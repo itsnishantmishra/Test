@@ -4,7 +4,7 @@ import { Layers } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { BarChart, CreditCard, Package, ShoppingCart, TrendingUp, Users } from "lucide-react";
 import Login from "./Login";
-import logo from "../assets/navBarLogo.png";
+import logo from "../assets/navBarLogo1.png";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 
