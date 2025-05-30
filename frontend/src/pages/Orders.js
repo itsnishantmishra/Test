@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Trash, Trash2, Check, CircleCheck } from "lucide-react";
+import { Trash, Trash2, Check, CircleCheck, ChevronDown, ChevronUp } from "lucide-react";
 
 const Orders = () => {
   const [activeTab, setActiveTab] = useState("pending");
@@ -111,7 +111,6 @@ const Orders = () => {
       alert("No orders are ready to be placed.");
       return;
     }
-    console.log("Placing all orders:", readyOrders);
     setOnWayOrders((prev) => [...prev, ...readyOrders]);
     setReadyOrders([]);
     setShowOrderPlacedModal(true);
@@ -119,11 +118,11 @@ const Orders = () => {
 
   const closeOrderPlacedModal = () => {
     setShowOrderPlacedModal(false);
-    if (readyOrders.length != 0) {
-      setActiveTab("ready"); // Redirect back to the "Ready" tab
-    } else {    
-    setActiveTab("pending"); // Redirect back to the "Pending" tab
-  };
+    if (readyOrders.length !== 0) {
+      setActiveTab("ready");
+    } else {
+      setActiveTab("pending");
+    }
   };
 
   const TabButton = ({ tabId, label }) => (
@@ -147,7 +146,7 @@ const Orders = () => {
       />
     </button>
   );
-  
+
   return (
     <div className="bg-white-800 min-h-screen p-3 md:p-6 flex gap-3 md:gap-6">
       {/* Main Section (75% of the screen) */}
@@ -201,7 +200,7 @@ const Orders = () => {
                         </td>
                         <td className="p-2 md:p-3">
                           <p className="font-semibold text-sm md:text-base">{order.item}</p>
-                          <p className="text-xs md:text-sm text-gray-500">
+                          <p className="text-xs md:text-sm text-blue-900">
                             {order.distributor}
                           </p>
                         </td>
@@ -234,7 +233,7 @@ const Orders = () => {
               </h2>
               <button
                 onClick={proceedOrders}
-                className="bg-blue-600 text-white px-6 md:px-8 py-2 md:py-3 text-base md:text-lg font-semibold rounded-xl hover:bg-blue-700 w-full md:w-auto"
+                className="bg-blue-900 text-white px-6 md:px-8 py-2 md:py-3 text-base md:text-lg font-semibold rounded-xl hover:bg-blue-700 w-full md:w-auto"
               >
                 Proceed
               </button>
@@ -242,9 +241,9 @@ const Orders = () => {
           </>
         )}
 
+        {/* Ready Orders Section */}
         {activeTab === "ready" && (
           <>
-            {/* Ready Orders Section */}
             {readyOrders.length === 0 ? (
               <p className="text-gray-300 text-center py-6 text-base md:text-base">No ready orders</p>
             ) : (
@@ -263,13 +262,28 @@ const Orders = () => {
                     return (
                       <div
                         key={distributor}
-                        className="border rounded-xl shadow p-3 md:p-4 mb-4 md:mb-6 bg-white"
+                        className={`bg-white rounded-xl shadow-sm border-2 transition-all duration-300 mb-4 md:mb-6 ${
+                          showAll ? "border-blue-600 shadow-lg" : "border-blue-200 hover:border-blue-300"
+                        }`}
                       >
                         {/* Distributor Header */}
-                        <div className="flex justify-between items-center mb-3 md:mb-4">
-                          <h3 className="text-base md:text-xl font-bold text-blue-800">
-                            {distributor}
-                          </h3>
+                        <div className="p-4 md:p-6 flex justify-between items-start mb-2 md:mb-4">
+                          <div className="flex items-center space-x-4">
+                            <div className="w-12 h-12 md:w-14 md:h-14 rounded-lg bg-blue-900 text-white flex items-center justify-center text-lg font-bold">
+                              {distributor
+                                .split(" ")
+                                .map((w) => w[0])
+                                .join("")
+                                .toUpperCase()
+                                .slice(0, 2)}
+                            </div>
+                            <div>
+                              <h3 className="text-base md:text-xl font-bold text-blue-900">{distributor}</h3>
+                              <div className="text-blue-600 text-xs md:text-sm">
+                                {items.length} item{items.length > 1 ? "s" : ""}
+                              </div>
+                            </div>
+                          </div>
                           <button
                             onClick={() => deleteDistributor(distributor)}
                             className="text-red-600 hover:text-red-800"
@@ -277,8 +291,24 @@ const Orders = () => {
                             <Trash2 size={18} className="md:w-5 md:h-5" />
                           </button>
                         </div>
+                        {/* Expand/Collapse Button */}
+                        {items.length > 3 && (
+                          <button
+                            onClick={() => toggleExpand(distributor)}
+                            className="w-full flex items-center justify-between bg-blue-100 hover:bg-blue-200 rounded-lg px-4 py-2 transition-colors mb-2"
+                          >
+                            <span className="font-medium text-blue-700">
+                              {showAll ? "View Less" : `View More (${items.length - 3} more)`}
+                            </span>
+                            {showAll ? (
+                              <ChevronUp className="w-5 h-5 text-blue-600" />
+                            ) : (
+                              <ChevronDown className="w-5 h-5 text-blue-600" />
+                            )}
+                          </button>
+                        )}
                         {/* Product List */}
-                        <ul className="space-y-2 md:space-y-3">
+                        <ul className="space-y-2 md:space-y-3 px-4 md:px-6 pb-2 md:pb-3">
                           {displayItems.map((item) => (
                             <li
                               key={item.id}
@@ -288,9 +318,8 @@ const Orders = () => {
                                 <p className="font-semibold text-sm md:text-base text-blue-800">
                                   {item.item}
                                 </p>
-                                <p className="text-xs md:text-sm text-gray-600">
-                                  Qty: {item.quantity}, Rate: ₹{item.rate}, Price:
-                                  ₹{item.quantity * item.rate}
+                                <p className="text-xs md:text-sm text-blue-900">
+                                  Qty: {item.quantity}, Rate: ₹{item.rate}, Price: ₹{item.quantity * item.rate}
                                 </p>
                               </div>
                               <button
@@ -314,8 +343,8 @@ const Orders = () => {
                           </button>
                         )}
                         {/* Bottom section */}
-                        <div className="flex flex-col md:flex-row justify-between items-center mt-3 md:mt-4 gap-2 md:gap-3">
-                          <p className="font-semibold text-sm md:text-base text-blue-800">
+                        <div className="flex flex-col md:flex-row justify-between items-center mt-3 md:mt-4 gap-2 md:gap-3 px-4 md:px-6 pb-4">
+                          <p className="font-semibold text-sm md:text-base text-blue-900">
                             Final Value: ₹{total}
                           </p>
                           <button
@@ -332,7 +361,7 @@ const Orders = () => {
                 <div className="flex justify-end">
                   <button
                     onClick={placeAllOrders}
-                    className="bg-blue-600 text-white px-6 py-2 md:px-6 md:py-2 rounded-full hover:bg-blue-700 w-full md:w-auto text-base md:text-base"
+                    className="bg-blue-900 text-white px-6 py-2 md:px-6 md:py-2 rounded-full hover:bg-blue-700 w-full md:w-auto text-base md:text-base"
                   >
                     Place All Orders
                   </button>
@@ -377,7 +406,7 @@ const Orders = () => {
 
         {/* Orders on Way Section */}
         <div
-          className="p-3 md:p-4 rounded-lg shadow-md transition-all duration-300 bg-blue-600"
+          className="p-3 md:p-4 rounded-lg shadow-md transition-all duration-300 bg-blue-900"
           style={{
             height: "200px",
             overflowY: "auto",
@@ -414,12 +443,12 @@ const Orders = () => {
         <div
           className={`p-3 md:p-4 rounded-lg shadow-md transition-all duration-300 ${
             suggestedItems.length === 0
-              ? "bg-gray-200"
+              ? "bg-gray700"
               : suggestedItems.length <= 3
-              ? "bg-blue-200"
+              ? "bg-blue-750"
               : suggestedItems.length <= 6
-              ? "bg-blue-400"
-              : "bg-blue-600"
+              ? "bg-blue-800"
+              : "bg-blue-900"
           }`}
           style={{
             height: "200px",

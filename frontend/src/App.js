@@ -15,6 +15,7 @@ import You from "./pages/You";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 
+
 // Vision Pages
 import Goals from "./pages/Vision/Goals";
 import Founders from "./pages/Vision/Founders";
@@ -58,10 +59,9 @@ function App() {
         <Route
           path="/layout"
           element={
-            <NavbarWrap>
               <Layout />
-            </NavbarWrap>
           }
+          
         >
           {/* Redirect /layout to /layout/shop */}
           <Route index element={<Navigate to="shop" replace />} />
