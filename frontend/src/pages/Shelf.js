@@ -693,7 +693,7 @@ const addAllToCart = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">
       {/* Header */}
-      <div className="sticky top-0 z-50 bg-gradient-to-r from-blue-900 via-blue-800 to-blue-900 shadow-lg border-b">
+      <div className="sticky top-0 z-50 bg-gradient-to-r from-blue-900 via-blue-800 to-blue-900 shadow-lg">
         <div className="px-3 sm:px-6 py-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           {/* Left: Inventory Title, Address, Product Count */}
           <div className="flex-1">
@@ -820,7 +820,7 @@ const addAllToCart = () => {
       <div className="relative z-30 y-auto">
         <div className="w-full flex items-stretch relative bg-white border-b shadow-sm">
           {/* Tabs */}
-          <div className="flex overflow-hidden scrollbar-hide flex-1 relative z-10 y-auto">
+          <div className="flex overflow-x-auto overflow-y-hidden scrollbar-hide flex-1 relative z-10 y-auto">
             {Object.keys(categoryStructure).map((cat) => (
               <button
                 key={cat}
@@ -902,7 +902,14 @@ const addAllToCart = () => {
         }}
       >
         {/* Subcategory Area */}
-        <div className="flex-shrink-0" style={{ width: "240px", minWidth: "140px" }}>
+        <div
+          className="flex-shrink-0"
+          style={{
+            width: "140px",
+            minWidth: "100px",
+            maxWidth: "180px"
+          }}
+        >
           <div className="bg-white rounded-xl shadow-sm border-2 border-blue-200 p-4 sticky top-[120px] mb-4">
             <h3 className="text-lg font-bold text-blue-900 mb-3">Subcategories</h3>
             <div className="flex flex-col gap-2">
