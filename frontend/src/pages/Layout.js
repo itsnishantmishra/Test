@@ -1,8 +1,10 @@
 import { NavLink, Outlet } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { PlaneLanding, Library, BanknoteArrowUp, Landmark, User, ScanBarcode, MoreVertical, LogOut } from "lucide-react";
+import { PlaneLanding, Library, BanknoteArrowUp, Landmark, User, ScanBarcode } from "lucide-react";
 import logo from "../assets/navBarLogo1.png"; // Import your logo
+import { useAuth } from "../components/AuthContext";
+
 
 function TogglingPaymentIcon() {
   const [showFirst, setShowFirst] = useState(true);
@@ -33,11 +35,25 @@ export default function Layout() {
     { name: "Orders", to: "/layout/orders", icon: PlaneLanding },
     { name: "You", to: "/layout/you", icon: User },
   ];
+  const [showNavbar, setShowNavbar] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
+  
+useEffect(() => {
+    const handleScroll = () => {
+      const currentY = window.scrollY;
+      setShowNavbar(currentY < lastScrollY || currentY < 10);
+      setLastScrollY(currentY);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [lastScrollY]);
 
   const navigate = useNavigate();
   const location = useLocation();
   const [activeItemPosition, setActiveItemPosition] = useState({ left: 0, width: 0 });
-  const [showMobileDropdown, setShowMobileDropdown] = useState(false);
+  const [showMobileLogout, setShowMobileLogout] = useState(false);
 
   useEffect(() => {
     // Small delay to ensure DOM is ready
@@ -60,25 +76,13 @@ export default function Layout() {
 
     return () => clearTimeout(timer);
   }, [location.pathname]);
-
-  // Close dropdown when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (showMobileDropdown && !event.target.closest('.mobile-dropdown-container')) {
-        setShowMobileDropdown(false);
-      }
-    };
-
-    document.addEventListener('click', handleClickOutside);
-    return () => document.removeEventListener('click', handleClickOutside);
-  }, [showMobileDropdown]);
-
+  const { logout } = useAuth();
   const handleLogout = () => {
     // Clear user session or token (if stored in localStorage or cookies)
     localStorage.removeItem("userInfo");
-    // Close dropdown
-    setShowMobileDropdown(false);
     // Redirect to the home page
+    
+    logout();
     navigate("/");
   };
 
@@ -106,7 +110,7 @@ export default function Layout() {
                     data-nav-index={index}
                     onClick={() => {
                       navigate(to);
-                      setShowMobileDropdown(false);
+                      setShowMobileLogout(false);
                     }}
                     className={`flex flex-col md:flex-row items-center justify-center min-w-0 flex-shrink-0 text-blue-1000 text-xs md:text-lg font-bold transition px-2 md:px-4 py-2 rounded-md ${
                       location.pathname === to ? "bg-blue-800 text-white" : "hover:text-blue-700 "
@@ -122,7 +126,7 @@ export default function Layout() {
               </div>
             </div>
 
-            {/* Right Section: Logout Button - Hidden on mobile, but add mobile dropdown trigger */}
+            {/* Right Section: Logout Button - Hidden on mobile, but add mobile logout trigger */}
             <div className="hidden md:block">
               <button
                 onClick={handleLogout}
@@ -132,39 +136,31 @@ export default function Layout() {
               </button>
             </div>
             
-            {/* Mobile Dropdown Toggle Button */}
-            <div className="md:hidden mobile-dropdown-container relative">
+            {/* Mobile Logout Toggle Button */}
+            <div className="md:hidden">
               <button
-                onClick={() => setShowMobileDropdown(!showMobileDropdown)}
-                className={`p-2 rounded-md transition-colors duration-200 ${
-                  showMobileDropdown 
-                    ? 'bg-blue-100 text-blue-700' 
-                    : 'text-blue-1000 hover:bg-gray-100'
-                }`}
-                aria-label="Menu"
+                onClick={() => setShowMobileLogout(!showMobileLogout)}
+                className="text-blue-1000 p-2"
               >
-                <MoreVertical className="w-5 h-5" />
+                <div className="w-1 h-1 bg-blue-1000 rounded-full mb-1"></div>
+                <div className="w-1 h-1 bg-blue-1000 rounded-full mb-1"></div>
+                <div className="w-1 h-1 bg-blue-1000 rounded-full"></div>
               </button>
-
-              {/* Mobile Dropdown Menu */}
-              {showMobileDropdown && (
-                <div className="absolute top-full right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
-                  {/* Dropdown arrow */}
-                  <div className="absolute -top-2 right-3 w-0 h-0 border-l-4 border-r-4 border-b-4 border-l-transparent border-r-transparent border-b-white"></div>
-                  <div className="absolute -top-3 right-3 w-0 h-0 border-l-4 border-r-4 border-b-4 border-l-transparent border-r-transparent border-b-gray-200"></div>
-                  
-                  <button
-                    onClick={handleLogout}
-                    className="w-full text-left px-4 py-3 text-red-600 hover:bg-red-50 font-medium transition-colors duration-150 flex items-center space-x-2"
-                  >
-                    <LogOut className="w-4 h-4" />
-                    <span>Logout</span>
-                  </button>
-                </div>
-              )}
             </div>
           </div>
         </div>
+        
+        {/* Mobile Logout Dropdown */}
+        {showMobileLogout && (
+          <div className="md:hidden absolute top-full left-0 w-full bg-white shadow-lg border-t z-40">
+            <button
+              onClick={handleLogout}
+              className="w-full text-left px-4 py-3 text-red-600 hover:bg-red-50 font-medium"
+            >
+              Logout
+            </button>
+          </div>
+        )}
         
         {/* Bottom border line with gap for active item */}
         <div className="absolute bottom-0 left-0 w-full h-0.5 bg-blue-600">
