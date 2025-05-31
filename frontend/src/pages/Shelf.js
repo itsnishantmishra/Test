@@ -693,7 +693,7 @@ const addAllToCart = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">
       {/* Header */}
-      <div className="sticky top-0 z-50 bg-gradient-to-r from-blue-900 via-blue-800 to-blue-900 shadow-lg">
+      <div className="top-0 z-50 bg-gradient-to-r from-blue-900 via-blue-800 to-blue-900 shadow-lg">
         <div className="px-3 sm:px-6 py-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           {/* Left: Inventory Title, Address, Product Count */}
           <div className="flex-1">
