@@ -88,7 +88,7 @@ export default function Layout() {
   return (
     <div className="min-h-screen">
       {/* Top Navigation Bar */}
-      <div className="fixed top-0 left-0 w-full bg-white shadow-md z-50 relative">
+      <div className="fixed top-0 left-0 w-full bg-white shadow-md z-50">
         <div className="p-2 md:p-4">
           <div className="flex justify-between items-center nav-container">
             {/* Left Section: Logo and Navigation Items */}
@@ -183,7 +183,7 @@ export default function Layout() {
       </div>
 
       {/* Content Area */}
-      <div>
+      <div className="pt-[72px]">
         <Outlet />
       </div>
     </div>

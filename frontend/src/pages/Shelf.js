@@ -905,7 +905,7 @@ const addAllToCart = () => {
         <div
           className="flex-shrink-0"
           style={{
-            width: "140px",
+            width: "220px",
             minWidth: "100px",
             maxWidth: "180px"
           }}
