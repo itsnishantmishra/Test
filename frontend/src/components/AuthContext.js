@@ -3,7 +3,7 @@ import React, { createContext, useState, useContext, useEffect } from "react";
 const AuthContext = createContext();
 
 // ====== TOGGLE THIS FLAG FOR TEST MODE ======
-const TEST_MODE = false; // Set to true for test mode, false for actual mode
+const TEST_MODE = true; // Set to true for test mode, false for actual mode
 // ============================================
 
 export const isTestMode = () => TEST_MODE;

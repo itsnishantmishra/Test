@@ -13,7 +13,7 @@ export default function Login() {
   const navigate = useNavigate();
   const { login } = useAuth();
 
-  const isTestMode = false; // Set to `true` for testing, `false` for real login
+  const isTestMode = true; // Set to `true` for testing, `false` for real login
 
   const handleLogin = async () => {
     if (loading) return; // Prevent double click
