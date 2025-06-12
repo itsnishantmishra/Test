@@ -2,6 +2,17 @@ import { motion } from "framer-motion";
 import { BarChart, CreditCard, Package, ShoppingCart, TrendingUp, Users } from "lucide-react";
 import Footer from "../components/Footer"; // <-- Import your existing Footer
 import kiranaShop from "../assets/Kirana_Shop.webp"; // <-- Add this import at the top
+import SplitText from "./SplitText";
+import TruckIntro from "./TruckIntro";
+import Home1 from "../assets/Home1.png";
+import Home2 from "../assets/Home2.jpg";
+import Home3 from "../assets/Home3.jpeg";
+import Home4 from "../assets/Home4.jpg";
+import Home5 from "../assets/Home5.jpg";
+
+const handleAnimationComplete = () => {
+  console.log('All letters have animated!');
+};
 
 export default function LandingPage() {
   return (
@@ -33,30 +44,63 @@ export default function LandingPage() {
           }}
         />
         {/* Content aligned to left and above the video */}
-        <div className="max-w-4xl relative z-20 flex flex-col items-start px-6 md:px-12 ml-0 md:ml-8">
-          <h1
-            className="text-5xl md:text-7xl font-light text-white md:tracking-tight text-left"
-            style={{
-              fontFamily: "'Inter', 'Helvetica Neue', Arial, 'sans-serif'",
-              letterSpacing: "0.01em",
-              textShadow: "0 4px 24px rgba(0,0,0,0.25)",
-              lineHeight: 1.2 // <-- Add this line for 1.5x line spacing
-            }}
-          >
-            Bridging Retailers<br />
-            & Distributors
-          </h1>
-          <p
-            className="mt-4 md:mt-6 text-base md:text-2xl text-gray-100 font-light text-left"
-            style={{
-              fontFamily: "'Inter', 'Helvetica Neue', Arial, 'sans-serif'",
-              textShadow: "0 2px 8px rgba(0,0,0,0.18)",
-              letterSpacing: "0.01em"
-            }}
-          >
-            Empowering retailers with seamless inventory,<br />
-            billing, and business growth solutions.
-          </p>
+        <div className="max-w-4xl relative z-20 flex flex-col items-start px-6 md:px-12 ml-16 md:ml-8">
+          <SplitText
+            text="Bridging Retailers"
+            className="text-5xl py-2 md:text-7xl font-light text-white md:tracking-tight text-left"
+            delay={80}
+            duration={0.4}
+            ease="power3.out"
+            splitType="chars"
+            from={{ opacity: 0, y: 40 }}
+            to={{ opacity: 1, y: 0 }}
+            threshold={0.1}
+            rootMargin="-100px"
+            textAlign="center"
+            onLetterAnimationComplete={handleAnimationComplete}
+          />
+          <SplitText
+            text="& Distributors"
+            className="text-5xl py-2 md:text-7xl font-light text-white md:tracking-tight text-left"
+            delay={80}
+            duration={0.4}
+            ease="power3.out"
+            splitType="chars"
+            from={{ opacity: 0, y: 40 }}
+            to={{ opacity: 1, y: 0 }}
+            threshold={0.1}
+            rootMargin="-100px"
+            textAlign="center"
+            onLetterAnimationComplete={handleAnimationComplete}
+          />
+          <SplitText
+            text="Empowering retailers with seamless inventory,"
+            className="text-1xl py-2 md:text-3xl font-light text-white md:tracking-tight text-left"
+            delay={20}
+            duration={0.5}
+            ease="power3.out"
+            splitType="chars"
+            from={{ opacity: 0, y: 40 }}
+            to={{ opacity: 1, y: 0 }}
+            threshold={0.1}
+            rootMargin="-100px"
+            textAlign="center"
+            onLetterAnimationComplete={handleAnimationComplete}
+          />
+          <SplitText
+            text="billing, and business growth solutions."
+            className="text-1xl py-2 md:text-3xl font-light text-white md:tracking-tight text-left"
+            delay={20}
+            duration={0.5}
+            ease="power3.out"
+            splitType="chars"
+            from={{ opacity: 0, y: 40 }}
+            to={{ opacity: 1, y: 0 }}
+            threshold={0.1}
+            rootMargin="-100px"
+            textAlign="center"
+            onLetterAnimationComplete={handleAnimationComplete}
+          />
           <button
             className="mt-8 px-10 py-3 border border-white text-white rounded-md bg-white bg-opacity-0 backdrop-sm font-medium transition hover:bg-opacity-20 text-bold"
             style={{
@@ -69,104 +113,104 @@ export default function LandingPage() {
           </button>
         </div>
       </section>
-
-      {/* --- Section Between Video and Image --- */}
-      <section
-        className="w-full flex items-center justify-start py-12 bg-gradient-to-r from-blue-50 via-white to-blue-50"
-        style={{
-          minHeight: "120px"
-        }}
-      >
-        <div className="relative w-full">
-          <div
-            className="max-w-4xl px-6 md:px-12 ml-0 md:ml-8"
-            style={{
-              // Matches the hero section's left start and width
-              display: "flex",
-              alignItems: "center",
-              minHeight: "100%",
-            }}
-          >
-            <h2
-              className="text-2xl md:text-3xl font-semibold text-grey text-left"
-              style={{
-                fontFamily: "'Inter', 'Helvetica Neue', Arial, 'sans-serif'",
-                letterSpacing: "0.01em",
-                lineHeight: 1.4,
-                width: "100%",
-              }}
-            >
-              Sledje Software Solutions is a leading pioneer in easing major setbacks of retailers and distributor connections
-            </h2>
-          </div>
+      {/* --- TruckIntro Animation Section (full width, below video) --- */}
+      <section className="w-full bg-white relative z-30" style={{ minHeight: "40px" }}>
+        <div className="flex justify-center items-center w-full py-">
+          <TruckIntro />
         </div>
       </section>
-
-      {/* --- New Image Section with Translucent Box --- */}
-      <section
-        className="relative w-full min-h-screen flex items-center justify-start overflow-hidden"
-        style={{ height: "100vh" }}
-      >
-        {/* Background Image */}
-        <img
-          src={kiranaShop}
-          alt="Kirana Shop"
-          className="absolute top-0 left-0 w-full h-full object-cover z-0"
-          style={{ minHeight: "100vh", minWidth: "100vw", filter: "brightness(0.85) blur(0.5px)" }}
-        />
-
-        {/* Soft overlay for better text readability */}
+      
+      {/* --- Fullscreen Scrollable Rounded Rectangles Section --- */}
+      <section className="w-full relative z-30">
         <div
-          className="absolute top-0 left-0 w-full h-full z-10 pointer-events-none"
+          className="w-full h-screen overflow-x-auto flex space-x-4 md:space-x-8 px-4 md:px-8 py-8"
           style={{
-            background: "linear-gradient(90deg, rgba(255,255,255,0.12) 0%, rgba(48,54,68,0.10) 100%)"
-          }}
-        />
-
-        {/* Translucent Box with Text */}
-        <div
-          className="relative z-20 flex flex-col justify-center"
-          style={{
-            width: "100%",
-            minHeight: "100vh",
-            paddingLeft: "1rem"
+            scrollSnapType: "x mandatory",
+            WebkitOverflowScrolling: "touch",
           }}
         >
-          <div
-            className="ml-0 md:ml-8 max-w-xl md:max-w-2xl px-8 py-10 rounded-2xl shadow-2xl"
-            style={{
-              background: "rgba(255,255,255,0.72)",
-              backdropFilter: "blur(12px)",
-              WebkitBackdropFilter: "blur(12px)",
-              boxShadow: "0 8px 32px 0 rgba(36,41,54,0.13)",
-              border: "1.5px solid rgba(255,255,255,0.22)"
-            }}
-          >
-            <h2
-              className="text-3xl md:text-4xl font-bold text-gray-900 mb-4"
+          {[Home1, Home2, Home3, Home4, Home5].map((img, idx) => (
+            <div
+              key={idx}
+              className="flex-shrink-0 bg-gray-100 rounded-3xl shadow-lg flex items-center justify-center overflow-hidden relative"
               style={{
-                fontFamily: "'Inter', 'Helvetica Neue', Arial, 'sans-serif'",
-                letterSpacing: "0.01em"
+                width: "33vw",
+                minWidth: "33vw",
+                maxWidth: "33vw",
+                height: "70vh",
+                scrollSnapAlign: "start",
+                marginRight: idx === 4 ? "-8vw" : "0",
+                zIndex: idx === 4 ? 10 : 1,
+                boxShadow: idx === 4 ? "0 8px 32px 0 rgba(36,41,54,0.13)" : undefined,
+                transition: "box-shadow 0.3s",
               }}
+              {...(window.innerWidth >= 768
+                ? {
+                    style: {
+                      ...{
+                        width: "22vw",
+                        minWidth: "22vw",
+                        maxWidth: "22vw",
+                        height: "90vh",
+                        scrollSnapAlign: "start",
+                        marginRight: idx === 4 ? "-16vw" : "0",
+                        zIndex: idx === 4 ? 10 : 1,
+                        boxShadow: idx === 4 ? "0 8px 32px 0 rgba(36,41,54,0.13)" : undefined,
+                        transition: "box-shadow 0.3s",
+                      },
+                    },
+                  }
+                : {})}
             >
-              Welcome to the Next Step
-            </h2>
-            <p
-              className="text-lg md:text-xl text-gray-700 font-light"
-              style={{
-                fontFamily: "'Inter', 'Helvetica Neue', Arial, 'sans-serif'",
-                lineHeight: 1.5
-              }}
-            >
-              Discover how our platform empowers your business with seamless integration, real-time insights, and a supportive ecosystem. 
-              <br /><br />
-              Join us as we redefine the future of retail and distribution, making growth accessible and effortless for everyone.
-            </p>
-          </div>
+              <img
+                src={img}
+                alt={`Home ${idx + 1}`}
+                className="object-cover w-full h-full rounded-3xl"
+                draggable={false}
+              />
+              {/* Gradient overlay and sample text */}
+              <div
+                style={{
+                  position: "absolute",
+                  left: 0,
+                  bottom: 0,
+                  width: "100%",
+                  height: "40%",
+                  background: "linear-gradient(to top, rgba(20,30,48,0.65) 70%, rgba(20,30,48,0.05) 100%)",
+                  borderBottomLeftRadius: "1.5rem",
+                  borderBottomRightRadius: "1.5rem",
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "flex-end",
+                  alignItems: "flex-start",
+                  padding: "1.5rem",
+                  zIndex: 2,
+                }}
+              >
+                <div style={{
+                  
+                  color: "#fff",
+                  fontWeight: 300,
+                  fontSize: "4.25rem",
+                  marginBottom: "0.25rem",
+                  textShadow: "0 2px 8px rgba(0,0,0,0.25)",
+                  fontFamily: "'Inter', 'Helvetica Neue', Arial, 'sans-serif' 'bold'"
+                }}>
+                  Sample Title
+                </div>
+                <div style={{
+                  color: "#e3e6ee",
+                  fontWeight: 400,
+                  fontSize: "1rem",
+                  textShadow: "0 2px 8px rgba(0,0,0,0.18)"
+                }}>
+                  Sample description for testing.
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       </section>
-      {/* --- End New Section --- */}
-
       {/* Features Section: 6 features, 2 per row, 3 rows, each row 100vh */}
       <section className="relative w-full">
         {[
