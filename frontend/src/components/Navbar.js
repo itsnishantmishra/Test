@@ -69,11 +69,6 @@ export default function Navbar({ onLoginClick }) {
   const navBlur = (isAtTop && !openDropdown && !isMobileMenuOpen)
     ? "blur(0px)"
     : "blur(12px)";
-
-  // Overlay for dropdown highlight (desktop & mobile)
-  const showOverlay = !!openDropdown || isMobileMenuOpen;
-  const overlayZ = isMobileMenuOpen ? 49 : 59;
-
   // Animation classes
   const baseNavClass =
     "fixed top-0 left-0 w-full z-50 p-4 transition-all duration-700 ease-[cubic-bezier(.4,0,.2,1)]";
@@ -105,24 +100,26 @@ export default function Navbar({ onLoginClick }) {
         ref={navbarRef}
         className={`${baseNavClass} ${vanishClass} ${shakeClass}`}
         style={{
+          paddingLeft: "calc(1.5rem + 2.5vw)",
+          paddingRight: "calc(1.5rem + 2.5vw)",
           background: navBg,
           backdropFilter: navBlur,
           WebkitBackdropFilter: navBlur,
           boxShadow: (isAtTop && !openDropdown && !isMobileMenuOpen)
             ? "none"
             : "0 4px 32px 0 rgba(36,41,54,0.13)",
-          borderBottom: (isAtTop && !openDropdown && !isMobileMenuOpen)
-            ? "none"
-            : "1.5px solid rgba(120,130,150,0.13)",
-          transition: "background 0.7s cubic-bezier(.4,0,.2,1), backdrop-filter 0.7s cubic-bezier(.4,0,.2,1), box-shadow 0.7s cubic-bezier(.4,0,.2,1), border-bottom 0.7s cubic-bezier(.4,0,.2,1), padding 0.7s cubic-bezier(.4,0,.2,1), opacity 0.7s cubic-bezier(.4,0,.2,1), transform 0.7s cubic-bezier(.4,0,.2,1)"
+          borderBottom: "none",
+          borderBottomLeftRadius: "0",
+          borderBottomRightRadius: "0",
+          transition: "background 0.7s cubic-bezier(.4,0,.2,1), backdrop-filter 0.7s cubic-bezier(.4,0,.2,1), box-shadow 0.7s cubic-bezier(.4,0,.2,1), border-radius 0.7s cubic-bezier(.4,0,.2,1), padding 0.7s cubic-bezier(.4,0,.2,1), opacity 0.7s cubic-bezier(.4,0,.2,1), transform 0.7s cubic-bezier(.4,0,.2,1)"
         }}
       >
         {/* Overlay for dropdown highlight */}
-        {showOverlay && (
+        {!isMobileMenuOpen && (
           <div
-            className={`fixed inset-0 z-[${overlayZ}] transition-all duration-500 ease-[cubic-bezier(.4,0,.2,1)]`}
+            className={`fixed inset-0] transition-all duration-500 ease-[cubic-bezier(.4,0,.2,1)]`}
             style={{
-              background: "rgba(36, 41, 54, 0.75)", // softer overlay
+              background: "rgba(36, 41, 54, 0.75)",
               pointerEvents: "auto",
               transition: "background 0.5s cubic-bezier(.4,0,.2,1)"
             }}
@@ -133,30 +130,22 @@ export default function Navbar({ onLoginClick }) {
           />
         )}
 
-        <div className="flex justify-between items-center">
-          {/* Dropdowns and Login (left) */}
-          <div
-            className="hidden lg:flex items-center space-x-6 ml-16 z-60 transition-all duration-500 ease-[cubic-bezier(.4,0,.2,1)]"
-            style={{
-              background: showOverlay
-                ? "linear-gradient(135deg, rgba(60,65,80,0.97) 60%, rgba(80,80,100,0.97) 100%)"
-                : "none",
-              borderRadius: showOverlay ? "1rem" : "0",
-              boxShadow: showOverlay ? "0 8px 32px 0 rgba(36,41,54,0.18)" : "none",
-              padding: showOverlay ? "0.5rem 1.5rem" : "0",
-              transition: "all 0.5s cubic-bezier(.4,0,.2,1)"
-            }}
-          >
-            {/* Vision Dropdown */}
+        <div className="w-full flex items-center justify-between px-[17px]">
+          {/* Desktop: Dropdowns left, login center, logo right */}
+          <div className="hidden lg:flex flex-1 items-center space-x-6">
+            {/* Example for Vision Dropdown */}
             <div className="relative">
               <button
                 onClick={() => toggleDropdown("vision")}
                 className={`text-white text-lg font-bold transition font-inter ${
-                  openDropdown === "vision" ? "bg-gradient-to-br from-black/80 to-gray-800/80 text-blue-300 px-2 py-1 rounded-md shadow" : "hover:text-blue-400"
+                  openDropdown === "vision" ? "-translate-y-1" : "hover:text-blue-400"
                 }`}
                 style={{
                   fontFamily: "'Inter', 'Helvetica Neue', Arial, 'sans-serif'",
-                  fontWeight: 700
+                  fontWeight: 700,
+                  background: "none",
+                  boxShadow: "none",
+                  color: "#fff"
                 }}
               >
                 Vision
@@ -164,8 +153,8 @@ export default function Navbar({ onLoginClick }) {
               {openDropdown === "vision" && (
                 <div className="absolute left-0 mt-2 flex flex-col shadow-lg rounded-md py-2 z-60 min-w-48"
                   style={{
-                    background: "linear-gradient(135deg, rgba(20,30,48,0.95) 60%, rgba(40,40,60,0.95) 100%)",
-                    boxShadow: "0 8px 32px 0 rgba(0,0,0,0.25)"
+                    background: "#fff", // White background
+                    boxShadow: "0 8px 32px 0 rgba(0,0,0,0.12)"
                   }}
                 >
                   <Link
@@ -201,11 +190,14 @@ export default function Navbar({ onLoginClick }) {
               <button
                 onClick={() => toggleDropdown("support")}
                 className={`text-white text-lg font-bold transition font-inter ${
-                  openDropdown === "support" ? "bg-gradient-to-br from-black/80 to-gray-800/80 text-blue-300 px-2 py-1 rounded-md shadow" : "hover:text-blue-400"
+                  openDropdown === "support" ? "-translate-y-1" : "hover:text-blue-400"
                 }`}
                 style={{
                   fontFamily: "'Inter', 'Helvetica Neue', Arial, 'sans-serif'",
-                  fontWeight: 700
+                  fontWeight: 700,
+                  background: "none",
+                  boxShadow: "none",
+                  color: "#fff"
                 }}
               >
                 Support
@@ -213,7 +205,7 @@ export default function Navbar({ onLoginClick }) {
               {openDropdown === "support" && (
                 <div className="absolute left-0 mt-2 flex flex-col shadow-lg rounded-md py-2 z-60 min-w-48"
                   style={{
-                    background: "linear-gradient(135deg, rgba(20,30,48,0.95) 60%, rgba(40,40,60,0.95) 100%)",
+                    background: "white",
                     boxShadow: "0 8px 32px 0 rgba(0,0,0,0.25)"
                   }}
                 >
@@ -250,11 +242,14 @@ export default function Navbar({ onLoginClick }) {
               <button
                 onClick={() => toggleDropdown("services")}
                 className={`text-white text-lg font-bold transition font-inter ${
-                  openDropdown === "services" ? "bg-gradient-to-br from-black/80 to-gray-800/80 text-blue-300 px-2 py-1 rounded-md shadow" : "hover:text-blue-400"
+                  openDropdown === "services" ? "-translate-y-1" : "hover:text-blue-400"
                 }`}
                 style={{
                   fontFamily: "'Inter', 'Helvetica Neue', Arial, 'sans-serif'",
-                  fontWeight: 700
+                  fontWeight: 700,
+                  background: "none",
+                  boxShadow: "none",
+                  color: "#fff"
                 }}
               >
                 Services
@@ -262,7 +257,7 @@ export default function Navbar({ onLoginClick }) {
               {openDropdown === "services" && (
                 <div className="absolute left-0 mt-2 flex flex-col shadow-lg rounded-md py-2 z-60 min-w-64"
                   style={{
-                    background: "linear-gradient(135deg, rgba(20,30,48,0.95) 60%, rgba(40,40,60,0.95) 100%)",
+                    background: "white",
                     boxShadow: "0 8px 32px 0 rgba(0,0,0,0.25)"
                   }}
                 >
@@ -315,11 +310,14 @@ export default function Navbar({ onLoginClick }) {
               <button
                 onClick={() => toggleDropdown("partners")}
                 className={`text-white text-lg font-bold transition font-inter ${
-                  openDropdown === "partners" ? "bg-gradient-to-br from-black/80 to-gray-800/80 text-blue-300 px-2 py-1 rounded-md shadow" : "hover:text-blue-400"
+                  openDropdown === "partners" ? "-translate-y-1" : "hover:text-blue-400"
                 }`}
                 style={{
                   fontFamily: "'Inter', 'Helvetica Neue', Arial, 'sans-serif'",
-                  fontWeight: 700
+                  fontWeight: 700,
+                  background: "none",
+                  boxShadow: "none",
+                  color: "#fff"
                 }}
               >
                 Partners
@@ -327,8 +325,8 @@ export default function Navbar({ onLoginClick }) {
               {openDropdown === "partners" && (
                 <div className="absolute left-0 mt-2 flex flex-col shadow-lg rounded-md py-2 z-60 min-w-48"
                   style={{
-                    background: "linear-gradient(135deg, rgba(20,30,48,0.95) 60%, rgba(40,40,60,0.95) 100%)",
-                    boxShadow: "0 8px 32px 0 rgba(0,0,0,0.25)"
+                    background: "white",
+                    boxShadow: "none"
                   }}
                 >
                   <Link
@@ -373,33 +371,40 @@ export default function Navbar({ onLoginClick }) {
             </button>
           </div>
 
-          {/* Logo - Now on the right */}
-          <div className="flex-shrink-0 mr-16">
+          {/* Desktop: Logo right */}
+          <div className="hidden lg:flex flex-shrink-0 ml-auto">
             <Link to="/" className="flex items-center">
               <img src={logo} alt="Logo" className="h-12 w-auto" />
             </Link>
           </div>
-        </div>
 
-        {/* Mobile Menu Button */}
-        <div className="lg:hidden flex items-center space-x-2 flex-shrink-0">
-          <button
-            onClick={onLoginClick}
-            className="px-10 py-3 border border-white text-white rounded-md bg-white bg-opacity-0 font-medium transition hover:bg-opacity-20"
-            style={{
-              fontFamily: "'Inter', 'Helvetica Neue', Arial, 'sans-serif'",
-              fontWeight: 700,
-              boxShadow: "0 2px 16px 0 rgba(0,0,0,0.10)"
-            }}
-          >
-            Login
-          </button>
-          <button
-            onClick={toggleMobileMenu}
-            className="bg-gray-200 text-gray-900 p-2 rounded-md shadow-md hover:bg-gray-300"
-          >
-            {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-          </button>
+          {/* Mobile: Logo left, login + menu right */}
+          <div className="flex w-full items-center justify-between lg:hidden">
+            <div className="flex-shrink-0">
+              <Link to="/" className="flex items-center">
+                <img src={logo} alt="Logo" className="h-12 w-auto" />
+              </Link>
+            </div>
+            <div className="flex items-center space-x-2">
+              <button
+                onClick={onLoginClick}
+                className="px-6 py-3 border border-white text-white rounded-md bg-transparent bg-opacity-0 font-medium transition hover:bg-opacity-20"
+                style={{
+                  fontFamily: "'Inter', 'Helvetica Neue', Arial, 'sans-serif'",
+                  fontWeight: 700,
+                  boxShadow: "0 2px 16px 0 rgba(0,0,0,0.10)"
+                }}
+              >
+                Login
+              </button>
+              <button
+                onClick={toggleMobileMenu}
+                className="bg-gray-200 text-gray-900 p-2 rounded-md shadow-md hover:bg-gray-300"
+              >
+                {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              </button>
+            </div>
+          </div>
         </div>
 
         {/* Mobile Menu */}
@@ -413,7 +418,7 @@ export default function Navbar({ onLoginClick }) {
             }}
           >
             <div className="py-2 space-y-1">
-              {/* Vision Mobile */}
+              {/* Example for Vision Mobile */}
               <div>
                 <button
                   onClick={() => toggleDropdown("vision")}
@@ -427,10 +432,10 @@ export default function Navbar({ onLoginClick }) {
                   Vision
                 </button>
                 {openDropdown === "vision" && (
-                  <div style={{ background: "rgba(20,30,48,0.85)" }} className="pl-8">
+                  <div style={{ background: "#fff" }} className="pl-8 rounded-b-md">
                     <Link
                       to="/vision/goals"
-                      className="block px-4 py-2 text-white hover:bg-blue-100 hover:text-blue-900 font-light rounded"
+                      className="block px-4 py-2 text-blue-900 hover:bg-blue-50 font-light rounded"
                       style={{ fontFamily: "'Inter', 'Helvetica Neue', Arial, 'sans-serif'", fontWeight: 300 }}
                       onClick={closeMobileMenu}
                     >
@@ -438,7 +443,7 @@ export default function Navbar({ onLoginClick }) {
                     </Link>
                     <Link
                       to="/vision/founders"
-                      className="block px-4 py-2 text-white hover:bg-blue-100 hover:text-blue-900 font-light rounded"
+                      className="block px-4 py-2 text-blue-900 hover:bg-blue-50 font-light rounded"
                       style={{ fontFamily: "'Inter', 'Helvetica Neue', Arial, 'sans-serif'", fontWeight: 300 }}
                       onClick={closeMobileMenu}
                     >
@@ -446,7 +451,7 @@ export default function Navbar({ onLoginClick }) {
                     </Link>
                     <Link
                       to="/vision/investors"
-                      className="block px-4 py-2 text-white hover:bg-blue-100 hover:text-blue-900 font-light rounded"
+                      className="block px-4 py-2 text-blue-900 hover:bg-blue-50 font-light rounded"
                       style={{ fontFamily: "'Inter', 'Helvetica Neue', Arial, 'sans-serif'", fontWeight: 300 }}
                       onClick={closeMobileMenu}
                     >
@@ -470,10 +475,10 @@ export default function Navbar({ onLoginClick }) {
                   Support
                 </button>
                 {openDropdown === "support" && (
-                  <div style={{ background: "rgba(20,30,48,0.85)" }} className="pl-8">
+                  <div style={{ background: "#fff" }} className="pl-8 rounded-b-md">
                     <Link
                       to="/support/tracking"
-                      className="block px-4 py-2 text-white hover:bg-blue-100 hover:text-blue-900 font-light rounded"
+                      className="block px-4 py-2 text-blue-900 hover:bg-blue-50 font-light rounded"
                       style={{ fontFamily: "'Inter', 'Helvetica Neue', Arial, 'sans-serif'", fontWeight: 300 }}
                       onClick={closeMobileMenu}
                     >
@@ -481,7 +486,7 @@ export default function Navbar({ onLoginClick }) {
                     </Link>
                     <Link
                       to="/support/grievances"
-                      className="block px-4 py-2 text-white hover:bg-blue-100 hover:text-blue-900 font-light rounded"
+                      className="block px-4 py-2 text-blue-900 hover:bg-blue-50 font-light rounded"
                       style={{ fontFamily: "'Inter', 'Helvetica Neue', Arial, 'sans-serif'", fontWeight: 300 }}
                       onClick={closeMobileMenu}
                     >
@@ -489,7 +494,7 @@ export default function Navbar({ onLoginClick }) {
                     </Link>
                     <Link
                       to="/support/contact-us"
-                      className="block px-4 py-2 text-white hover:bg-blue-100 hover:text-blue-900 font-light rounded"
+                      className="block px-4 py-2 text-blue-900 hover:bg-blue-50 font-light rounded"
                       style={{ fontFamily: "'Inter', 'Helvetica Neue', Arial, 'sans-serif'", fontWeight: 300 }}
                       onClick={closeMobileMenu}
                     >
@@ -513,10 +518,10 @@ export default function Navbar({ onLoginClick }) {
                   Services
                 </button>
                 {openDropdown === "services" && (
-                  <div style={{ background: "rgba(20,30,48,0.85)" }} className="pl-8">
+                  <div style={{ background: "#fff" }} className="pl-8 rounded-b-md">
                     <Link
                       to="/services/inventory-management"
-                      className="block px-4 py-2 text-white hover:bg-blue-100 hover:text-blue-900 font-light rounded"
+                      className="block px-4 py-2 text-blue-900 hover:bg-blue-50 font-light rounded"
                       style={{ fontFamily: "'Inter', 'Helvetica Neue', Arial, 'sans-serif'", fontWeight: 300 }}
                       onClick={closeMobileMenu}
                     >
@@ -524,7 +529,7 @@ export default function Navbar({ onLoginClick }) {
                     </Link>
                     <Link
                       to="/services/billing-credit-management"
-                      className="block px-4 py-2 text-white hover:bg-blue-100 hover:text-blue-900 font-light rounded"
+                      className="block px-4 py-2 text-blue-900 hover:bg-blue-50 font-light rounded"
                       style={{ fontFamily: "'Inter', 'Helvetica Neue', Arial, 'sans-serif'", fontWeight: 300 }}
                       onClick={closeMobileMenu}
                     >
@@ -532,7 +537,7 @@ export default function Navbar({ onLoginClick }) {
                     </Link>
                     <Link
                       to="/services/customer-automation"
-                      className="block px-4 py-2 text-white hover:bg-blue-100 hover:text-blue-900 font-light rounded"
+                      className="block px-4 py-2 text-blue-900 hover:bg-blue-50 font-light rounded"
                       style={{ fontFamily: "'Inter', 'Helvetica Neue', Arial, 'sans-serif'", fontWeight: 300 }}
                       onClick={closeMobileMenu}
                     >
@@ -540,7 +545,7 @@ export default function Navbar({ onLoginClick }) {
                     </Link>
                     <Link
                       to="/services/supply-chain-optimizations"
-                      className="block px-4 py-2 text-white hover:bg-blue-100 hover:text-blue-900 font-light rounded"
+                      className="block px-4 py-2 text-blue-900 hover:bg-blue-50 font-light rounded"
                       style={{ fontFamily: "'Inter', 'Helvetica Neue', Arial, 'sans-serif'", fontWeight: 300 }}
                       onClick={closeMobileMenu}
                     >
@@ -548,7 +553,7 @@ export default function Navbar({ onLoginClick }) {
                     </Link>
                     <Link
                       to="/services/ai-driven-analytics"
-                      className="block px-4 py-2 text-white hover:bg-blue-100 hover:text-blue-900 font-light rounded"
+                      className="block px-4 py-2 text-blue-900 hover:bg-blue-50 font-light rounded"
                       style={{ fontFamily: "'Inter', 'Helvetica Neue', Arial, 'sans-serif'", fontWeight: 300 }}
                       onClick={closeMobileMenu}
                     >
@@ -572,10 +577,10 @@ export default function Navbar({ onLoginClick }) {
                   Partners
                 </button>
                 {openDropdown === "partners" && (
-                  <div style={{ background: "rgba(20,30,48,0.85)" }} className="pl-8">
+                  <div style={{ background: "#fff" }} className="pl-8 rounded-b-md">
                     <Link
                       to="/partners/retailers"
-                      className="block px-4 py-2 text-white hover:bg-blue-100 hover:text-blue-900 font-light rounded"
+                      className="block px-4 py-2 text-blue-900 hover:bg-blue-50 font-light rounded"
                       style={{ fontFamily: "'Inter', 'Helvetica Neue', Arial, 'sans-serif'", fontWeight: 300 }}
                       onClick={closeMobileMenu}
                     >
@@ -583,7 +588,7 @@ export default function Navbar({ onLoginClick }) {
                     </Link>
                     <Link
                       to="/partners/distributors"
-                      className="block px-4 py-2 text-white hover:bg-blue-100 hover:text-blue-900 font-light rounded"
+                      className="block px-4 py-2 text-blue-900 hover:bg-blue-50 font-light rounded"
                       style={{ fontFamily: "'Inter', 'Helvetica Neue', Arial, 'sans-serif'", fontWeight: 300 }}
                       onClick={closeMobileMenu}
                     >
@@ -591,7 +596,7 @@ export default function Navbar({ onLoginClick }) {
                     </Link>
                     <Link
                       to="/partners/delivery-partners"
-                      className="block px-4 py-2 text-white hover:bg-blue-100 hover:text-blue-900 font-light rounded"
+                      className="block px-4 py-2 text-blue-900 hover:bg-blue-50 font-light rounded"
                       style={{ fontFamily: "'Inter', 'Helvetica Neue', Arial, 'sans-serif'", fontWeight: 300 }}
                       onClick={closeMobileMenu}
                     >
@@ -601,20 +606,7 @@ export default function Navbar({ onLoginClick }) {
                 )}
               </div>
 
-              {/* Mobile Login Button */}
-              <div className="px-4 py-2">
-                <button
-                  onClick={onLoginClick}
-                  className="w-full px-10 py-3 border border-white text-white rounded-md bg-white bg-opacity-0 font-bold transition hover:bg-opacity-20"
-                  style={{
-                    fontFamily: "'Inter', 'Helvetica Neue', Arial, 'sans-serif'",
-                    fontWeight: 700,
-                    boxShadow: "0 2px 16px 0 rgba(0,0,0,0.10)"
-                  }}
-                >
-                  Login
-                </button>
-              </div>
+              
             </div>
           </div>
         )}
