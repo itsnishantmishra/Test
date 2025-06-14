@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { BarChart, CreditCard, Package, ShoppingCart, TrendingUp, Users } from "lucide-react";
-import Footer from "../components/Footer"; // <-- Import your existing Footer
-import kiranaShop from "../assets/Kirana_Shop.webp"; // <-- Add this import at the top
+import Footer from "../components/Footer";
+import kiranaShop from "../assets/Kirana_Shop.webp";
 import SplitText from "./SplitText";
 import TruckIntro from "./TruckIntro";
 import Home1 from "../assets/Home1.png";
@@ -9,18 +9,57 @@ import Home2 from "../assets/Home2.jpg";
 import Home3 from "../assets/Home3.jpeg";
 import Home4 from "../assets/Home4.jpg";
 import Home5 from "../assets/Home5.jpg";
+import { useRef, useEffect, useState } from "react";
 
 const handleAnimationComplete = () => {
   console.log('All letters have animated!');
 };
 
 export default function LandingPage() {
+  const heroRef = useRef(null);
+  const [heroWidth, setHeroWidth] = useState("100vw");
+  const [heroRadius, setHeroRadius] = useState("0px");
+
+  useEffect(() => {
+    function handleScroll() {
+      if (!heroRef.current) return;
+      const rect = heroRef.current.getBoundingClientRect();
+      const windowHeight = window.innerHeight;
+
+      const start = 0;
+      const end = -windowHeight * 1.2;
+
+      let progress = 0;
+      if (rect.top < start) {
+        progress = Math.min(1, Math.max(0, (start - rect.top) / (start - end)));
+      }
+
+      const width = 100 - 15 * progress;
+      const radius = progress * 48;
+
+      // 🔥 Direct style updates (no state)
+      heroRef.current.style.width = `${width}vw`;
+      heroRef.current.style.borderRadius = `${radius}px`;
+    }
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
-    <div className="min-h-screen bg-white text-gray-900">
-      {/* Hero Section */}
+    <div className="min-h-screen bg-white text-gray-900 font-eudoxus">
+      {/* Hero Section with animated width and border radius */}
       <section
-        className="relative w-full min-h-screen flex flex-col justify-center overflow-hidden p-0 m-0"
-        style={{ height: "100vh" }}
+        ref={heroRef}
+        className="relative flex flex-col justify-center overflow-hidden p-0 m-0 mx-auto transition-all duration-[0ms] ease-linear"
+        style={{
+          width: heroWidth,
+          height: "100vh",
+          borderRadius: heroRadius,
+          background: "#fff",
+          boxShadow: heroRadius !== "0px" ? "0 8px 32px 0 rgba(36,41,54,0.13)" : undefined,
+        }}
       >
         {/* Fullscreen Video - only covers the hero section */}
         <video
@@ -29,7 +68,7 @@ export default function LandingPage() {
           muted
           playsInline
           className="absolute top-0 left-0 w-full h-full object-cover z-0"
-          style={{ minHeight: "100vh", minWidth: "100vw" }}
+          style={{ minHeight: "100vh", minWidth: "100vw", borderRadius: heroRadius, transition: "border-radius 0.5s cubic-bezier(0.4,0,0.2,1)" }}
         >
           <source src="https://www.onelineage.com/sites/default/files/2023-05/main_page_032323_web.mp4" type="video/mp4" />
           Your browser does not support the video tag.
@@ -40,14 +79,16 @@ export default function LandingPage() {
           style={{
             background: "linear-gradient(to right, rgba(20,30,48,0.7) 40%, rgba(20,30,48,0.2) 70%, rgba(20,30,48,0) 100%)",
             minHeight: "100vh",
-            minWidth: "100vw"
+            minWidth: "100vw",
+            borderRadius: heroRadius,
+            transition: "border-radius 0.5s cubic-bezier(0.4,0,0.2,1)"
           }}
         />
         {/* Content aligned to left and above the video */}
-        <div className="max-w-4xl relative z-20 flex flex-col items-start px-6 md:px-12 ml-16 md:ml-8">
+        <div className="max-w-4xl relative z-20 flex flex-col items-start px-7 md:px-12 ml-16 md:ml-8">
           <SplitText
             text="Bridging Retailers"
-            className="text-5xl py-2 md:text-7xl font-light text-white md:tracking-tight text-left"
+            className="text-5xl md:text-6xl py-2 font-bold leading-tight mb-6 tracking-tight text-white md:tracking-tight text-left"
             delay={80}
             duration={0.4}
             ease="power3.out"
@@ -61,7 +102,7 @@ export default function LandingPage() {
           />
           <SplitText
             text="& Distributors"
-            className="text-5xl py-2 md:text-7xl font-light text-white md:tracking-tight text-left"
+            className="text-5xl md:text-6xl font-bold leading-tight mb-6 tracking-tight text-white md:tracking-tight text-left"
             delay={80}
             duration={0.4}
             ease="power3.out"
@@ -73,36 +114,8 @@ export default function LandingPage() {
             textAlign="center"
             onLetterAnimationComplete={handleAnimationComplete}
           />
-          <SplitText
-            text="Empowering retailers with seamless inventory,"
-            className="text-1xl py-2 md:text-3xl font-light text-white md:tracking-tight text-left"
-            delay={20}
-            duration={0.5}
-            ease="power3.out"
-            splitType="chars"
-            from={{ opacity: 0, y: 40 }}
-            to={{ opacity: 1, y: 0 }}
-            threshold={0.1}
-            rootMargin="-100px"
-            textAlign="center"
-            onLetterAnimationComplete={handleAnimationComplete}
-          />
-          <SplitText
-            text="billing, and business growth solutions."
-            className="text-1xl py-2 md:text-3xl font-light text-white md:tracking-tight text-left"
-            delay={20}
-            duration={0.5}
-            ease="power3.out"
-            splitType="chars"
-            from={{ opacity: 0, y: 40 }}
-            to={{ opacity: 1, y: 0 }}
-            threshold={0.1}
-            rootMargin="-100px"
-            textAlign="center"
-            onLetterAnimationComplete={handleAnimationComplete}
-          />
           <button
-            className="mt-8 px-10 py-3 border border-white text-white rounded-md bg-white bg-opacity-0 backdrop-sm font-medium transition hover:bg-opacity-20 text-bold"
+            className="mt-8 px-10 py-3 border border-white text-white rounded-full bg-white bg-opacity-0 backdrop-sm font-medium transition hover:bg-opacity-20 text-bold"
             style={{
               fontFamily: "'Inter', 'Helvetica Neue', Arial, 'sans-serif' 'bold'",
               fontWeight: 400,
@@ -113,17 +126,27 @@ export default function LandingPage() {
           </button>
         </div>
       </section>
-      {/* --- TruckIntro Animation Section (full width, below video) --- */}
-      <section className="w-full bg-white relative z-30" style={{ minHeight: "40px" }}>
-        <div className="flex justify-center items-center w-full py-">
-          <TruckIntro />
-        </div>
+      
+      <section className="text-center px-6 py-28 md:py-40 max-w-5xl mx-auto">
+        <h1 className="text-7xl md:text-5xl font-bold leading-tight mb-6 tracking-tight ">
+          Sledge 
+        </h1>
+        <h1 className="text-5xl md:text-6xl font-bold leading-tight mb-6 tracking-tight text-blue-400">
+          Software Solutions
+        </h1>
+        <p className="text-xl text-gray-600 mb-10 max-w-2xl mx-auto">
+          A premium UI crafted with Eudoxus Sans for clarity, elegance, and modern appeal. Designed for forward-thinkers.
+        </p>
+        <button className="bg-black text-white px-8 py-3 text-lg rounded-full hover:bg-gray-900 transition-all">
+          Explore Now
+        </button>
       </section>
+
       
       {/* --- Fullscreen Scrollable Rounded Rectangles Section --- */}
       <section className="w-full relative z-30">
         <div
-          className="w-full h-screen overflow-x-auto flex space-x-4 md:space-x-8 px-4 md:px-8 py-8"
+          className="w-full h-screen overflow-x-auto-hidden flex space-x-4 md:space-x-8 px-4 md:px-8 py-8"
           style={{
             scrollSnapType: "x mandatory",
             WebkitOverflowScrolling: "touch",
@@ -137,7 +160,7 @@ export default function LandingPage() {
                 width: "33vw",
                 minWidth: "33vw",
                 maxWidth: "33vw",
-                height: "70vh",
+                height: "50vh",
                 scrollSnapAlign: "start",
                 marginRight: idx === 4 ? "-8vw" : "0",
                 zIndex: idx === 4 ? 10 : 1,
@@ -151,7 +174,7 @@ export default function LandingPage() {
                         width: "22vw",
                         minWidth: "22vw",
                         maxWidth: "22vw",
-                        height: "90vh",
+                        height: "70vh",
                         scrollSnapAlign: "start",
                         marginRight: idx === 4 ? "-16vw" : "0",
                         zIndex: idx === 4 ? 10 : 1,

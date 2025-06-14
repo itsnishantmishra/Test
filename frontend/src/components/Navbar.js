@@ -360,7 +360,7 @@ export default function Navbar({ onLoginClick }) {
             {/* Login Button */}
             <button
               onClick={onLoginClick}
-              className="px-10 py-3 border border-white text-white rounded-md bg-transparent bg-opacity-0 backdrop-blur-sm font-bold transition hover:bg-opacity-20"
+              className="px-10 py-3 border border-white text-white rounded-full bg-transparent bg-opacity-0 backdrop-blur-sm font-bold transition hover:bg-opacity-20"
               style={{
                 fontFamily: "'Inter', 'Helvetica Neue', Arial, 'sans-serif'",
                 fontWeight: 700,

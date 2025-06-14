@@ -15,6 +15,7 @@ import Payment from "./pages/Payment";
 import You from "./pages/You";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
+import Test from "./pages/Resources";
 
 
 // Vision Pages
@@ -222,6 +223,14 @@ function App() {
             <NavbarWrap>
               <NotFound />
             </NavbarWrap>
+          }
+        />
+         <Route
+          path="/Test"
+          element={
+            
+              <Test />
+            
           }
         />
       </Routes>
