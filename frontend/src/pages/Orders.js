@@ -148,11 +148,20 @@ const Orders = () => {
   );
 
   return (
-    <div className="bg-white-800 min-h-screen p-3 md:p-6 flex gap-3 md:gap-6">
+    <div className="min-h-screen bg-white p-4 md:p-6">
+      <h2 className="text-4xl md:text-5xl font-bold md:leading-tight mb-6 tracking-tight text-between md:pt-4 md:pl-16">
+              <span className="bg-black bg-clip-text text-transparent font-eudoxus">
+                Fast Track
+              </span>
+              <span className="bg-gradient-to-r from-purple-500 via-violet-500 to-teal-400 bg-clip-text text-transparent font-eudoxus pl-2">
+                 Orders
+              </span>
+            </h2>
+    <div className="bg-white-800 min-h-screen p-3 md:p-6 flex gap-3 md:gap- md:pl-16 md:pr-12">
       {/* Main Section (75% of the screen) */}
       <div className="flex-1">
         {/* Tabs */}
-        <div className="flex w-full gap-2 md:gap-4 mb-4 md:mb-6 border-b border-blue-600">
+        <div className="flex w-full gap-2 md:gap-4 mb-4 md:mb-6 border-b border-blue-600 font-bold font-eudoxus">
           <TabButton tabId="pending" label="Pending" />
           {readyOrders.length > 0 && <TabButton tabId="ready" label="Ready" />}
         </div>
@@ -161,23 +170,23 @@ const Orders = () => {
         {activeTab === "pending" && (
           <>
             {/* Orders Table */}
-            <div className="overflow-auto bg-white rounded-lg shadow-md p-2 md:p-4">
-              <table className="min-w-full border border-gray-300 text-left text-sm md:text-base">
+            <div className="overflow-auto bg-white rounded-3xl shadow-md p-2 md:p-4">
+              <table className="min-w-full border border-gray-300 text-left text-sm md:text-base rounded-full">
                 <thead className="bg-blue-100">
                   <tr>
-                    <th className="p-2 md:p-5">
+                    <th className="p-2 md:p-3">
                       <input
-                        className="w-4 h-4 md:w-4 md:h-4"
+                        className="w-4 h-4 md:w-4 md:h-4 "
                         type="checkbox"
                         checked={selectAll}
                         onChange={handleSelectAllChange}
                       />
                     </th>
-                    <th className="p-2 md:p-5 text-blue-800 font-semibold text-base md:text-base">Product</th>
-                    <th className="p-2 md:p-5 text-blue-800 font-semibold text-base md:text-base hidden md:table-cell">Details</th>
-                    <th className="p-2 md:p-5 text-blue-800 font-semibold text-base md:text-base">Rate</th>
-                    <th className="p-2 md:p-5 text-blue-800 font-semibold text-base md:text-base">Qty</th>
-                    <th className="p-2 md:p-5 text-blue-800 font-semibold text-base md:text-base">Total</th>
+                    <th className="p-2 md:p-7 text-blue-800 font-semibold text-base md:text-base">Product</th>
+                    <th className="p-2 md:p-7 text-blue-800 font-semibold text-base md:text-base hidden md:table-cell">Details</th>
+                    <th className="p-2 md:p-4 text-blue-800 font-semibold text-base md:text-base">Rate</th>
+                    <th className="p-2 md:p-7 text-blue-800 font-semibold text-base md:text-base">Qty</th>
+                    <th className="p-2 md:p-4 text-blue-800 font-semibold text-base md:text-base">Total</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -198,17 +207,17 @@ const Orders = () => {
                             onChange={() => handleCheckboxChange(order.id)}
                           />
                         </td>
-                        <td className="p-2 md:p-3">
+                        <td className="p-7 md:p-3">
                           <p className="font-semibold text-sm md:text-base">{order.item}</p>
                           <p className="text-xs md:text-sm text-blue-900">
                             {order.distributor}
                           </p>
                         </td>
-                        <td className="p-2 md:p-3 hidden md:table-cell">
+                        <td className="p-7 md:p-3 hidden md:table-cell">
                           <p className="text-sm text-gray-600">High-quality product</p>
                         </td>
-                        <td className="p-2 md:p-3 text-sm md:text-base font-semibold">₹{order.rate}</td>
-                        <td className="p-2 md:p-3">
+                        <td className="p-7 md:p-3 text-sm md:text-base font-semibold">₹{order.rate}</td>
+                        <td className="p-7 md:p-3">
                           <input
                             type="number"
                             min="1"
@@ -219,7 +228,7 @@ const Orders = () => {
                             }
                           />
                         </td>
-                        <td className="p-2 md:p-3 text-sm md:text-base font-semibold">₹{order.quantity * order.rate}</td>
+                        <td className="p-7 md:p-3 text-sm md:text-base font-semibold">₹{order.quantity * order.rate}</td>
                       </tr>
                     ))
                   )}
@@ -233,7 +242,7 @@ const Orders = () => {
               </h2>
               <button
                 onClick={proceedOrders}
-                className="bg-blue-900 text-white px-6 md:px-8 py-2 md:py-3 text-base md:text-lg font-semibold rounded-xl hover:bg-blue-700 w-full md:w-auto"
+                className="bg-blue-900 text-white px-6 md:px-8 py-2 md:py-3 text-base md:text-lg font-semibold rounded-full hover:bg-blue-700 w-full md:w-auto"
               >
                 Proceed
               </button>
@@ -361,7 +370,7 @@ const Orders = () => {
                 <div className="flex justify-end">
                   <button
                     onClick={placeAllOrders}
-                    className="bg-blue-900 text-white px-6 py-2 md:px-6 md:py-2 rounded-full hover:bg-blue-700 w-full md:w-auto text-base md:text-base"
+                    className="bg-black md:py-3 text-white px-6 py-2 md:px-6 md:py-2 md:rounded-full hover:bg-blue-700 w-full md:w-auto text-base md:text-base"
                   >
                     Place All Orders
                   </button>
@@ -396,7 +405,7 @@ const Orders = () => {
               </h2>
               <button
                 onClick={placeAllOrders}
-                className="bg-blue-600 text-white px-4 py-2 md:px-6 md:py-2 text-sm md:text-lg font-semibold rounded-lg hover:bg-blue-700 w-full"
+                className="bg-blue-600 text-white px-4 py-2 md:px-6 md:py-2 text-sm md:text-lg font-semibold rounded-full hover:bg-blue-700 w-full"
               >
                 Place All Orders
               </button>
@@ -406,7 +415,7 @@ const Orders = () => {
 
         {/* Orders on Way Section */}
         <div
-          className="p-3 md:p-4 rounded-lg shadow-md transition-all duration-300 bg-blue-900"
+          className="p-3 md:p-4 rounded-3xl shadow-md transition-all duration-300 bg-blue-900"
           style={{
             height: "200px",
             overflowY: "auto",
@@ -441,7 +450,7 @@ const Orders = () => {
 
         {/* Suggested Items Section */}
         <div
-          className={`p-3 md:p-4 rounded-lg shadow-md transition-all duration-300 ${
+          className={`p-3 md:p-4 rounded-3xl shadow-md transition-all duration-300 ${
             suggestedItems.length === 0
               ? "bg-gray700"
               : suggestedItems.length <= 3
@@ -453,6 +462,7 @@ const Orders = () => {
           style={{
             height: "200px",
             overflowY: "auto",
+            overflowX: "auto",
           }}
         >
           <h3 className="text-sm md:text-lg font-semibold text-white mb-2 md:mb-3 text-center">
@@ -499,6 +509,7 @@ const Orders = () => {
           </div>
         </div>
       )}
+    </div>
     </div>
   );
 };

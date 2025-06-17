@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Trash, Check, FileText, ArrowDown, ArrowUp, PlusCircle } from "lucide-react";
+import { Trash, Check, FileText, ArrowDown, ArrowUp, PlusCircle, X, } from "lucide-react";
 import CreateOrder from "../components/CreateOrder";
 
 const dummyOrders = [
@@ -188,8 +188,14 @@ const Shop = () => {
 const renderOrderCard = (order, isPayment = false) => (
   <div
     key={order.orderId}
-    className="w-full max-w-sm bg-white rounded-2xl shadow-md p-5 mx-2 font-[Eudoxus Sans] transition-all hover:shadow-lg border border-gray-100"
+    className="w-full max-w-sm bg-white rounded-2xl shadow-md p-5 mx-2 font-[Eudoxus Sans] transition-all hover:shadow-lg border border-gray-100 relative"
   >
+    {/* Card Delete (X) Icon - Top right */}
+    <X
+      className="absolute top-6 right-3 w-4 h-4 text-red-400 hover:text-red-600 cursor-pointer transition "
+      onClick={() => deleteOrderCard(order.orderId)}
+    />
+
     {/* Customer Name */}
     <div className="text-center font-bold text-gray-900 text-base mb-3">
       {order.customerName || "Custom"}
@@ -234,7 +240,7 @@ const renderOrderCard = (order, isPayment = false) => (
               {item.unit && (
                 <span className="ml-1 text-gray-500 text-xs">{item.unit}</span>
               )}
-              <Trash
+              <X
                 className="w-3 h-3 text-red-400 hover:text-red-600 transition cursor-pointer"
                 onClick={() => deleteItem(order.orderId, item.id)}
               />

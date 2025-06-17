@@ -244,16 +244,25 @@ const Payment = () => {
   const totalWeeklyProfit = distributors.reduce((sum, d) => sum + d.weeklyProfit, 0);
 
   return (
-    <div className="min-h-screen bg-blue-50">
+    <div className="min-h-screen bg-white">
       {/* Header */}
-      <div className="bg-blue-900 text-white">
-        <div className="max-w-7xl mx-auto px-6 py-2">
+      <div className="bg-white text-white">
+        <div className="max-w-7xl mx-auto px-2 py-2 md:pt-4">
           <div className="flex justify-between items-center">
-            <div>
+            <h2 className="text-4xl md:text-5xl font-bold md:leading-tight mb-6 tracking-tight text-between">
+              <span className="bg-black bg-clip-text text-transparent font-eudoxus">
+                One Stop <br></br>
+              </span>
+              <span className="bg-gradient-to-r from-purple-500 via-violet-500 to-teal-400 bg-clip-text text-transparent font-eudoxus">
+                 Payment Settlement Hub
+              </span>
+
+            </h2>
+            {/* <div>
               <h1 className="text-4xl font-bold mb-2">Payment Settlement Hub</h1>
               <p className="text-blue-300 text-lg">Manage distributor payments and track performance</p>
-            </div>
-            <div className="bg-blue-800 rounded-xl p-6">
+            </div> */}
+            <div className="bg-blue-800 rounded-3xl p-6 mt-4">
               <div className="grid grid-cols-2 gap-6 text-center">
                 <div>
                   <div className="text-2xl font-bold">{formatCurrency(totalTodaysSales)}</div>
@@ -277,18 +286,18 @@ const Payment = () => {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-6 py-8">
+      <div className="max-w-7xl mx-auto px-2 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Distributors List */}
-          <div className="lg:col-span-2 space-y-6">
+          <div className="lg:col-span-2 space-y-6 md:mt-5">
             <div className="flex justify-between items-center">
-              <h2 className="text-2xl font-bold text-blue-900">Distributors</h2>
+              {/* <h2 className="text-4xl font-eudoxus font-bold text-blue-900">Distributors</h2> */}
             </div>
 
             {sortedDistributors.map((distributor) => (
               <div
                 key={distributor.id}
-                className={`bg-white rounded-xl shadow-sm border-2 transition-all duration-300 cursor-pointer ${
+                className={`bg-white rounded-3xl shadow-sm border-2 border-gray-200 transition-all duration-300 cursor-pointer ${
                   selectedDistributors.has(distributor.id)
                     ? 'border-blue-600 shadow-lg'
                     : 'border-blue-200 hover:border-blue-300'
@@ -323,13 +332,13 @@ const Payment = () => {
                     
                     <div className="text-right">
                       {distributor.paymentStatus === 'pending' && (
-                        <span className="text-xs text-blue-600 bg-blue-100 px-2 py-1 rounded">Payment Pending</span>
+                        <span className="text-xs text-blue-600 bg-blue-100 px-2 py-1 rounded-full">Payment Pending</span>
                       )}
                     </div>
                   </div>
 
                   {/* Payment Options */}
-                  <div className="bg-blue-50 rounded-lg p-4 mb-4">
+                  <div className="bg-blue-50 rounded-full p-4 mb-4">
                     <div className="grid grid-cols-2 gap-4">
                       <div 
                         className="flex items-center space-x-3 cursor-pointer"
@@ -341,10 +350,10 @@ const Payment = () => {
                           value="today"
                           checked={distributorPaymentTypes[distributor.id] === 'today'}
                           onChange={() => {}} // Empty onChange to prevent default behavior
-                          className="text-blue-900 pointer-events-none"
+                          className="text-blue-900 font-eudoxus pointer-events-none"
                         />
                         <div>
-                          <div className="font-medium text-blue-900">Today's Payable</div>
+                          <div className="font-bold text-blue-900 font-eudoxus ">Today's Payable</div>
                           <div className="text-lg font-bold text-blue-900">{formatCurrency(distributor.todaysPayable)}</div>
                         </div>
                       </div>
@@ -362,7 +371,7 @@ const Payment = () => {
                           className="text-blue-900 pointer-events-none"
                         />
                         <div>
-                          <div className="font-medium text-blue-900">Weekly Payable</div>
+                          <div className="font-bold text-blue-900 font-eudoxus">Weekly Payable</div>
                           <div className="text-lg font-bold text-blue-900">{formatCurrency(distributor.weeklyPayable)}</div>
                         </div>
                       </div>
@@ -372,7 +381,7 @@ const Payment = () => {
                   {/* Bills Section Toggle */}
                   <button
                     onClick={() => toggleExpanded(distributor.id)}
-                    className="w-full flex items-center justify-between bg-blue-100 hover:bg-blue-200 rounded-lg p-4 transition-colors"
+                    className="w-full flex items-center justify-between bg-blue-100 hover:bg-blue-200 rounded-full p-4 transition-colors"
                   >
                     <div className="flex items-center space-x-3">
                       <Eye className="w-5 h-5 text-blue-600" />
@@ -472,7 +481,7 @@ const Payment = () => {
 
           {/* Payment Summary Sidebar */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-xl shadow-sm p-6 sticky top-6 border border-blue-200">
+            <div className="bg-white rounded-3xl shadow-sm p-6 sticky top-6 border-2 border-gray-200 mt-11">
               <h3 className="text-xl font-bold text-blue-900 mb-6">Payment Summary</h3>
               
               <div className="space-y-4 mb-6">
@@ -486,7 +495,7 @@ const Payment = () => {
                   <span className="font-bold text-blue-900">{formatCurrency(paymentSummary.totalOutstanding)}</span>
                 </div>
                 
-                <div className="flex justify-between items-center py-4 bg-blue-900 text-white rounded-lg px-4">
+                <div className="flex justify-between items-center py-4 bg-blue-900 text-white rounded-full px-4">
                   <span className="font-medium">Amount to Pay</span>
                   <span className="text-2xl font-bold">{formatCurrency(paymentSummary.netPayable)}</span>
                 </div>
@@ -509,11 +518,11 @@ const Payment = () => {
               <div className="space-y-3">
                 <button
                   disabled={selectedDistributors.size === 0}
-                  className="w-full bg-blue-900 text-white py-4 rounded-lg font-medium text-lg hover:bg-blue-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-blue-900 text-white py-4 rounded-full font-medium text-lg hover:bg-blue-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Process Payment
                 </button>
-                <button className="w-full bg-blue-100 text-blue-700 py-3 rounded-lg font-medium hover:bg-blue-200 transition-colors">
+                <button className="w-full bg-blue-100 text-blue-700 py-3 rounded-full font-medium hover:bg-blue-200 transition-colors">
                   Schedule Payment
                 </button>
               </div>

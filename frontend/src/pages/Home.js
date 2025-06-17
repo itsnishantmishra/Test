@@ -280,7 +280,7 @@ export default function LandingPage() {
       
       {/* --- Fullscreen Scrollable Rounded Rectangles Section --- */}
       <section
-        className="w-full relative z-30 flex flex-col items-center pl-16"
+        className="w-full relative z-30 flex flex-col items-center pl-16 scroll-behavior: smooth; whileHover={{ scale: 1.015 }}"
         style={{
           opacity: bgReveal,
           transform: `translateY(${(1 - bgReveal) * 100}px)`,
@@ -310,10 +310,19 @@ export default function LandingPage() {
   const isSelected = selectedCard === idx;
 
   return (
-    <div
+    <motion.div
       key={idx}
       className="flex-shrink-0 rounded-3xl shadow-lg flex items-center justify-center overflow-hidden relative cursor-pointer"
       onClick={() => setSelectedCard(isSelected ? null : idx)}
+      initial={{ opacity: 0, y: 60 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{
+        type: "spring",
+        stiffness: 60,    // decent bounce, not too snappy
+        damping: 10,      // smoothens the bounce quickly
+        mass: 0.6,        // lighter feel
+         
+      }}
       style={{
         width: isSelected ? "95vw" : "22vw",
         minWidth: isSelected ? "95vw" : "22vw",
@@ -332,7 +341,7 @@ export default function LandingPage() {
         draggable={false}
       />
 
-      {/* Top-left overlay text */}
+      {/* Overlay text */}
       <div
         style={{
           position: "absolute",
@@ -352,7 +361,6 @@ export default function LandingPage() {
         </div>
       </div>
 
-      {/* Optional expanded description */}
       {isSelected && (
         <div
           style={{
@@ -371,7 +379,8 @@ export default function LandingPage() {
           <p>This is the detailed description of the {card.title} section.</p>
         </div>
       )}
-    </div>
+    </motion.div>
+
   );
 })}
 
