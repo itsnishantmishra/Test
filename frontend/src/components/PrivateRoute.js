@@ -1,5 +1,5 @@
 import { useAuth } from "./AuthContext";
-import Login from "../pages/Login";
+import Login from "./Login";
 const PrivateRoute = ({ children}) => {
   const { isAuthenticated } = useAuth();
   

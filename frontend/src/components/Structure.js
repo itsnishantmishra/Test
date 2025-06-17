@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
-import Login from "../pages/Login";
+import Login from "./Login";
 
 export default function NavbarWrapper({ children }) {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);

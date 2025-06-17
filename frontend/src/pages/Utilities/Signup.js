@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import bcrypt from "bcryptjs";
-import API from "../api";
+import API from "../../api";
 
 export default function SignUp() {
   const [email, setEmail] = useState("");

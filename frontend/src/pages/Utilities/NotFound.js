@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import backgroundImage from "../assets/404.jpg"; // Adjust the import path as necessary
+import backgroundImage from "../../assets/404.jpg"; // Adjust the import path as necessary
 
 export default function NotFound() {
   return (

@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { PlaneLanding, Library, BanknoteArrowUp, Landmark, User, ScanBarcode, MoreVertical, LogOut } from "lucide-react";
 import logo from "../assets/navBarLogo1.png"; // Import your logo
-import {useAuth} from "../components/AuthContext.js"; // Import the AuthContext
+import {useAuth} from "./AuthContext.js"; // Import the AuthContext
 
 function TogglingPaymentIcon() {
   const [showFirst, setShowFirst] = useState(true);

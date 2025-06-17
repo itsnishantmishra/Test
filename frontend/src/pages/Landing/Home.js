@@ -1,14 +1,14 @@
 import { motion } from "framer-motion";
 import { BarChart, CreditCard, Package, ShoppingCart, TrendingUp, Users } from "lucide-react";
-import Footer from "../components/Footer";
-import kiranaShop from "../assets/945.png";
-import SplitText from "./SplitText";
-import Earth from "../assets/HomeEarth.png";
-import Home1 from "../assets/Home1.png";
-import Home2 from "../assets/Home2.png";
-import Home3 from "../assets/Home3.png";
-import Home4 from "../assets/Home4.png";
-import Money from "../assets/HomeMoney.png";
+import Footer from "../../components/Footer";
+import kiranaShop from "../../assets/945.png";
+import SplitText from "../Utilities/SplitText";
+import Earth from "../../assets/HomeEarth.png";
+import Home1 from "../../assets/Home1.png";
+import Home2 from "../../assets/Home2.png";
+import Home3 from "../../assets/Home3.png";
+import Home4 from "../../assets/Home4.png";
+import Money from "../../assets/HomeMoney.png";
 
 import { useRef, useEffect, useState } from "react";
 

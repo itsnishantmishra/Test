@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Trash, Check, FileText, ArrowDown, ArrowUp, PlusCircle, X, } from "lucide-react";
-import CreateOrder from "../components/CreateOrder";
+import CreateOrder from "../../components/CreateOrder";
 
 const dummyOrders = [
   {
