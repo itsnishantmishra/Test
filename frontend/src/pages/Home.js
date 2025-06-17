@@ -124,7 +124,7 @@ export default function LandingPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-white text-gray-900 font-doxueus ">
+    <div className="min-h-screen bg-white text-gray-900 font-eudoxus ">
       {/* Hero Section with animated width and border radius */}
       <section
         ref={heroRef}

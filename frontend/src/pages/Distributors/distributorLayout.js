@@ -1,9 +1,8 @@
 import { NavLink, Outlet } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { PlaneLanding, Library, BanknoteArrowUp, Landmark, User, ScanBarcode, MoreVertical, LogOut } from "lucide-react";
-import logo from "../assets/navBarLogo1.png"; // Import your logo
-import {useAuth} from "../components/AuthContext.js"; // Import the AuthContext
+import { PlaneTakeoff, BanknoteArrowUp, Landmark, User, ScanBarcode, MoreVertical, LogOut } from "lucide-react";
+import {useAuth} from "../../components/AuthContext.js"; // Import the AuthContext
 
 function TogglingPaymentIcon() {
   const [showFirst, setShowFirst] = useState(true);
@@ -27,13 +26,15 @@ function TogglingPaymentIcon() {
 }
 
 export default function Layout() {
-  const navItems = [
-    { name: "Shop", to: "/layout/shop", icon: ScanBarcode },
-    { name: "Shelf", to: "/layout/shelf", icon: Library },
-    { name: "Payments", to: "/layout/payment", icon: TogglingPaymentIcon },
-    { name: "Orders", to: "/layout/orders", icon: PlaneLanding },
-    { name: "You", to: "/layout/you", icon: User },
-  ];
+  
+const navItems = [
+  { name: "Orders", to: "/distributor/", icon: PlaneTakeoff},
+  { name: "Products", to: "/distributor/products", icon: ScanBarcode },
+  { name: "Overview", to: "/distributor/overview", icon: Landmark },
+  { name: "Payments", to: "/distributor/payments", icon: BanknoteArrowUp },
+  { name: "Profile", to: "/distributor/profile", icon: User },
+];
+
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -88,21 +89,21 @@ export default function Layout() {
   return (
     <div className="min-h-screen">
       {/* Top Navigation Bar */}
-      <div className="fixed top-0 left-0 w-full bg-white shadow-md z-50">
+      <div className="fixed top-0 left-0 w-full bg-white shadow-md z-50 relative">
         <div className="p-2 md:p-4">
           <div className="flex justify-between items-center nav-container">
             {/* Left Section: Logo and Navigation Items */}
-            <div className="flex items-center justify-between space-x-2 md:space-x-6 w-full md:w-auto">
+            <div className="flex items-center space-x-2 md:space-x-6 w-full md:w-auto">
               {/* Logo - Hidden on mobile */}
               <img
-                src={logo}
+                src={process.env.PUBLIC_URL + "/logo192.png"}
                 alt="Logo"
-                className="hidden md:block h-12 w-auto cursor-pointer pl-16"
+                className="hidden md:block h-12 w-auto cursor-pointer"
                 onClick={() => navigate("/")}
               />
 
               {/* Navigation Items */}
-              <div className="flex justify-between items-centre w-full space-x-2 md:space-x-4 px-2 md:px-[12rem]">
+              <div className="flex items-center justify-between md:justify-start space-x-1 md:space-x-6 w-full md:w-auto overflow-x-auto">
                 {navItems.map(({ name, to, icon: Icon }, index) => (
                   <button
                     key={index}
@@ -111,12 +112,12 @@ export default function Layout() {
                       navigate(to);
                       setShowMobileDropdown(false);
                     }}
-                    className={`flex flex-col md:flex-row items-center justify-center min-w-0 flex-shrink-0  text-blue-1000 text-xs md:text-xl font-bold transition px-2 md:px-4 py-2 rounded-full font-eudoxus  ${
-                      location.pathname === to ? "bg-blue-700 text-white" : "hover:text-black "
+                    className={`flex flex-col md:flex-row items-center justify-center min-w-0 flex-shrink-0 text-blue-1000 text-xs md:text-lg font-bold transition px-2 md:px-4 py-2 rounded-md ${
+                      location.pathname === to ? "bg-blue-800 text-white" : "hover:text-blue-700 "
                     }`}
                   >
                     {/* Show icon on mobile, hide on desktop */}
-                    <div className="block md:hidden mb-1 justify-between items-center">
+                    <div className="block md:hidden mb-1">
                       {typeof Icon === 'function' ? <Icon /> : <Icon className="w-4 h-4" />}
                     </div>
                     <span className="text-center">{name}</span>
@@ -126,10 +127,10 @@ export default function Layout() {
             </div>
 
             {/* Right Section: Logout Button - Hidden on mobile, but add mobile dropdown trigger */}
-            <div className="hidden md:block pr-16">
+            <div className="hidden md:block">
               <button
                 onClick={handleLogout}
-                className="bg-blue-800 text-white font-bold font-eudoxus  px-6 py-3 rounded-full shadow-md hover:bg-blue-700 transition"
+                className="bg-blue-600 text-white px-6 py-3 rounded-md shadow-md hover:bg-blue-700 transition"
               >
                 Logout
               </button>
@@ -176,14 +177,14 @@ export default function Layout() {
             className="absolute top-0 h-0.5 bg-white transition-all duration-300 ease-in-out"
             style={{
               left: `${activeItemPosition.left - 10}px`,
-              width: `${activeItemPosition.width + 10}px`
+              width: `${activeItemPosition.width + 20}px`
             }}
           />
         </div>
       </div>
 
       {/* Content Area */}
-      <div className="pt-[72px]">
+      <div>
         <Outlet />
       </div>
     </div>

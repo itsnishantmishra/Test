@@ -17,6 +17,13 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Test from "./pages/Resources";
 
+import DistributorLayout from "./pages/Distributors/distributorLayout";
+import DistributorProducts from "./pages/Distributors/distributorProducts";
+import DistributorOrders from "./pages/Distributors/distributorOrders";
+import DistributorOverview from "./pages/Distributors/distributorOverview";
+import DistributorPayments from "./pages/Distributors/distributorPayments";
+import DistributorProfile from "./pages/Distributors/distributorProfile";
+
 
 // Vision Pages
 import Goals from "./pages/Vision/Goals";
@@ -67,7 +74,6 @@ function App() {
             </PrivateRoute>
              
           }
-          
         >
           {/* Redirect /layout to /layout/shop */}
           <Route index element={<Navigate to="shop" replace />} />
@@ -77,6 +83,15 @@ function App() {
           <Route path="payment" element={<Payment />} />
           <Route path="you" element={<You />} />
         </Route>
+
+          {/* Distributor Routes */}<Route path="/distributor" element={<PrivateRoute><DistributorLayout /></PrivateRoute>}>
+        <Route index element={<Navigate to="orders" replace />} />
+         <Route path="products" element={<DistributorProducts />} />
+         <Route path="orders" element={<DistributorOrders />} />
+         <Route path="overview" element={<DistributorOverview />} />
+         <Route path="payments" element={<DistributorPayments />} />
+         <Route path="profile" element={<DistributorProfile />} />
+       </Route>
 
         {/* Vision Pages */}
         <Route
