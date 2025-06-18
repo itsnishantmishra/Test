@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { motion, useAnimation, useInView } from "framer-motion";
 import { BarChart, CreditCard, Package, ShoppingCart, TrendingUp, Users } from "lucide-react";
 import Footer from "../../components/Footer";
 import kiranaShop from "../../assets/945.png";
@@ -9,6 +9,7 @@ import Home2 from "../../assets/Home2.png";
 import Home3 from "../../assets/Home3.png";
 import Home4 from "../../assets/Home4.png";
 import Money from "../../assets/HomeMoney.png";
+import ExploreSection from "../../components/ExploreSection";
 
 import { useRef, useEffect, useState } from "react";
 
@@ -68,6 +69,12 @@ export default function LandingPage() {
   const whyExistRef = useRef(null);
   const [whyExistScale, setWhyExistScale] = useState(1);
 
+  // WHy Sledge Ref Section
+  const whySledgeRef = useRef(null);
+  const [whySledgeWidth, setwhySledgeWidth] = useState("100vw");
+  const [whySledgeRadius, setwhySledgeRadius] = useState("0px");
+
+
   useEffect(() => {
     function handleScroll() {
       // --- HERO SECTION ANIMATION ---
@@ -84,6 +91,21 @@ export default function LandingPage() {
         const radius = progress * 48;
         heroRef.current.style.width = `${width}vw`;
         heroRef.current.style.borderRadius = `${radius}px`;
+      }
+      // WHY SLEDGE REF SECTION ANIMATION ---
+      if (whySledgeRef.current) {
+        const rect = whySledgeRef.current.getBoundingClientRect();
+        const windowHeight = window.innerHeight;
+        const start = 0;
+        const end = -windowHeight * 1.2;
+        let progress = 0;
+        if (rect.top < start) {
+          progress = Math.min(1, Math.max(0, (start - rect.top) / (start - end)));
+        }
+        const width = 100 - 15 * progress;
+        const radius = progress * 48;
+        whySledgeRef.current.style.width = `${width}vw`;
+        whySledgeRef.current.style.borderRadius = `${radius}px`;
       }
 
       // --- SLEDGE SECTION ANIMATION ---
@@ -279,114 +301,9 @@ export default function LandingPage() {
 
       
       {/* --- Fullscreen Scrollable Rounded Rectangles Section --- */}
-      <section
-        className="w-full relative z-30 flex flex-col items-center pl-16 scroll-behavior: smooth; whileHover={{ scale: 1.015 }}"
-        style={{
-          opacity: bgReveal,
-          transform: `translateY(${(1 - bgReveal) * 100}px)`,
-          transition: "opacity 0.4s cubic-bezier(0.4,0,0.2,1), transform 0.4s cubic-bezier(0.4,0,0.2,1)",
-          paddingTop: "5rem" // 1. Push cards section slightly below
-        }}
-      >
-        <h2 className="text-5xl font-eudoxus font-bold tracking-tight mb-8 text-left w-full px-2">
-          Explore Our Platform
-        </h2>
-        <div
-          className="w-full h-[70vh] overflow-x-auto flex space-x-4 md:space-x-8 px-4 md:px-8 py-8"
-          style={{
-            scrollSnapType: "x mandatory",
-            WebkitOverflowScrolling: "touch",
-            overflowY: "hidden",
-            overflowX: "auto" // 3. Only this section scrolls horizontally
-          }}
-        >
-         {[
-  { img: "https://www.apple.com/v/iphone/home/cb/images/overview/consider/apple_intelligence__gbh77cvflkia_large.jpg", title: "Shop" },
-  { img: "https://www.apple.com/v/iphone/home/cb/images/overview/consider/camera__exi2qfijti0y_large.jpg", title: "Inventory" },
-  { img: "https://www.apple.com/v/iphone/home/cb/images/overview/consider/privacy__ckc0wa30o55y_large_2x.jpg", title: "Orders" },
-  { img: "https://www.apple.com/v/iphone/home/cb/images/overview/consider/safety__bwp7rsowtjiu_large.jpg", title: "Shelf" },
-  { img: "https://www.apple.com/v/iphone/home/cb/images/overview/consider/apple_intelligence__gbh77cvflkia_large.jpg", title: "You" }
-].map((card, idx) => {
-  const isSelected = selectedCard === idx;
-
-  return (
-    <motion.div
-      key={idx}
-      className="flex-shrink-0 rounded-3xl shadow-lg flex items-center justify-center overflow-hidden relative cursor-pointer"
-      onClick={() => setSelectedCard(isSelected ? null : idx)}
-      initial={{ opacity: 0, y: 60 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{
-        type: "spring",
-        stiffness: 60,    // decent bounce, not too snappy
-        damping: 10,      // smoothens the bounce quickly
-        mass: 0.6,        // lighter feel
-         
-      }}
-      style={{
-        width: isSelected ? "95vw" : "22vw",
-        minWidth: isSelected ? "95vw" : "22vw",
-        maxWidth: isSelected ? "95vw" : "22vw",
-        height: "70vh",
-        scrollSnapAlign: "start",
-        zIndex: isSelected ? 20 : 1,
-        transform: isSelected ? "scale(1.01)" : "none",
-        transition: "all 0.5s ease-in-out"
-      }}
-    >
-      <img
-        src={card.img}
-        alt={card.title}
-        className="object-cover w-full h-full rounded-3xl"
-        draggable={false}
-      />
-
-      {/* Overlay text */}
-      <div
-        style={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          padding: "1.25rem 1.5rem",
-          zIndex: 5,
-          color: "white",
-          textShadow: "0 2px 4px rgba(0,0,0,0.5)"
-        }}
-      >
-        <div className="font-eudoxus text-3xl font-bold tracking-tight">
-          {card.title}
-        </div>
-        <div className="text-base font-medium text-blue-200">
-          {card.title} section
-        </div>
+      <div>
+        <ExploreSection />
       </div>
-
-      {isSelected && (
-        <div
-          style={{
-            position: "absolute",
-            bottom: "1.5rem",
-            left: "1.5rem",
-            right: "1.5rem",
-            zIndex: 4,
-            background: "rgba(255,255,255,0.75)",
-            padding: "1rem",
-            borderRadius: "1rem",
-            color: "#111",
-            backdropFilter: "blur(8px)"
-          }}
-        >
-          <p>This is the detailed description of the {card.title} section.</p>
-        </div>
-      )}
-    </motion.div>
-
-  );
-})}
-
-
-        </div>
-      </section>
       {/* Modal Overlay */}
       {selectedFeature !== null && (
         <div
@@ -422,12 +339,20 @@ export default function LandingPage() {
       )}
 
       {/* Section */}
-      <section className="w-full bg-black mt-32 px-4 md:px-16 py-24">
+      <section ref={whySledgeRef}
+        className="relative flex flex-col justify-center overflow-hidden p-0 m-0 mx-auto transition-all duration-[0ms] ease-linear bg-black pl-16 pr-16"
+        style={{
+          width: heroWidth,
+          height: "130vh",
+          borderRadius: heroRadius,
+          background: "black",
+          boxShadow: heroRadius !== "0px" ? "0 8px 32px 0 rgba(36,41,54,0.13)" : undefined,
+        }}>
         <h2 className="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-500 via-violet-500 to-teal-400 mb-16">
           Why Choose Sledge
         </h2>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 ">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 ">
           {features.map((feature, idx) => (
             <div
               key={idx}
