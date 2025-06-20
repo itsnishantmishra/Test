@@ -1,5 +1,5 @@
 import { motion, useAnimation, useInView } from "framer-motion";
-import { BarChart, CreditCard, Package, ShoppingCart, TrendingUp, Users } from "lucide-react";
+import { BarChart, CreditCard, Package, ShoppingCart, TrendingUp, Users, Moon, Sun } from "lucide-react";
 import Footer from "../../components/Footer";
 import kiranaShop from "../../assets/945.png";
 import SplitText from "../Utilities/SplitText";
@@ -16,6 +16,7 @@ import { useRef, useEffect, useState } from "react";
 const handleAnimationComplete = () => {
   console.log('All letters have animated!');
 };
+
 const features = [
   {
     title: "Inventory Management",
@@ -49,114 +50,233 @@ const features = [
   }
 ];
 
+function useScrollReveal(threshold = 0.2) {
+  const ref = useRef(null);
+  const [inView, setInView] = useState(false);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setInView(true);
+          observer.disconnect(); // Only once
+        }
+      },
+      { threshold }
+    );
+
+    if (ref.current) observer.observe(ref.current);
+
+    return () => observer.disconnect();
+  }, [threshold]);
+
+  return [ref, inView];
+}
 
 
 export default function LandingPage() {
   const heroRef = useRef(null);
-  const [heroWidth, setHeroWidth] = useState("100vw");
-  const [heroRadius, setHeroRadius] = useState("0px");
+  const [heroWidth, setHeroWidth] = useState(100);
+  const [heroRadius, setHeroRadius] = useState(0);
   const [selectedCard, setSelectedCard] = useState(null);
   const [selectedFeature, setSelectedFeature] = useState(null);
-
+  const [isDarkMode, setIsDarkMode] = useState(false);
 
   // Sledge Software Solutions section
   const sledgeRef = useRef(null);
   const [sledgeScale, setSledgeScale] = useState(1);
   const [sledgeTranslate, setSledgeTranslate] = useState(0);
-  const [bgReveal, setBgReveal] = useState(0); // 0 = hidden, 1 = fully revealed
+  const [bgReveal, setBgReveal] = useState(0);
+  const [isSledgeVisible, setIsSledgeVisible] = useState(false);
 
-  // Why Do We Exist section
-  const whyExistRef = useRef(null);
-  const [whyExistScale, setWhyExistScale] = useState(1);
-
-  // WHy Sledge Ref Section
+  // Why Sledge Ref Section
   const whySledgeRef = useRef(null);
-  const [whySledgeWidth, setwhySledgeWidth] = useState("100vw");
-  const [whySledgeRadius, setwhySledgeRadius] = useState("0px");
+  const [whySledgeWidth, setWhySledgeWidth] = useState(100);
+  const [whySledgeRadius, setWhySledgeRadius] = useState(0);
+  const [isWhySledgeVisible, setIsWhySledgeVisible] = useState(false);
 
+  // Why exist section
+  const ExistRef = useRef(null);
+  const [isInView, setIsInView] = useState(false);
+
+  // Pricing section
+  const pricingRef = useRef(null);
+  const [isPricingVisible, setIsPricingVisible] = useState(false);
+
+  // Newsletter section
+  const newsletterRef = useRef(null);
+  const [isNewsletterVisible, setIsNewsletterVisible] = useState(false);
+
+  // Dark mode toggle function
+  const toggleDarkMode = () => {
+    setIsDarkMode(!isDarkMode);
+  };
 
   useEffect(() => {
-    function handleScroll() {
-      // --- HERO SECTION ANIMATION ---
-      if (heroRef.current) {
-        const rect = heroRef.current.getBoundingClientRect();
-        const windowHeight = window.innerHeight;
-        const start = 0;
-        const end = -windowHeight * 1.2;
-        let progress = 0;
-        if (rect.top < start) {
-          progress = Math.min(1, Math.max(0, (start - rect.top) / (start - end)));
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsInView(true);
+          observer.disconnect();
         }
-        const width = 100 - 15 * progress;
-        const radius = progress * 48;
-        heroRef.current.style.width = `${width}vw`;
-        heroRef.current.style.borderRadius = `${radius}px`;
-      }
-      // WHY SLEDGE REF SECTION ANIMATION ---
-      if (whySledgeRef.current) {
-        const rect = whySledgeRef.current.getBoundingClientRect();
-        const windowHeight = window.innerHeight;
-        const start = 0;
-        const end = -windowHeight * 1.2;
-        let progress = 0;
-        if (rect.top < start) {
-          progress = Math.min(1, Math.max(0, (start - rect.top) / (start - end)));
-        }
-        const width = 100 - 15 * progress;
-        const radius = progress * 48;
-        whySledgeRef.current.style.width = `${width}vw`;
-        whySledgeRef.current.style.borderRadius = `${radius}px`;
-      }
+      },
+      { threshold: 0.2 } // Reduced threshold for earlier trigger
+    );
 
-      // --- SLEDGE SECTION ANIMATION ---
-      if (sledgeRef.current) {
-        const rect = sledgeRef.current.getBoundingClientRect();
-        const windowHeight = window.innerHeight;
-        const start = windowHeight * 0.3;
-        const end = -windowHeight * 0.2;
-        let progress = 0;
-        if (rect.top < start) {
-          progress = Math.min(1, Math.max(0, (start - rect.top) / (start - end)));
-        }
-        // Text shrinks and moves up
-        setSledgeScale(1 - 0.3 * progress);
-        setSledgeTranslate(-350 * progress);
-
-        // Background reveal: from white to image, reveal from bottom
-        setBgReveal(progress);
-      }
-
-      // --- WHY DO WE EXIST SECTION ANIMATION ---
-      if (whyExistRef.current) {
-        const rect = whyExistRef.current.getBoundingClientRect();
-        const windowHeight = window.innerHeight;
-        const start = windowHeight * 0.3;
-        const end = -windowHeight * 0.5;
-        let progress = 0;
-        if (rect.top < start) {
-          progress = Math.min(1, Math.max(0, (start - rect.top) / (start - end)));
-        }
-        setWhyExistScale(1 - 0.15 * progress); // Shrink a bit less than hero
-      }
+    if (ExistRef.current) {
+      observer.observe(ExistRef.current);
     }
 
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    handleScroll();
-    return () => window.removeEventListener("scroll", handleScroll);
+    return () => observer.disconnect();
   }, []);
 
+  // Pricing section observer
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsPricingVisible(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.2 }
+    );
+
+    if (pricingRef.current) {
+      observer.observe(pricingRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
+
+  // Newsletter section observer
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsNewsletterVisible(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.2 }
+    );
+
+    if (newsletterRef.current) {
+      observer.observe(newsletterRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+  let ticking = false;
+  
+   function handleScroll() {
+    if (!ticking) {
+      requestAnimationFrame(() => {
+        // --- HERO SECTION ANIMATION ---
+        if (heroRef.current) {
+          const rect = heroRef.current.getBoundingClientRect();
+          const windowHeight = window.innerHeight;
+          const start = 0;
+          const end = -windowHeight * 1.2;
+          let progress = 0;
+          if (rect.top < start) {
+            progress = Math.min(1, Math.max(0, (start - rect.top) / (start - end)));
+          }
+          const width = Math.round((100 - 15 * progress) * 100) / 100;
+          const radius = Math.round(progress * 48 * 100) / 100;
+          heroRef.current.style.width = `${width}vw`;
+          heroRef.current.style.borderRadius = `${radius}px`;
+        }
+
+        // --- WHY SLEDGE SECTION ANIMATION --- (FIXED)
+        if (whySledgeRef.current) {
+          const rect = whySledgeRef.current.getBoundingClientRect();
+          const windowHeight = window.innerHeight;
+          
+          // Check if section is in view for visibility
+          if (rect.top < windowHeight * 0.8 && rect.bottom > windowHeight * 0.2) {
+            setIsWhySledgeVisible(true);
+          }
+          
+          // Only calculate scroll animation if section is visible
+          if (rect.top <= windowHeight && rect.bottom >= 0) {
+            const start = 0;
+            const end = -windowHeight * 1.2;
+            let progress = 0;
+            if (rect.top < start) {
+              progress = Math.min(1, Math.max(0, (start - rect.top) / (start - end)));
+            }
+            const width = Math.round((100 - 15 * progress) * 100) / 100;
+            const radius = Math.round(progress * 48 * 100) / 100;
+            whySledgeRef.current.style.width = `${width}vw`;
+            whySledgeRef.current.style.borderRadius = `${radius}px`;
+          }
+        }
+
+        // --- SLEDGE SECTION ANIMATION ---
+        if (sledgeRef.current) {
+          const rect = sledgeRef.current.getBoundingClientRect();
+          const windowHeight = window.innerHeight;
+          
+          // Check if section is in view for visibility
+          if (rect.top < windowHeight * 0.8 && rect.bottom > windowHeight * 0.2) {
+            setIsSledgeVisible(true);
+          }
+          
+          // Only calculate animation if section is in viewport
+          if (rect.top <= windowHeight && rect.bottom >= 0) {
+            const start = windowHeight * 0.3;
+            const end = -windowHeight * 0.2;
+            let progress = 0;
+            if (rect.top < start) {
+              progress = Math.min(1, Math.max(0, (start - rect.top) / (start - end)));
+            }
+            setSledgeScale(1 - 0.3 * progress);
+            setSledgeTranslate(-350 * progress);
+            setBgReveal(progress);
+          }
+        }
+        
+        ticking = false;
+      });
+      
+      ticking = true;
+    }
+  }
+  window.addEventListener("scroll", handleScroll, { passive: true });
+  handleScroll();
+  return () => window.removeEventListener("scroll", handleScroll);
+}, []);
+
   return (
-    <div className="min-h-screen bg-white text-gray-900 font-eudoxus ">
+    <div className={`min-h-screen font-eudoxus transition-colors duration-300 ${isDarkMode ? 'bg-gray-900 text-gray-100' : 'bg-white text-gray-900'}`}>
+      {/* Dark Mode Toggle Button */}
+      <button
+        onClick={toggleDarkMode}
+        className={`fixed top-4 right-4 md:top-6 md:right-6 z-50 p-2 md:p-3 rounded-full transition-all duration-300 shadow-lg ${
+          isDarkMode 
+            ? 'bg-gray-800 hover:bg-gray-700 text-yellow-400 border border-gray-700' 
+            : 'bg-white hover:bg-gray-50 text-gray-700 border border-gray-200'
+        }`}
+        aria-label="Toggle dark mode"
+      >
+        {isDarkMode ? <Sun size={16} className="md:w-5 md:h-5" /> : <Moon size={16} className="md:w-5 md:h-5" />}
+      </button>
+
       {/* Hero Section with animated width and border radius */}
       <section
         ref={heroRef}
-        className="relative flex flex-col justify-center overflow-hidden p-0 m-0 mx-auto transition-all duration-[0ms] ease-linear"
+        className="relative flex flex-col justify-center overflow-hidden p-0 m-0 mx-auto"
         style={{
-          width: heroWidth,
+          width: `${heroWidth}vw`,
           height: "100vh",
-          borderRadius: heroRadius,
-          background: "#fff",
-          boxShadow: heroRadius !== "0px" ? "0 8px 32px 0 rgba(36,41,54,0.13)" : undefined,
+          borderRadius: `${heroRadius}px`,
+          background: isDarkMode ? "#1f2937" : "#fff",
+          boxShadow: heroRadius !== 0 ? (isDarkMode ? "0 8px 32px 0 rgba(0,0,0,0.4)" : "0 8px 32px 0 rgba(36,41,54,0.13)") : undefined,
+          transform: "translateZ(0)", // Force hardware acceleration
+          willChange: "width, border-radius", // Optimize for changes
         }}
       >
         {/* Fullscreen Video - only covers the hero section */}
@@ -166,7 +286,14 @@ export default function LandingPage() {
           muted
           playsInline
           className="absolute top-0 left-0 w-full h-full object-cover z-0"
-          style={{ minHeight: "100vh", minWidth: "100vw", borderRadius: heroRadius, transition: "border-radius 0.5s cubic-bezier(0.4,0,0.2,1)" }}
+          style={{ 
+            minHeight: "100vh", 
+            minWidth: "100vw", 
+            borderRadius: `${heroRadius}px`,
+            transform: "translateZ(0)", // Force hardware acceleration
+            willChange: "border-radius", // Optimize for changes
+            filter: isDarkMode ? "brightness(0.7) contrast(1.1)" : "none"
+          }}
         >
           <source src="https://www.onelineage.com/sites/default/files/2023-05/main_page_032323_web.mp4" type="video/mp4" />
           Your browser does not support the video tag.
@@ -175,18 +302,26 @@ export default function LandingPage() {
         <div
           className="absolute top-0 left-0 w-full h-full z-10 pointer-events-none"
           style={{
-            background: "linear-gradient(to right, rgba(20,30,48,0.7) 40%, rgba(20,30,48,0.2) 70%, rgba(20,30,48,0) 100%)",
+            background: isDarkMode 
+              ? "linear-gradient(to right, rgba(10,20,35,0.85) 40%, rgba(10,20,35,0.4) 70%, rgba(10,20,35,0.1) 100%)"
+              : "linear-gradient(to right, rgba(20,30,48,0.7) 40%, rgba(20,30,48,0.2) 70%, rgba(20,30,48,0) 100%)",
             minHeight: "100vh",
             minWidth: "100vw",
-            borderRadius: heroRadius,
-            transition: "border-radius 0.5s cubic-bezier(0.4,0,0.2,1)"
+            borderRadius: `${heroRadius}px`,
+            transform: "translateZ(0)", // Force hardware acceleration
+            willChange: "border-radius", // Optimize for changes
           }}
         />
         {/* Content aligned to left and above the video */}
-        <div className="max-w-4xl relative z-20 flex flex-col items-start px-7 md:px-12 ml-16 md:ml-8">
+        <div 
+          className="max-w-4xl relative z-20 flex flex-col items-start px-4 md:px-7 lg:px-12 ml-4 md:ml-16 lg:ml-8"
+          style={{
+            transform: "translateZ(0)", // Force hardware acceleration to prevent wobbling
+          }}
+        >
           <SplitText
             text="Bridging Retailers"
-            className="text-5xl md:text-6xl py-2 font-bold leading-tight mb-6 tracking-tight text-white md:tracking-tight text-left"
+            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl py-2 font-bold leading-tight mb-3 md:mb-6 tracking-tight text-white text-left"
             delay={80}
             duration={0.4}
             ease="power3.out"
@@ -200,7 +335,7 @@ export default function LandingPage() {
           />
           <SplitText
             text="& Distributors"
-            className="text-5xl md:text-6xl font-bold leading-tight mb-6 tracking-tight text-white md:tracking-tight text-left"
+            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-4 md:mb-6 tracking-tight text-white text-left"
             delay={80}
             duration={0.4}
             ease="power3.out"
@@ -213,7 +348,7 @@ export default function LandingPage() {
             onLetterAnimationComplete={handleAnimationComplete}
           />
           <button
-            className="mt-8 px-10 py-3 border border-white text-white rounded-full bg-white bg-opacity-0 backdrop-sm font-medium transition hover:bg-opacity-20 text-bold"
+            className="mt-4 md:mt-8 px-6 md:px-10 py-2 md:py-3 border border-white text-white rounded-full bg-white bg-opacity-0 backdrop-sm font-medium transition hover:bg-opacity-20 text-sm md:text-base"
             style={{
               font:"Eudoxus Sans",
               fontWeight: 400,
@@ -224,46 +359,44 @@ export default function LandingPage() {
           </button>
         </div>
       </section>
-        {/* Why Do We Exist Section */}
-        <section
-          ref={whyExistRef}
-          className="flex justify-between items-centre py-14 bg-white pl-2 pr-2 w-full"
-        >
-          <div
-            className="w-full justify-between items-centre bg-white rounded-2xl  p-0 flex flex-col items-start overflow-hidden"
-            style={{
-              transform: `scale(${whyExistScale})`,
-              transition: "transform 0.4s cubic-bezier(0.4,0,0.2,1)", // match hero section
-              willChange: "transform"
-            }}
-          >
-            <h2 className="text-7xl md:text-5xl font-bold leading-tight mb-6 tracking-tight text-left pl-16 pt-12">
-              <span className="bg-gradient-to-r from-purple-500 via-violet-500 to-teal-400 bg-clip-text text-transparent font-eudoxus">
-                Why Do We Exist
-              </span>
-            </h2>
-            <div className="text-xl text-gray-600 mb-10  text-left pl-16 mb-8 font-eudoxus w-full pr-16">
-              We exist to empower retailers and distributors with modern, efficient, and elegant software solutions that bridge the gap in the supply chain, enabling growth and clarity for every business.
-            </div>
-            {/* <img
-              src={Earth}
-              alt="Why Do We Exist"
-              className="w-full object-cover shadow"
-              style={{ height: "30rem " }}
-            /> */}
+      
+      {/* Why Do We Exist Section */}
+      <section
+        ref={ExistRef}
+        className={`flex justify-between items-center py-8 md:py-14 pl-2 pr-2 w-full transition-all duration-1000 ease-out transform ${
+          isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-20'
+        } ${isDarkMode ? 'bg-gray-900' : 'bg-white'}`}
+        style={{
+          transitionDelay: isInView ? '200ms' : '0ms' // Added delay for later appearance
+        }}
+      >
+        <div className={`w-full rounded-2xl flex flex-col items-start overflow-hidden ${isDarkMode ? 'bg-gray-900' : 'bg-white'}`}>
+          <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-6xl font-bold leading-tight mb-4 md:mb-6 tracking-tight text-left pl-4 md:pl-16 pt-6 md:pt-12">
+            <span className="bg-gradient-to-r from-purple-500 via-violet-500 to-teal-400 bg-clip-text text-transparent font-eudoxus">
+              Why Do We Exist
+            </span>
+          </h2>
+          <div className={`text-base md:text-xl text-left pl-4 md:pl-16 mb-4 md:mb-8 font-eudoxus w-full pr-4 md:pr-16 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+            We exist to empower retailers and distributors with modern, efficient, and elegant software solutions that bridge the gap in the supply chain, enabling growth and clarity for every business.
           </div>
-        </section>
+        </div>
+      </section>
 
       {/* Sledge Software Solutions Section */}    
       <section
         ref={sledgeRef}
-        className="text-center px-6 py-28 md:py-40 max-w-5xl mx-auto relative overflow-hidden"
-        style={{ minHeight: "60vh" }}
+        className={`text-center px-4 md:px-6 py-16 md:py-28 lg:py-40 max-w-5xl mx-auto relative overflow-hidden transition-all duration-1000 ease-out transform ${
+          isSledgeVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-20'
+        }`}
+        style={{ 
+          minHeight: "60vh",
+          transitionDelay: isSledgeVisible ? '300ms' : '0ms'
+        }}
       >
         {/* Background reveal: white to image, revealed from bottom */}
         <div className="absolute inset-0 w-full h-full pointer-events-none select-none z-0">
-          {/* White background always */}
-          <div className="absolute inset-0 bg-white" />
+          {/* Background always */}
+          <div className={`absolute inset-0 ${isDarkMode ? 'bg-gray-900' : 'bg-white'}`} />
           {/* Image revealed from bottom as you scroll */}
           <img
             src={kiranaShop}
@@ -272,7 +405,7 @@ export default function LandingPage() {
             style={{
               height: `${bgReveal * 100}%`,
               opacity: bgReveal,
-              filter: `blur(${10 - 10 * bgReveal}px)`,
+              filter: `blur(${10 - 10 * bgReveal}px) ${isDarkMode ? 'brightness(0.8) contrast(1.1)' : ''}`,
               transition: "height 0.4s cubic-bezier(0.4,0,0.2,1), opacity 0.4s, filter 0.4s"
             }}
           />
@@ -284,40 +417,48 @@ export default function LandingPage() {
             transition: "transform 0.4s cubic-bezier(0.4,0,0.2,1)"
           }}
         >
-          <h1 className="text-7xl md:text-5xl font-bold leading-tight mb-6 tracking-tight ">
+          <h1 className={`text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight mb-4 md:mb-6 tracking-tight ${isDarkMode ? 'text-white' : 'text-black'}`}>
             Sledge 
           </h1>
-          <h1 className="text-5xl md:text-6xl font-bold leading-tight mb-6 tracking-tight text-blue-400">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-4 md:mb-6 tracking-tight text-blue-400">
             Software Solutions
           </h1>
-          <p className="text-xl text-gray-600 mb-10 max-w-2xl mx-auto">
+          <p className={`text-base md:text-xl mb-6 md:mb-10 max-w-2xl mx-auto px-4 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
             A premium UI crafted with Eudoxus Sans for clarity, elegance, and modern appeal. Designed for forward-thinkers.
           </p>
-          <button className="bg-black text-white px-8 py-3 text-lg rounded-full hover:bg-gray-900 transition-all">
+          <button className={`px-6 md:px-8 py-2 md:py-3 text-base md:text-lg rounded-full transition-all ${
+            isDarkMode 
+              ? 'bg-white text-gray-900 hover:bg-gray-100' 
+              : 'bg-black text-white hover:bg-gray-900'
+          }`}>
             Explore Now
           </button>
         </div>
       </section>
 
-      
       {/* --- Fullscreen Scrollable Rounded Rectangles Section --- */}
       <div>
         <ExploreSection />
       </div>
+      
       {/* Modal Overlay */}
       {selectedFeature !== null && (
         <div
-          className="fixed inset-0 z-50 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center"
+          className="fixed inset-0 z-50 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center p-4"
           onClick={() => setSelectedFeature(null)}
         >
           <div
-            className="relative bg-white rounded-2xl p-6 w-[90%] md:w-[150vh] h-[95vh] overflow-auto"
+            className={`relative rounded-2xl p-4 md:p-6 w-full max-w-4xl h-[90vh] md:h-[95vh] overflow-auto ${
+              isDarkMode ? 'bg-gray-800 text-white' : 'bg-white text-gray-900'
+            }`}
             onClick={(e) => e.stopPropagation()} // prevent close on inner click
           >
             {/* Close Button */}
             <button
               onClick={() => setSelectedFeature(null)}
-              className="absolute top-3 right-4 text-2xl text-gray-600 hover:text-red-500"
+              className={`absolute top-2 md:top-3 right-3 md:right-4 text-xl md:text-2xl hover:text-red-500 ${
+                isDarkMode ? 'text-gray-300' : 'text-gray-600'
+              }`}
             >
               &times;
             </button>
@@ -326,102 +467,200 @@ export default function LandingPage() {
             <img
               src={kiranaShop}
               alt={features[selectedFeature].title}
-              className="w-full h-64 object-cover rounded-lg mb-4"
+              className="w-full h-48 md:h-64 object-cover rounded-lg mb-4"
+              style={{
+                filter: isDarkMode ? 'brightness(0.9)' : 'none'
+              }}
             />
 
             {/* Title & Description */}
-            <h2 className="text-3xl font-bold mb-2 text-blue-900">
+            <h2 className={`text-2xl md:text-3xl font-bold mb-2 ${isDarkMode ? 'text-blue-400' : 'text-blue-900'}`}>
               {features[selectedFeature].title}
             </h2>
-            <p className="text-gray-800 text-lg">{features[selectedFeature].desc}</p>
+            <p className={`text-base md:text-lg ${isDarkMode ? 'text-gray-300' : 'text-gray-800'}`}>
+              {features[selectedFeature].desc}
+            </p>
           </div>
         </div>
       )}
 
-      {/* Section */}
-      <section ref={whySledgeRef}
-        className="relative flex flex-col justify-center overflow-hidden p-0 m-0 mx-auto transition-all duration-[0ms] ease-linear bg-black pl-16 pr-16"
+      {/* Why Choose Sledge Section */}
+      <section
+        ref={whySledgeRef}
+        className={`w-full relative flex flex-col justify-center overflow-hidden mx-auto pt-8 md:pt-8 px-4 md:pl-16 pr-4 md:pr-16 transition-all duration-1000 ease-out ${
+          isWhySledgeVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-20'
+        } ${isDarkMode ? 'bg-gray-800' : 'bg-black'}`}
         style={{
-          width: heroWidth,
+          width: "100vw", // will be overridden dynamically
           height: "130vh",
-          borderRadius: heroRadius,
-          background: "black",
-          boxShadow: heroRadius !== "0px" ? "0 8px 32px 0 rgba(36,41,54,0.13)" : undefined,
-        }}>
-        <h2 className="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-500 via-violet-500 to-teal-400 mb-16">
-          Why Choose Sledge
-        </h2>
+          borderRadius: "0px",
+          boxShadow: heroRadius !== "0px" ? (isDarkMode ? "0 8px 32px 0 rgba(0,0,0,0.6)" : "0 8px 32px 0 rgba(36,41,54,0.13)") : undefined,
+          transform: "translateZ(0)",
+          willChange: "width, border-radius"
+        }}
+      >
+        <div 
+          className="w-full h-full"
+          style={{
+            // Apply scroll-based transforms to inner container instead
+            transform: isWhySledgeVisible ? 'none' : 'translateY(20px)',
+            transition: 'transform 1000ms ease-out',
+            transitionDelay: isWhySledgeVisible ? '400ms' : '0ms',
+          }}
+        >
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-500 via-violet-500 to-teal-400 mb-8 md:mb-16">
+            Why Choose Sledge
+          </h2>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 ">
+   {/* Mobile: Vertical stacked features with vertical scroll */}
+        <div className="block md:hidden max-h-[100vh] overflow-y-auto px-4 space-y-4 pb-4">
           {features.map((feature, idx) => (
             <div
               key={idx}
               onClick={() => setSelectedFeature(idx)}
-              className="bg-gray-900 text-white p-8 rounded-2xl shadow-xl cursor-pointer hover:scale-105 transition-transform flex flex-col justify-between h-[250px]"
+              className={`text-white p-6rounded-3xl shadow-xl cursor-pointer hover:scale-105 transition-transform flex flex-col justify-between ${
+                isDarkMode ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-900 hover:bg-gray-800'
+              }`}
+              style={{
+                transform: isWhySledgeVisible ? 'translateY(0)' : 'translateY(30px)',
+                opacity: isWhySledgeVisible ? 1 : 0,
+                transition: `all 800ms ease-out`,
+                transitionDelay: isWhySledgeVisible ? `${500 + idx * 100}ms` : '0ms',
+              }}
             >
               <div className="flex-grow flex items-end">
-                <h3 className="text-2xl font-semibold text-center w-full">
+                <h3 className="text-xl font-semibold text-center w-full">
                   {feature.title}
                 </h3>
               </div>
-              <p className="mt-4 text-white text-base text-center">{feature.desc}</p>
+              <p className="mt-3 text-white text-sm text-center">
+                {feature.desc}
+              </p>
             </div>
           ))}
         </div>
+
+
+          {/* Desktop: Grid layout */}
+          <div className="hidden md:grid grid-cols-1 sm:grid-cols-2 gap-6">
+            {features.map((feature, idx) => (
+              <div
+                key={idx}
+                onClick={() => setSelectedFeature(idx)}
+                className={`text-white p-8 rounded-2xl shadow-xl cursor-pointer hover:scale-105 transition-transform flex flex-col justify-between h-[250px] ${
+                  isDarkMode ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-900 hover:bg-gray-800'
+                }`}
+                style={{
+                  transform: isWhySledgeVisible ? 'translateY(0)' : 'translateY(30px)',
+                  opacity: isWhySledgeVisible ? 1 : 0,
+                  transition: `all 800ms ease-out`,
+                  transitionDelay: isWhySledgeVisible ? `${500 + idx * 100}ms` : '0ms',
+                }}
+              >
+                <div className="flex-grow flex items-end">
+                  <h3 className="text-2xl font-semibold text-center w-full">
+                    {feature.title}
+                  </h3>
+                </div>
+                <p className="mt-4 text-white text-base text-center">
+                  {feature.desc}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
       </section>
-      <section className="w-full bg-white py-24 px-8 md:px-32">
-  <h2 className="text-7xl md:text-5xl font-bold leading-tight mb-6 tracking-tight ">
-    Low On Margins, We Care Too
-  </h2>
 
-  <div className="grid grid-cols-1 md:grid-cols-2 items-center">
-    {/* Left Content */}
-    <div>
-      <h1 className="text-8xl font-extrabold leading-none text-black mb-6 font-arial pl-12">99</h1>
-      <p className="text-2xl text-gray-700 leading-snug max-w-md">
-        the cost for all this because,<br />
-        <span className="font-semibold"> Sledge is never a burden.</span>
-      </p>
-    </div>
+      <section 
+        ref={pricingRef}
+        className={`w-full py-12 md:py-24 px-4 md:px-8 lg:px-32 transition-all duration-1000 ease-out transform ${
+          isPricingVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-20'
+        } ${isDarkMode ? 'bg-gray-900' : 'bg-white'}`}
+        style={{
+          transitionDelay: isPricingVisible ? '500ms' : '0ms'
+        }}
+      >
+        <h2 className={`text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight mb-6 tracking-tight  ${isDarkMode ? 'text-white' : 'text-black'}`}>
+          Low On Margins, We Care Too
+        </h2>
 
-    {/* Right Image Placeholder */}
-    <div className="w-full h-[400px] md:h-[400px]  bg-gray-200 rounded-2xl flex justify-end">
-      {/* Replace src with your image */}
-      <img
-        src={Money}
-        alt="Sledge Pricing Visual"
-        className="object-cover w-full h-full justify-end rounded-2xl md:rounded-3xl"
-      />
-    </div>
-  </div>
-</section>
-{/* Subscribe to Newsletter Section */}
-<div className="w-full bg-white py-20 flex flex-col items-center justify-center text-center px-4">
-  <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Subscribe to Our Newsletter</h2>
-  <p className="text-lg text-gray-600 max-w-xl mb-8">
-    Stay updated with the latest features, business tools, and tips to grow with Sledge.
-  </p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center sm:pl-64">
+          {/* Left Content */}
+          <div>
+            <h1 className={`text-6xl md:text-8xl font-extrabold leading-none mb-4 md:mb-6 font-arial pl-4 md:pl-12 sm:pl-32  ${isDarkMode ? 'text-white' : 'text-black'}`}>99</h1>
+            <p className={`text-lg md:text-2xl leading-snug max-w-md px-4 md:px-0 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+              the cost for all this because,<br />
+              <span className="font-semibold"> Sledge is never a burden.</span>
+            </p>
+          </div>
 
-  <form className="w-1/3 max-w-md flex flex-col sm:flex-col gap-4">
-    <input
-      type="email"
-      placeholder="Name"
-      className="flex-1 px-6 py-3 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-violet-500"
-    />
-    <input
-      type="email"
-      placeholder="Email"
-      className="flex-1 px-6 py-3 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-violet-500"
-    />
-    
-  </form>
-  <button
-      type="submit"
-      className="px-6 py-4 bg-black text-white font-semibold rounded-full hover:opacity-90 transition duration-300 mt-2"
-    >
-      Subscribe
-    </button>
-</div>
+          {/* Right Image Placeholder */}
+          <div className={`w-full h-[250px] md:h-[400px] rounded-2xl flex justify-end ${isDarkMode ? 'bg-gray-700' : 'bg-gray-200'}`}>
+            {/* Replace src with your image */}
+            <img
+              src={Money}
+              alt="Sledge Pricing Visual"
+              className="object-cover w-full h-full justify-end rounded-2xl md:rounded-3xl"
+              style={{
+                filter: isDarkMode ? 'brightness(0.9) contrast(1.1)' : 'none'
+              }}
+            />
+          </div>
+        </div>
+      </section>
+      
+      {/* Subscribe to Newsletter Section */}
+      <div 
+        ref={newsletterRef}
+        className={`w-full py-12 md:py-20 flex flex-col items-center justify-center text-center px-4 transition-all duration-1000 ease-out transform ${
+          isNewsletterVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-20'
+        } ${isDarkMode ? 'bg-gray-900' : 'bg-white'}`}
+        style={{
+          transitionDelay: isNewsletterVisible ? '600ms' : '0ms'
+        }}
+      >
+        <h2 className={`text-3xl md:text-4xl lg:text-5xl font-bold mb-4 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Subscribe to Our Newsletter</h2>
+        <p className={`text-base md:text-lg max-w-xl mb-6 md:mb-8 px-4 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+          Stay updated with the latest features, business tools, and tips to grow with Sledge.
+        </p>
+
+        <form className="w-full max-w-sm md:max-w-md flex flex-col gap-4">
+          <input
+            type="text"
+            placeholder="Name"
+            className={`flex-1 px-4 md:px-6 py-2 md:py-3 rounded-full border focus:outline-none focus:ring-2 focus:ring-violet-500 transition-colors ${
+              isDarkMode 
+                ? 'border-gray-600 bg-gray-800 text-white placeholder-gray-400' 
+                : 'border-gray-300 bg-white text-gray-900 placeholder-gray-500'
+            }`}
+          />
+          <input
+            type="email"
+            placeholder="Email"
+            className={`flex-1 px-4 md:px-6 py-2 md:py-3 rounded-full border focus:outline-none focus:ring-2 focus:ring-violet-500 transition-colors ${
+              isDarkMode 
+                ? 'border-gray-600 bg-gray-800 text-white placeholder-gray-400' 
+                : 'border-gray-300 bg-white text-gray-900 placeholder-gray-500'
+            }`}
+          />
+        </form>
+        <button
+          type="submit"
+          className={`px-6 py-3 md:py-4 font-semibold rounded-full transition duration-300 mt-2 ${
+            isDarkMode 
+              ? 'bg-white text-gray-900 hover:bg-gray-100' 
+              : 'bg-black text-white hover:opacity-90'
+          }`}
+        >
+          Subscribe
+        </button>
+      </div>
     </div>
   );
 }
+
+
+
+
+
+

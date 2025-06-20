@@ -7,6 +7,18 @@ const ExploreSection = () => {
   const isInView = useInView(sectionRef, { once: true, amount:0.25 });
   const [selectedCard, setSelectedCard] = useState(null);
 
+  const useIsMobile = () => {
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  return isMobile;
+};
+
   useEffect(() => {
     if (isInView) controls.start("visible");
   }, [isInView]);
@@ -44,7 +56,7 @@ const ExploreSection = () => {
       }
     }
   };
-
+  const isMobile = useIsMobile();
   return (
     <motion.section
       ref={sectionRef}
@@ -75,10 +87,10 @@ const ExploreSection = () => {
               onClick={() => setSelectedCard(isSelected ? null : idx)}
               variants={cardVariants}
               style={{
-                width: isSelected ? "95vw" : "22vw",
-                minWidth: isSelected ? "95vw" : "22vw",
-                maxWidth: isSelected ? "95vw" : "22vw",
-                height: "70vh",
+                width: isSelected ? "95vw" : isMobile ? "75vw" : "22vw",
+                minWidth: isSelected ? "95vw" : isMobile ? "75vw" : "22vw",
+                maxWidth: isSelected ? "95vw" : isMobile ? "75vw" : "22vw",
+                height: isMobile ?  "70vh": "95vh",
                 scrollSnapAlign: "start",
                 zIndex: isSelected ? 20 : 1,
                 transform: isSelected ? "scale(1.01)" : "none",
