@@ -1,5 +1,5 @@
 import { motion, useAnimation, useInView } from "framer-motion";
-import { BarChart, CreditCard, Package, ShoppingCart, TrendingUp, Users, Moon, Sun } from "lucide-react";
+import { BarChart, CreditCard, Package, ShoppingCart, TrendingUp, Users, Moon, Sun, ArrowRight, Star } from "lucide-react";
 import Footer from "../../components/Footer";
 import kiranaShop from "../../assets/945.png";
 import SplitText from "../Utilities/SplitText";
@@ -16,6 +16,24 @@ import { useRef, useEffect, useState } from "react";
 const handleAnimationComplete = () => {
   console.log('All letters have animated!');
 };
+const testimonials = [
+    {
+      quote: "This product redefined my workflow — pure excellence.",
+      name: "Aarav Mehta",
+      role: "UX Designer",
+    },
+    {
+      quote: "Everything just works. Effortlessly smooth experience.",
+      name: "Sara Li",
+      role: "Product Manager",
+    },
+    {
+      quote: "The design feels thoughtful. Apple-level polish, truly.",
+      name: "Jordan Smith",
+      role: "Developer Advocate",
+    },
+  ];
+
 
 const features = [
   {
@@ -148,7 +166,24 @@ export default function LandingPage() {
 
     return () => observer.disconnect();
   }, []);
+// Pricing section observer
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsPricingVisible(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.2 }
+    );
 
+    if (pricingRef.current) {
+      observer.observe(pricingRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
   // Newsletter section observer
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -255,7 +290,7 @@ export default function LandingPage() {
       {/* Dark Mode Toggle Button */}
       <button
         onClick={toggleDarkMode}
-        className={`fixed top-4 right-4 md:top-6 md:right-6 z-50 p-2 md:p-3 rounded-full transition-all duration-300 shadow-lg ${
+        className={`fixed top-4 right-4 md:top-4 md:right-6 z-50 p-2 md:p-3 rounded-full transition-all duration-300 shadow-lg ${
           isDarkMode 
             ? 'bg-gray-800 hover:bg-gray-700 text-yellow-400 border border-gray-700' 
             : 'bg-white hover:bg-gray-50 text-gray-700 border border-gray-200'
@@ -363,7 +398,7 @@ export default function LandingPage() {
       {/* Why Do We Exist Section */}
       <section
         ref={ExistRef}
-        className={`flex justify-between items-center py-8 md:py-14 pl-2 pr-2 w-full transition-all duration-1000 ease-out transform ${
+        className={`flex justify-between items-center py-8 md:py-14 pl-16 pr-2 w-full transition-all duration-1000 ease-out transform ${
           isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-20'
         } ${isDarkMode ? 'bg-gray-900' : 'bg-white'}`}
         style={{
@@ -371,12 +406,12 @@ export default function LandingPage() {
         }}
       >
         <div className={`w-full rounded-2xl flex flex-col items-start overflow-hidden ${isDarkMode ? 'bg-gray-900' : 'bg-white'}`}>
-          <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-6xl font-bold leading-tight mb-4 md:mb-6 tracking-tight text-left pl-4 md:pl-16 pt-6 md:pt-12">
+          <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight mb-4 md:mb-6 tracking-tight text-left pl-4 pt-6 md:pt-12">
             <span className="bg-gradient-to-r from-purple-500 via-violet-500 to-teal-400 bg-clip-text text-transparent font-eudoxus">
               Why Do We Exist
             </span>
           </h2>
-          <div className={`text-base md:text-xl text-left pl-4 md:pl-16 mb-4 md:mb-8 font-eudoxus w-full pr-4 md:pr-16 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+          <div className={`text-base md:text-xl text-left pl-4 mb-4 md:mb-8 font-eudoxus w-full pr-4 md:pr-16 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
             We exist to empower retailers and distributors with modern, efficient, and elegant software solutions that bridge the gap in the supply chain, enabling growth and clarity for every business.
           </div>
         </div>
@@ -546,7 +581,6 @@ export default function LandingPage() {
             {features.map((feature, idx) => (
               <div
                 key={idx}
-                onClick={() => setSelectedFeature(idx)}
                 className={`text-white p-8 rounded-2xl shadow-xl cursor-pointer hover:scale-105 transition-transform flex flex-col justify-between h-[250px] ${
                   isDarkMode ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-900 hover:bg-gray-800'
                 }`}
@@ -557,14 +591,26 @@ export default function LandingPage() {
                   transitionDelay: isWhySledgeVisible ? `${500 + idx * 100}ms` : '0ms',
                 }}
               >
-                <div className="flex-grow flex items-end">
-                  <h3 className="text-2xl font-semibold text-center w-full">
-                    {feature.title}
-                  </h3>
+               <div className="bg-gray hover:bg-gray rounded-3xl p-6 md:p-8 h-full transition-all duration-300 group-hover:shadow-purple-500/10">
+                  <div className="flex items-center mb-4">
+                    {idx === 0 && <Package className="w-8 h-8 text-blue-400 mr-3" />}
+                    {idx === 1 && <CreditCard className="w-8 h-8 text-green-400 mr-3" />}
+                    {idx === 2 && <Users className="w-8 h-8 text-purple-400 mr-3" />}
+                    {idx === 3 && <TrendingUp className="w-8 h-8 text-orange-400 mr-3" />}
+                    {idx === 4 && <BarChart className="w-8 h-8 text-pink-400 mr-3" />}
+                    {idx === 5 && <ShoppingCart className="w-8 h-8 text-teal-400 mr-3" />}
+                    <h3 className="text-xl md:text-2xl font-bold text-white group-hover:text-blue-400 transition-colors">
+                      {feature.title}
+                    </h3>
+                  </div>
+                  <p className="text-gray-300 text-base md:text-lg leading-relaxed">
+                    {feature.desc}
+                  </p>
+                  <div className="mt-4 flex items-center text-blue-400 group-hover:text-blue-300 transition-colors">
+                    <span className="text-sm font-medium">Learn more</span>
+                    <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                  </div>
                 </div>
-                <p className="mt-4 text-white text-base text-center">
-                  {feature.desc}
-                </p>
               </div>
             ))}
           </div>
@@ -573,7 +619,7 @@ export default function LandingPage() {
 
       <section 
         ref={pricingRef}
-        className={`w-full py-12 md:py-24 px-4 md:px-8 lg:px-32 transition-all duration-1000 ease-out transform ${
+        className={`w-full py-12 md:py-24 px-4 md:px-8 lg:px-16 transition-all duration-1000 ease-out transform ${
           isPricingVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-20'
         } ${isDarkMode ? 'bg-gray-900' : 'bg-white'}`}
         style={{
@@ -584,11 +630,11 @@ export default function LandingPage() {
           Low On Margins, We Care Too
         </h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center sm:pl-64">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center sm:pl-64 ">
           {/* Left Content */}
           <div>
-            <h1 className={`text-6xl md:text-8xl font-extrabold leading-none mb-4 md:mb-6 font-arial pl-4 md:pl-12 sm:pl-32  ${isDarkMode ? 'text-white' : 'text-black'}`}>99</h1>
-            <p className={`text-lg md:text-2xl leading-snug max-w-md px-4 md:px-0 ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+            <h1 className={`text-6xl md:text-8xl font-extrabold leading-none mb-4 md:mb-6 font-arial pl-2 md:pl-16 sm:pl-32  ${isDarkMode ? 'text-white' : 'text-black'}`}>99</h1>
+            <p className={`text-lg md:text-2xl leading-snug max-w-md px-2 md:px-0  ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
               the cost for all this because,<br />
               <span className="font-semibold"> Sledge is never a burden.</span>
             </p>
@@ -608,6 +654,50 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
+
+      {/* Testimonials */}
+      <section className="bg-gray-900 px-4 py-4">
+          <div className="max-w-full mx-auto text-left md:pl-16 mt-16 md:text-7xl mb-16">
+             <h2 className={`text-4xl sm:text-5xl text-white md:text-6xl lg:text-7xl font-bold leading-tight mb-6 tracking-tight  ${isDarkMode ? 'text-white' : 'text-black'}`}>
+                The Masses 
+             </h2>
+            <div className="grid gap-8 md:grid-cols-3 md:pt-4">
+              {testimonials.map((t, index) => (
+                <div
+                  key={index}
+                  className="bg-gray-200 p-6 rounded-3xl shadow-sm hover:shadow-md transition duration-300"
+                >
+                 {[...Array(testimonials.rating)].map((t, i) => (
+                    <Star key={5} className="w-5 h-5 text-yellow-400 fill-current" />
+                  ))}
+                  <p className="text-lg text-gray-800 mb-4 italic">“{t.quote}”</p>
+                  <div className="text-sm text-gray-600 font-medium">
+                    {t.name}
+                  </div>
+                  <div className="text-xs text-gray-400">{t.role}</div>
+                    </div>
+              ))}
+            </div>
+            <div className="grid gap-8 md:grid-cols-3 md:pt-4">
+              {testimonials.map((t, index) => (
+                <div
+                  key={index}
+                  className="bg-gray-200 p-6 rounded-3xl shadow-sm hover:shadow-md transition duration-300"
+                >
+                  {[...Array(testimonials.rating)].map((t, i) => (
+                    <Star key={5} className="w-5 h-5 text-yellow-400 fill-current" />
+                  ))}
+                  <p className="text-lg text-gray-800 mb-4 italic">“{t.quote}”</p>
+                  <div className="text-sm text-gray-600 font-medium">
+                    {t.name}
+                  </div>
+                  <div className="text-xs text-gray-400">{t.role}</div>
+                    </div>
+              ))}
+            </div>
+
+          </div>
+        </section>
       
       {/* Subscribe to Newsletter Section */}
       <div 
@@ -658,6 +748,10 @@ export default function LandingPage() {
     </div>
   );
 }
+
+
+
+
 
 
 

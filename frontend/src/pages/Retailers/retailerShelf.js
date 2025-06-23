@@ -1177,8 +1177,8 @@ const addAllToCart = () => {
 
       {/* Distributor Modal */}
       {showDistributorModal && (
-        <div className="fixed inset-0 z-50 bg-black bg-opacity-40 flex items-center justify-center">
-          <div className="bg-white rounded-lg shadow-lg w-full max-w-md mx-2 p-6 relative">
+        <div className="fixed inset-0 z-50 bg-black bg-opacity-40 flex items-center justify-center w-full">
+          <div className="bg-white rounded-lg shadow-lg w-full h-2/3 max-w-4xl  mx-2 p-6 relative">
             <button
               className="absolute top-4 right-4 text-gray-500 hover:text-blue-700"
               onClick={() => {
@@ -1217,14 +1217,14 @@ const addAllToCart = () => {
               </>
             ) : (
               <>
-                <div className="flex items-center mb-4">
+                <div className="flex justify-centre items-centre mb-6">
                   <button
                     className="mr-2 text-blue-700 hover:underline text-sm"
                     onClick={() => setModalDistributor(null)}
                   >
                     ← Back
                   </button>
-                  <span className="font-semibold text-blue-700">{modalDistributor}</span>
+                  <span className="font-semibold text-blue-700  font-bold text-xl">{modalDistributor}</span>
                 </div>
                 <div className="max-h-72 overflow-y-auto">
                   {modalProducts.length === 0 ? (
