@@ -1176,189 +1176,199 @@ const addAllToCart = () => {
       )}
 
       {/* Distributor Modal */}
-      {showDistributorModal && (
-        <div className="fixed inset-0 z-50 bg-black bg-opacity-40 flex items-center justify-center w-full">
-          <div className="bg-white rounded-lg shadow-lg w-full h-2/3 max-w-4xl  mx-2 p-6 relative">
-            <button
-              className="absolute top-4 right-4 text-gray-500 hover:text-blue-700"
-              onClick={() => {
-                setShowDistributorModal(false);
-                setModalDistributor(null);
-              }}
-            >
-              <X className="w-6 h-6" />
-            </button>
-            <h2 className="text-xl font-bold mb-4 text-blue-700">Select Distributor</h2>
-            {!modalDistributor ? (
-              <>
-                <div className="mb-4">
-                  <input
-                    type="text"
-                    placeholder="Search distributors..."
-                    value={distributorSearch}
-                    onChange={e => setDistributorSearch(e.target.value)}
-                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-                <div className="max-h-60 overflow-y-auto space-y-2">
-                  {filteredDistributors.length === 0 && (
-                    <div className="text-gray-400 text-center py-4">No distributors found</div>
-                  )}
-                  {filteredDistributors.map(d => (
-                    <button
-                      key={d}
-                      className="w-full text-left px-4 py-2 rounded hover:bg-blue-100 transition"
-                      onClick={() => setModalDistributor(d)}
-                    >
-                      {d}
-                    </button>
-                  ))}
-                </div>
-              </>
+{showDistributorModal && (
+  <div className="fixed inset-0 z-50 bg-black bg-opacity-40 flex items-center justify-center w-full">
+    <div className="bg-white rounded-3xl shadow-lg w-full h-5/6 max-w-4xl mx-2 flex flex-col">
+      
+      {/* Blue Header */}
+      <div className="bg-blue-800 text-white rounded-t-3xl p-6 relative flex items-center justify-between">
+        <h2 className="text-xl font-bold">Select Distributor</h2>
+        <button
+          className="text-white hover:text-gray-300"
+          onClick={() => {
+            setShowDistributorModal(false);
+            setModalDistributor(null);
+          }}
+        >
+          <X className="w-6 h-6" />
+        </button>
+      </div>
+
+      {/* Body */}
+      <div className="flex-1 overflow-y-auto p-6">
+        {!modalDistributor ? (
+          <>
+            <div className="mb-4">
+              <input
+                type="text"
+                placeholder="Search distributors..."
+                value={distributorSearch}
+                onChange={e => setDistributorSearch(e.target.value)}
+                className="w-full px-4 py-2 rounded-full border-2 focus:ring focus:ring-gray-300"
+              />
+            </div>
+            <div className="space-y-2">
+              {filteredDistributors.length === 0 && (
+                <div className="text-gray-400 text-center py-4">No distributors found</div>
+              )}
+              {filteredDistributors.map(d => (
+                <button
+                  key={d}
+                  className="w-full text-left px-4 py-2 rounded-3xl hover:bg-blue-200 transition"
+                  onClick={() => setModalDistributor(d)}
+                >
+                  {d}
+                </button>
+              ))}
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="flex items-center mb-6">
+              <button
+                className="mr-2 text-blue-700 hover:underline text-sm"
+                onClick={() => setModalDistributor(null)}
+              >
+                ← Back
+              </button>
+              <span className="font-semibold text-blue-700 font-bold text-xl">{modalDistributor}</span>
+            </div>
+
+            {modalProducts.length === 0 ? (
+              <div className="text-gray-400 text-center py-4">No products for this distributor</div>
             ) : (
-              <>
-                <div className="flex justify-centre items-centre mb-6">
-                  <button
-                    className="mr-2 text-blue-700 hover:underline text-sm"
-                    onClick={() => setModalDistributor(null)}
-                  >
-                    ← Back
-                  </button>
-                  <span className="font-semibold text-blue-700  font-bold text-xl">{modalDistributor}</span>
-                </div>
-                <div className="max-h-72 overflow-y-auto">
-                  {modalProducts.length === 0 ? (
-                    <div className="text-gray-400 text-center py-4">No products for this distributor</div>
-                  ) : (
-                    <table className="w-full text-sm">
-                      <thead>
-                        <tr>
-                          <th className="text-left py-2">Product</th>
-                          <th className="text-right py-2">Price</th>
-                          <th className="text-right py-2">Stock</th>
-                          <th className="text-center py-2">Order</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {modalProducts.map(product => (
-                          product.variants.map(variant => (
-                            <tr key={variant.id} className="border-b last:border-b-0">
-                              <td className="py-2">
-                                <div className="flex items-center gap-2">
-                                  <span className="text-lg">{product.icon}</span>
-                                  <span>{product.name} <span className="text-xs text-gray-400">({variant.name})</span></span>
-                                </div>
-                              </td>
-                              <td className="py-2 text-right">₹{variant.sellingPrice.toLocaleString()}</td>
-                              <td className="py-2 text-right">
-                                <span className={`inline-flex px-2 py-1 text-xs rounded-full ${
-                                  variant.stock === 0 ? 'bg-red-100 text-red-700' :
-                                  variant.stock <= 5 ? 'bg-yellow-100 text-yellow-700' :
-                                  'bg-green-100 text-green-700'
-                                }`}>
-                                  {variant.stock} units
-                                </span>
-                              </td>
-                              <td className="py-2 text-center">
-                                <div className="flex items-center justify-center gap-1">
-                                  <button
-                                    onClick={() => updateQuantity(product.id, variant.id, (orderQuantities[`${product.id}-${variant.id}`]?.quantity || 0) - 1)}
-                                    disabled={variant.stock === 0}
-                                    className="p-1 rounded-l bg-gray-100 hover:bg-gray-200 disabled:opacity-50"
-                                  >
-                                    <Minus className="w-3 h-3" />
-                                  </button>
-                                  <input
-                                    type="number"
-                                    min="0"
-                                    max={variant.stock}
-                                    value={orderQuantities[`${product.id}-${variant.id}`]?.quantity || 0}
-                                    onChange={(e) => updateQuantity(product.id, variant.id, parseInt(e.target.value) || 0)}
-                                    disabled={variant.stock === 0}
-                                    className="w-10 px-1 py-1 text-center text-xs border-t border-b"
-                                  />
-                                  <button
-                                    onClick={() => updateQuantity(product.id, variant.id, (orderQuantities[`${product.id}-${variant.id}`]?.quantity || 0) + 1)}
-                                    disabled={variant.stock === 0}
-                                    className="p-1 rounded-r bg-gray-100 hover:bg-gray-200 disabled:opacity-50"
-                                  >
-                                    <Plus className="w-3 h-3" />
-                                  </button>
-                                  <select
-                                    value={orderQuantities[`${product.id}-${variant.id}`]?.unit || "box"}
-                                    onChange={(e) => updateUnit(product.id, variant.id, e.target.value)}
-                                    disabled={variant.stock === 0}
-                                    className="ml-2 text-xs border rounded px-2 py-1"
-                                  >
-                                    <option value="box">Box</option>
-                                    <option value="piece">Piece</option>
-                                    <option value="pack">Pack</option>
-                                  </select>
-                                </div>
-                              </td>
-                            </tr>
-                          ))
-                        ))}
-                      </tbody>
-                    </table>
+              <table className="w-full text-sm">
+                <thead>
+                  <tr>
+                    <th className="text-left py-2">Product</th>
+                    <th className="text-right py-2">Price</th>
+                    <th className="text-right py-2">Stock</th>
+                    <th className="text-center py-2">Order</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {modalProducts.map(product =>
+                    product.variants.map(variant => (
+                      <tr key={variant.id} className="border-b last:border-b-0">
+                        <td className="py-2">
+                          <div className="flex items-center gap-2">
+                            <span className="text-lg">{product.icon}</span>
+                            <span>{product.name} <span className="text-xs text-gray-400">({variant.name})</span></span>
+                          </div>
+                        </td>
+                        <td className="py-2 text-right">₹{variant.sellingPrice.toLocaleString()}</td>
+                        <td className="py-2 text-right">
+                          <span className={`inline-flex px-2 py-1 text-xs rounded-full ${
+                            variant.stock === 0 ? 'bg-red-100 text-red-700' :
+                            variant.stock <= 5 ? 'bg-yellow-100 text-yellow-700' :
+                            'bg-green-100 text-green-700'
+                          }`}>
+                            {variant.stock} units
+                          </span>
+                        </td>
+                        <td className="py-2 text-center">
+                          <div className="flex items-center justify-center gap-1">
+                            <button
+                              onClick={() => updateQuantity(product.id, variant.id, (orderQuantities[`${product.id}-${variant.id}`]?.quantity || 0) - 1)}
+                              disabled={variant.stock === 0}
+                              className="p-1 rounded-l bg-gray-100 hover:bg-gray-200 disabled:opacity-50"
+                            >
+                              <Minus className="w-3 h-3" />
+                            </button>
+                            <input
+                              type="number"
+                              min="0"
+                              max={variant.stock}
+                              value={orderQuantities[`${product.id}-${variant.id}`]?.quantity || 0}
+                              onChange={(e) => updateQuantity(product.id, variant.id, parseInt(e.target.value) || 0)}
+                              disabled={variant.stock === 0}
+                              className="w-10 px-1 py-1 text-center text-xs border-t border-b"
+                            />
+                            <button
+                              onClick={() => updateQuantity(product.id, variant.id, (orderQuantities[`${product.id}-${variant.id}`]?.quantity || 0) + 1)}
+                              disabled={variant.stock === 0}
+                              className="p-1 rounded-r bg-gray-100 hover:bg-gray-200 disabled:opacity-50"
+                            >
+                              <Plus className="w-3 h-3" />
+                            </button>
+                            <select
+                              value={orderQuantities[`${product.id}-${variant.id}`]?.unit || "box"}
+                              onChange={(e) => updateUnit(product.id, variant.id, e.target.value)}
+                              disabled={variant.stock === 0}
+                              className="ml-2 text-xs border rounded px-2 py-1"
+                            >
+                              <option value="box">Box</option>
+                              <option value="piece">Piece</option>
+                              <option value="pack">Pack</option>
+                            </select>
+                          </div>
+                        </td>
+                      </tr>
+                    ))
                   )}
-                </div>
-                <div className="mt-4 flex justify-end">
-                  <button
-                    onClick={() => {
-                      // Add all selected variants for this distributor to cart
-                      const itemsToAdd = [];
-                      modalProducts.forEach(product => {
-                        product.variants.forEach(variant => {
-                          const key = `${product.id}-${variant.id}`;
-                          const quantity = orderQuantities[key]?.quantity || 0;
-                          if (quantity > 0) {
-                            itemsToAdd.push({
-                              id: key,
-                              productId: product.id,
-                              variantId: variant.id,
-                              productName: product.name,
-                              productIcon: product.icon,
-                              variantName: variant.name,
-                              price: variant.sellingPrice,
-                              quantity,
-                              unit: orderQuantities[key]?.unit || "box",
-                              totalPrice: variant.sellingPrice * quantity
-                            });
-                          }
-                        });
-                      });
-                      if (itemsToAdd.length === 0) {
-                        alert("Please select quantity for at least one variant");
-                        return;
-                      }
-                      setCartItems(prev => [...prev, ...itemsToAdd]);
-                      // Reset quantities for these variants
-                      const resetQuantities = {};
-                      modalProducts.forEach(product => {
-                        product.variants.forEach(variant => {
-                          const key = `${product.id}-${variant.id}`;
-                          resetQuantities[key] = {
-                            ...orderQuantities[key],
-                            quantity: 0
-                          };
-                        });
-                      });
-                      setOrderQuantities(prev => ({
-                        ...prev,
-                        ...resetQuantities
-                      }));
-                    }}
-                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
-                  >
-                    Add Selected to Cart
-                  </button>
-                </div>
-              </>
+                </tbody>
+              </table>
             )}
-          </div>
-        </div>
-      )}
+          </>
+        )}
+      </div>
+
+      {/* Footer */}
+      <div className="p-4 border-t flex justify-end">
+        <button
+          onClick={() => {
+            // Add all selected variants to cart
+            const itemsToAdd = [];
+            modalProducts.forEach(product => {
+              product.variants.forEach(variant => {
+                const key = `${product.id}-${variant.id}`;
+                const quantity = orderQuantities[key]?.quantity || 0;
+                if (quantity > 0) {
+                  itemsToAdd.push({
+                    id: key,
+                    productId: product.id,
+                    variantId: variant.id,
+                    productName: product.name,
+                    productIcon: product.icon,
+                    variantName: variant.name,
+                    price: variant.sellingPrice,
+                    quantity,
+                    unit: orderQuantities[key]?.unit || "box",
+                    totalPrice: variant.sellingPrice * quantity
+                  });
+                }
+              });
+            });
+            if (itemsToAdd.length === 0) {
+              alert("Please select quantity for at least one variant");
+              return;
+            }
+            setCartItems(prev => [...prev, ...itemsToAdd]);
+            // Reset quantities
+            const resetQuantities = {};
+            modalProducts.forEach(product => {
+              product.variants.forEach(variant => {
+                const key = `${product.id}-${variant.id}`;
+                resetQuantities[key] = {
+                  ...orderQuantities[key],
+                  quantity: 0
+                };
+              });
+            });
+            setOrderQuantities(prev => ({
+              ...prev,
+              ...resetQuantities
+            }));
+          }}
+          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
+        >
+          Add Selected to Cart
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
     </div>
   );
 }
