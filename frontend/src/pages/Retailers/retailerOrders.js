@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Trash, Trash2, Check, CircleCheck, ChevronDown, ChevronUp } from "lucide-react";
 
 const Orders = () => {
+  const [isDarkMode, setIsDarkMode] = useState(false);
   const [activeTab, setActiveTab] = useState("pending");
   const [pendingOrders, setPendingOrders] = useState([
     { id: 1, item: "Aashirvaad Atta", quantity: 10, rate: 300, checked: false, distributor: "Hindustan Distributors" },
@@ -35,7 +36,21 @@ const Orders = () => {
       )
     );
   };
+ useEffect(() => {
+    // Detect initial system theme
+    const darkThemeQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    setIsDarkMode(darkThemeQuery.matches);
 
+    // Listen for system theme changes
+    const handleThemeChange = (e) => {
+      setIsDarkMode(e.matches);
+    };
+
+    darkThemeQuery.addEventListener('change', handleThemeChange);
+
+    // Cleanup listener when component unmounts
+    return () => darkThemeQuery.removeEventListener('change', handleThemeChange);
+  }, []);
   // Whenever selectAll changes, update all checkboxes
   useEffect(() => {
     setPendingOrders((prevOrders) =>
@@ -148,7 +163,7 @@ const Orders = () => {
   );
 
   return (
-    <div className="min-h-screen bg-white p-4 md:p-6">
+    <div className="min-h-screen bg-white p-4 md:p-6" >
       <h2 className="text-4xl md:text-5xl font-bold md:leading-tight mb-6 tracking-tight text-between md:pt-4 md:pl-16">
               <span className="bg-black bg-clip-text text-transparent font-eudoxus">
                 Fast Track
@@ -157,9 +172,10 @@ const Orders = () => {
                  Orders
               </span>
             </h2>
-    <div className="bg-white-800 min-h-screen p-3 md:p-6 flex gap-3 md:gap- md:pl-16 md:pr-12">
+    <div className="bg-white-800 min-h-screen p-3 md:p-6 flex gap-3 md:gap- md:pl-16 md:pr-12"
+    >
       {/* Main Section (75% of the screen) */}
-      <div className="flex-1">
+      <div className="flex-1" >
         {/* Tabs */}
         <div className="flex w-full gap-2 md:gap-4 mb-4 md:mb-6 border-b border-blue-600 font-bold font-eudoxus">
           <TabButton tabId="pending" label="Pending" />

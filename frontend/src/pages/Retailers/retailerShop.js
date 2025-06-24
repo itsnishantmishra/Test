@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from 'react';
 import { Trash, Check, FileText, ArrowDown, ArrowUp, PlusCircle, X, } from "lucide-react";
 import CreateOrder from "../../components/CreateOrder";
 
@@ -112,6 +112,23 @@ const Shop = () => {
   const [completedOrders, setCompletedOrders] = useState([]);
   const [showOrderModal, setShowOrderModal] = useState(false);
   const [sortMode, setSortMode] = useState("none");
+  const [isDarkMode, setIsDarkMode] = useState(false);
+  
+   useEffect(() => {
+      // Detect initial system theme
+      const darkThemeQuery = window.matchMedia('(prefers-color-scheme: dark)');
+      setIsDarkMode(darkThemeQuery.matches);
+  
+      // Listen for system theme changes
+      const handleThemeChange = (e) => {
+        setIsDarkMode(e.matches);
+      };
+  
+      darkThemeQuery.addEventListener('change', handleThemeChange);
+  
+      // Cleanup listener when component unmounts
+      return () => darkThemeQuery.removeEventListener('change', handleThemeChange);
+    }, []);
 
   const toggleExpand = (orderId) => {
     setExpandedCards((prev) => ({ ...prev, [orderId]: !prev[orderId] }));
@@ -188,16 +205,16 @@ const Shop = () => {
 const renderOrderCard = (order, isPayment = false) => (
   <div
     key={order.orderId}
-    className="w-full max-w-sm bg-white rounded-2xl shadow-md p-5 mx-2 font-[Eudoxus Sans] transition-all hover:shadow-lg border border-gray-100 relative"
+    className={`w-full max-w-sm rounded-2xl shadow-md p-5 mx-2 font-[Eudoxus Sans] transition-all hover:shadow-lg border relative ${isDarkMode ? 'bg-gray-800 border-gray-700 text-gray-100' : 'bg-white border-gray-100 text-gray-900'}`}
   >
     {/* Card Delete (X) Icon - Top right */}
     <X
-      className="absolute top-6 right-3 w-4 h-4 text-red-400 hover:text-red-600 cursor-pointer transition "
+      className="absolute top-6 right-3 w-4 h-4 text-red-400 hover:text-red-600 cursor-pointer transition"
       onClick={() => deleteOrderCard(order.orderId)}
     />
 
     {/* Customer Name */}
-    <div className="text-center font-bold text-gray-900 text-base mb-3">
+    <div className="text-center font-bold text-base mb-3">
       {order.customerName || "Custom"}
     </div>
 
@@ -206,11 +223,16 @@ const renderOrderCard = (order, isPayment = false) => (
       {(expandedCards[order.orderId] ? order.items : order.items.slice(0, 3)).map((item) => (
         <div
           key={item.id}
-          className="flex justify-between items-start text-sm border-b pb-2 border-gray-200"
+          className={`flex justify-between items-start text-sm border-b pb-2 ${isDarkMode ? 'border-gray-600' : 'border-gray-200'}`}
         >
           {/* Product Info */}
-          <div className="text-gray-800 text-xs font-medium w-2/3">
-            <p>{item.item} <span className="text-gray-400 font-normal">({item.brand})</span></p>
+          <div className={`text-xs font-medium w-2/3 ${isDarkMode ? 'text-gray-100' : 'text-gray-800'}`}>
+            <p>
+              {item.item}{" "}
+              <span className={`font-normal ${isDarkMode ? 'text-gray-400' : 'text-gray-400'}`}>
+                ({item.brand})
+              </span>
+            </p>
           </div>
 
           {/* Quantity & Delete */}
@@ -235,10 +257,12 @@ const renderOrderCard = (order, isPayment = false) => (
                     )
                   );
                 }}
-                className="w-12 border border-gray-300 rounded-md px-1 py-0.5 text-xs focus:outline-none focus:ring-1 focus:ring-blue-400"
+                className={`w-12 border rounded-md px-1 py-0.5 text-xs focus:outline-none focus:ring-1 focus:ring-blue-400 ${isDarkMode ? 'bg-gray-700 border-gray-600 text-gray-100' : 'border-gray-300 text-gray-900'}`}
               />
               {item.unit && (
-                <span className="ml-1 text-gray-500 text-xs">{item.unit}</span>
+                <span className={`ml-1 text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                  {item.unit}
+                </span>
               )}
               <X
                 className="w-3 h-3 text-red-400 hover:text-red-600 transition cursor-pointer"
@@ -261,7 +285,7 @@ const renderOrderCard = (order, isPayment = false) => (
     </div>
 
     {/* Total Row */}
-    <div className="mt-4 flex justify-between items-center text-sm text-gray-800 font-semibold">
+    <div className={`mt-4 flex justify-between items-center text-sm font-semibold ${isDarkMode ? 'text-gray-100' : 'text-gray-800'}`}>
       <p>Total: ₹{calculateTotal(order.items)}</p>
       {!isPayment && (
         <Check
@@ -281,7 +305,7 @@ const renderOrderCard = (order, isPayment = false) => (
           <button
             key={mode}
             onClick={() => handlePayment(order.orderId, mode)}
-            className="text-[11px] px-3 py-1 bg-black hover:bg-gray-900 text-white rounded-full transition"
+            className={`text-[11px] px-3 py-1 rounded-full transition ${isDarkMode ? 'bg-gray-700 hover:bg-gray-600 text-white' : 'bg-black hover:bg-gray-900 text-white'}`}
           >
             {mode.toUpperCase()}
           </button>
@@ -292,55 +316,52 @@ const renderOrderCard = (order, isPayment = false) => (
 );
 
 
+
   return (
-    <div className="p-6 space-y-8 bg-white min-h-screen">
+    <div className={`p-6 space-y-8 min-h-screen transition-all duration-300 ${isDarkMode ? 'bg-gray-900 text-gray-100' : 'bg-white text-gray-900'}`}>
+
       <div className="flex justify-between items-center md:pl-16 md:pt-8">
-        <h2 className="text-4xl md:text-5xl font-bold md:leading-tight mb-6 tracking-tight text-between">
-              <span className="bg-black bg-clip-text text-transparent font-eudoxus">
-                Your Shop
-              </span>
-              <span className="bg-gradient-to-r from-purple-500 via-violet-500 to-teal-400 bg-clip-text text-transparent font-eudoxus pl-2">
-                 Dashboard
-              </span>
-            </h2>
+        <h2 className="text-4xl md:text-5xl font-bold md:leading-tight mb-6 tracking-tight">
+          <span className={`font-eudoxus ${isDarkMode ? 'text-white' : 'text-black'}`}>
+            Your Shop
+          </span>
+          <span className="bg-gradient-to-r from-purple-500 via-violet-500 to-teal-400 bg-clip-text text-transparent font-eudoxus pl-2">
+            Dashboard
+          </span>
+        </h2>
         <div className="flex justified-between md:gap-3 md:pr-[3.5rem] md:pb-8 gap-2">
           {/* Create Order Button */}
           <button
-          onClick={() => setShowOrderModal(true)}
-          className="flex items-center bg-black text-white px-4 py-4 rounded-full hover:bg-gray-800 "
-        >
-          <PlusCircle className="mr-2 w-4 h-4" /> Create Order
-        </button>
+            onClick={() => setShowOrderModal(true)}
+            className={`flex items-center px-4 py-4 rounded-full transition-all duration-300 ${isDarkMode ? 'bg-gray-800 text-white hover:bg-gray-700' : 'bg-black text-white hover:bg-gray-800'}`}
+          >
+            <PlusCircle className="mr-2 w-4 h-4" /> Create Order
+          </button>
           <CreateOrder
-           isOpen={showOrderModal}
-           onClose={() => setShowOrderModal(false)}
-           onAddOrder={handleOrderCreated}
+            isOpen={showOrderModal}
+            onClose={() => setShowOrderModal(false)}
+            onAddOrder={handleOrderCreated}
           />
 
           {/* Reports Button */}
           <button
             onClick={() => setShowReports((prev) => !prev)}
-            className="flex items-center bg-gray-200 text-black px-4 py-2 rounded-full hover:bg-gray-300"
+            className={`flex items-center px-4 py-2 rounded-full transition-all duration-300 ${isDarkMode ? 'bg-gray-700 text-white hover:bg-gray-600' : 'bg-gray-200 text-black hover:bg-gray-300'}`}
           >
-            <FileText className=" w-4 h-4" /> {showReports ? "Hide Reports" : "Show Reports"}
+            <FileText className="w-4 h-4" /> {showReports ? "Hide Reports" : "Show Reports"}
           </button>
         </div>
       </div>
 
       {/* Flex container for Upcoming Orders and Payment Section */}
-      <div className=" flex lg:flex-row gap-6 md:pl-16 md:pr-16">
+      <div className="flex lg:flex-row gap-6 md:pl-16 md:pr-16">
         {/* Upcoming Orders Section */}
-        <section style={{background: "linear-gradient(to bottom, #0D47A1 0px, #1565c0 99px,  transparent 100px)"}}
-          className="p-5 rounded-3xl shadow-md flex-1"
+        <section style={{ background: isDarkMode ? "linear-gradient(to bottom, #1a237e 0px, #283593 99px, transparent 100px)" : "linear-gradient(to bottom, #0D47A1 0px, #1565c0 99px, transparent 100px)" }}
+          className="p-5 rounded-3xl shadow-md flex-1 transition-all duration-300"
         >
           <h2 className="text-xl font-semibold text-white mb-2">Upcoming Orders</h2>
-          <div
-            className="overflow-y-auto"
-            style={{ 
-            }}
-          >
-            <div className="grid gap-4"
-            style={{gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",justifyItems: "stretch" }}>
+          <div className="overflow-y-auto">
+            <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", justifyItems: "stretch" }}>
               {upcomingOrders.length === 0 ? (
                 <p className="text-gray-300">No upcoming orders.</p>
               ) : (
@@ -351,19 +372,14 @@ const renderOrderCard = (order, isPayment = false) => (
         </section>
 
         {/* Payment Section */}
-        <section style={{background: "linear-gradient(to bottom, #0D47A1 0px, #1565c0 99px,  transparent 100px)"}}
-          className=" p-5 rounded-3xl shadow-md flex-1 "
+        <section style={{ background: isDarkMode ? "linear-gradient(to bottom, #1a237e 0px, #283593 99px, transparent 100px)" : "linear-gradient(to bottom, #0D47A1 0px, #1565c0 99px, transparent 100px)" }}
+          className="p-5 rounded-3xl shadow-md flex-1 transition-all duration-300"
         >
           <h2 className="text-xl font-semibold text-white mb-2">Payment Section</h2>
-          <div
-            className="overflow-y-auto"
-            style={{
-            }}
-          >
-            <div className="grid gap-4 "
-            style={{gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",justifyItems: "stretch" }}>
+          <div className="overflow-y-auto">
+            <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", justifyItems: "stretch" }}>
               {paymentOrders.length === 0 ? (
-                <p className="text-gray-300">No orders in payment section.</p> 
+                <p className="text-gray-300">No orders in payment section.</p>
               ) : (
                 paymentOrders.map((order) => renderOrderCard(order, true))
               )}
@@ -373,14 +389,9 @@ const renderOrderCard = (order, isPayment = false) => (
       </div>
 
       {/* Transaction History Section */}
-      <section className="p-4 rounded-3xl shadow-md mt-6 md:ml-16 md:mr-16" style={{background: " linear-gradient(to bottom, #0D47A1 0px, #1565c0 99px,  transparent 100px)"}}>
+      <section className="p-4 rounded-3xl shadow-md mt-6 md:ml-16 md:mr-16 transition-all duration-300" style={{ background: isDarkMode ? "linear-gradient(to bottom, #1a237e 0px, #283593 99px, transparent 100px)" : "linear-gradient(to bottom, #0D47A1 0px, #1565c0 99px, transparent 100px)" }}>
         <h2 className="text-xl font-semibold text-white mb-2">Transaction History</h2>
-        <div
-          className="overflow-y-auto"
-          style={{
-            maxHeight: "400px",
-          }}
-        >
+        <div className="overflow-y-auto" style={{ maxHeight: "400px" }}>
           {completedOrders.length === 0 ? (
             <p className="text-gray-300">No transactions available.</p>
           ) : (
@@ -388,7 +399,7 @@ const renderOrderCard = (order, isPayment = false) => (
               {completedOrders.map((order) => (
                 <div
                   key={order.orderId}
-                  className="bg-white rounded-lg shadow-md p-4"
+                  className={`rounded-lg shadow-md p-4 transition-all duration-300 ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-white text-black'}`}
                 >
                   <div className="flex justify-between items-center mb-2">
                     <h2 className="text-md font-bold">{order.customerName || "Custom"}</h2>
@@ -422,7 +433,7 @@ const renderOrderCard = (order, isPayment = false) => (
 
       {/* Reports Section */}
       {showReports && (
-        <div className="mt-4 border p-4 rounded-xl bg-gray-100">
+        <div className={`mt-4 border p-4 rounded-xl transition-all duration-300 ${isDarkMode ? 'bg-gray-800 text-white border-gray-700' : 'bg-gray-100 text-black border-gray-200'}`}>
           <h3 className="text-lg font-semibold mb-2">Business Summary</h3>
           <p>Total Revenue Today: ₹{calculateRevenue()}</p>
           <p>Profit Today: ₹{calculateProfit()}</p>
@@ -446,6 +457,7 @@ const renderOrderCard = (order, isPayment = false) => (
         </div>
       )}
     </div>
+
   );
 };
 

@@ -53,6 +53,24 @@ const DistributorOrders = () => {
   const [supplierOnWay, setSupplierOnWay] = useState([
     {
       id: 101,
+      supplier: "Small Basket Wholesale",
+      items: [
+        { name: "Aashirvaad Atta", quantity: 20, rate: 280 },
+        { name: "Tata Salt", quantity: 10, rate: 18 },
+      ],
+      expected: "Tomorrow",
+    },
+     {
+      id: 101,
+      supplier: "Modern Basket Wholesale",
+      items: [
+        { name: "Aashirvaad Atta", quantity: 20, rate: 280 },
+        { name: "Tata Salt", quantity: 10, rate: 18 },
+      ],
+      expected: "Tomorrow",
+    },
+     {
+      id: 101,
       supplier: "BigBasket Wholesale",
       items: [
         { name: "Aashirvaad Atta", quantity: 20, rate: 280 },
@@ -166,11 +184,14 @@ const DistributorOrders = () => {
           (orderRequests.length === 0 ? (
             <p className="text-center text-gray-400">No new order requests.</p>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 px-4">
+
+           
+            <div  style={{background: "linear-gradient(to bottom, #0D47A1 0px, #1565c0 99px,  transparent 100px)"}}
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 px-4 bg-blue-400 rounded-tl-3xl rounded-tr-3xl">
               {orderRequests.map((order) => (
                 <div
                   key={order.id}
-                  className="bg-white rounded-3xl shadow-[0_10px_30px_rgba(0,0,0,0.05)] p-6 transition hover:shadow-[0_12px_40px_rgba(0,0,0,0.08)] border border-gray-100"
+                  className=" mt-8 bg-white rounded-3xl shadow-[0_10px_30px_rgba(0,0,0,0.05)] p-6 transition hover:shadow-[0_12px_40px_rgba(0,0,0,0.08)] border border-gray-100"
                 >
                   {/* Retailer Name */}
                   <h3 className="text-lg font-semibold text-gray-900 text-center mb-4">
@@ -331,7 +352,8 @@ const DistributorOrders = () => {
                 {supplierOnWay.length === 0 ? (
                   <p className="text-center text-gray-400">No orders on the way.</p>
                 ) : (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 px-4">
+                  <div style={{background: "linear-gradient(to bottom, #0D47A1 0px, #1565c0 99px,  transparent 100px)"}}
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 px-4 bg-blue-400 rounded-tl-3xl rounded-tr-3xl">
                     {supplierOnWay.map((order, i) => (
                       <div
                         key={i}
@@ -349,8 +371,16 @@ const DistributorOrders = () => {
                               <span className="text-xs text-gray-500">
                                 Qty: {item.quantity}, ₹{item.rate}
                               </span>
+                              
                             </li>
                           ))}
+                          <li>
+                            <div className="flex md:gap-6 md:ml-16">
+                              <button className="flex items-center bg-black text-white px-4 py-2 hover:bg-gray-800 rounded-full md:mt-2">UPI</button>
+                               <button className="flex items-center bg-black text-white px-4 py-2 hover:bg-gray-800 rounded-full md:mt-2">Credit</button>
+                                <button className="flex items-center bg-black text-white px-4 py-2 hover:bg-gray-800 rounded-full md:mt-2">Cash</button>
+                            </div>
+                          </li>
                         </ul>
                       </div>
                     ))}
@@ -365,7 +395,8 @@ const DistributorOrders = () => {
                 {supplierHistory.length === 0 ? (
                   <p className="text-center text-gray-400">No history available.</p>
                 ) : (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 px-4">
+                  <div style={{background: "linear-gradient(to bottom, #0D47A1 0px, #1565c0 99px,  transparent 100px)"}}
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 px-4 bg-blue-400 rounded-tl-3xl rounded-tr-3xl">
                     {supplierHistory.map((hist, i) => (
                       <div
                         key={i}

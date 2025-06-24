@@ -125,10 +125,21 @@ export default function LandingPage() {
   const newsletterRef = useRef(null);
   const [isNewsletterVisible, setIsNewsletterVisible] = useState(false);
 
-  // Dark mode toggle function
-  const toggleDarkMode = () => {
-    setIsDarkMode(!isDarkMode);
-  };
+   useEffect(() => {
+    // Detect initial system theme
+    const darkThemeQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    setIsDarkMode(darkThemeQuery.matches);
+
+    // Listen for system theme changes
+    const handleThemeChange = (e) => {
+      setIsDarkMode(e.matches);
+    };
+
+    darkThemeQuery.addEventListener('change', handleThemeChange);
+
+    // Cleanup listener when component unmounts
+    return () => darkThemeQuery.removeEventListener('change', handleThemeChange);
+  }, []);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -287,18 +298,6 @@ export default function LandingPage() {
 
   return (
     <div className={`min-h-screen font-eudoxus transition-colors duration-300 ${isDarkMode ? 'bg-gray-900 text-gray-100' : 'bg-white text-gray-900'}`}>
-      {/* Dark Mode Toggle Button */}
-      <button
-        onClick={toggleDarkMode}
-        className={`fixed top-4 right-4 md:top-4 md:right-6 z-50 p-2 md:p-3 rounded-full transition-all duration-300 shadow-lg ${
-          isDarkMode 
-            ? 'bg-gray-800 hover:bg-gray-700 text-yellow-400 border border-gray-700' 
-            : 'bg-white hover:bg-gray-50 text-gray-700 border border-gray-200'
-        }`}
-        aria-label="Toggle dark mode"
-      >
-        {isDarkMode ? <Sun size={16} className="md:w-5 md:h-5" /> : <Moon size={16} className="md:w-5 md:h-5" />}
-      </button>
 
       {/* Hero Section with animated width and border radius */}
       <section
@@ -440,7 +439,7 @@ export default function LandingPage() {
             style={{
               height: `${bgReveal * 100}%`,
               opacity: bgReveal,
-              filter: `blur(${10 - 10 * bgReveal}px) ${isDarkMode ? 'brightness(0.8) contrast(1.1)' : ''}`,
+              filter: `blur(${10 - 10 * bgReveal}px) ${isDarkMode ? 'brightness(0.6) contrast(1.1)'  : ''}`,
               transition: "height 0.4s cubic-bezier(0.4,0,0.2,1), opacity 0.4s, filter 0.4s"
             }}
           />

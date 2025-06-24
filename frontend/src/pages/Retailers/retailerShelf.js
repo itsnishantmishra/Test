@@ -25,22 +25,40 @@ import {
 // --- CATEGORY STRUCTURE MUST BE ABOVE useState ---
 const categoryStructure = {
   "Electronics": {
-    "Laptops": ["MacBook Pro 16-inch", "Dell XPS 13", "HP Spectre x360"],
-    "Smartphones": ["iPhone 15 Pro", "Samsung Galaxy S24", "Google Pixel 8"],
-    "Tablets": ["iPad Pro", "Samsung Tab S9"],
-    "Accessories": ["Apple Magic Mouse", "Dell Docking Station"]
+    "Laptops": ["MacBook Pro 16-inch", "Dell XPS 13", "HP Spectre x360", "Gaming Laptops", "Ultrabooks", "Business Laptops"],
+    "Smartphones": ["iPhone 15 Pro", "Samsung Galaxy S24", "Google Pixel 8", "Android Phones", "Foldable Phones", "Budget Smartphones"],
+    "Tablets": ["iPad Pro", "Samsung Tab S9", "Graphic Tablets", "Kids Tablets", "E-Readers"],
+    "Accessories": ["Apple Magic Mouse", "Dell Docking Station", "Bluetooth Earbuds", "Wireless Chargers", "Laptop Bags"],
+    "Wearable Tech": ["Smartwatches", "Fitness Bands", "Smart Glasses"],
+    "Gaming": ["Gaming Consoles", "Controllers", "Gaming Headsets"],
+    "Cameras": ["DSLR Cameras", "Mirrorless Cameras", "Action Cameras"],
+    "Audio": ["Bluetooth Speakers", "Home Theater Systems", "Headphones"],
+    "Networking": ["Wi-Fi Routers", "Range Extenders", "Network Switches"],
+    "Smart Home": ["Smart Plugs", "Smart Lights", "Home Security Cameras"]
   },
   "Clothing": {
-    "Casual Wear": ["Premium Cotton T-Shirt", "Denim Jeans"],
-    "Formal Wear": ["Slim Fit Blazer", "Formal Trousers"],
-    "Footwear": ["Running Shoes", "Leather Loafers"],
-    "Accessories": ["Leather Belt", "Silk Scarf"]
+    "Casual Wear": ["Premium Cotton T-Shirt", "Denim Jeans", "Hoodies", "Polo Shirts", "Cargo Pants"],
+    "Formal Wear": ["Slim Fit Blazer", "Formal Trousers", "Three-Piece Suits", "Dress Shirts", "Pencil Skirts"],
+    "Footwear": ["Running Shoes", "Leather Loafers", "Sneakers", "Hiking Boots", "Sandals"],
+    "Accessories": ["Leather Belt", "Silk Scarf", "Wrist Watches", "Sunglasses", "Caps"],
+    "Sportswear": ["Track Suits", "Compression Shirts", "Running Shorts"],
+    "Ethnic Wear": ["Sarees", "Kurta Sets", "Sherwanis"],
+    "Winter Wear": ["Woolen Sweaters", "Jackets", "Thermal Wear"],
+    "Rainwear": ["Raincoats", "Waterproof Jackets", "Umbrellas"],
+    "Innerwear": ["Boxers", "Bras", "Thermals"],
+    "Nightwear": ["Pajama Sets", "Nightgowns", "Sleep Shirts"]
   },
   "Home Goods": {
-    "Furniture": ["Modern Sofa", "Dining Table Set"],
-    "Decor": ["Wall Art", "Table Lamp"],
-    "Kitchen": ["Non-stick Pan", "Chef Knife"],
-    "Cleaning": ["Vacuum Cleaner", "Microfiber Cloth"]
+    "Furniture": ["Modern Sofa", "Dining Table Set", "Beds", "Office Desks", "Recliners"],
+    "Decor": ["Wall Art", "Table Lamp", "Rugs", "Indoor Plants", "Decorative Mirrors"],
+    "Kitchen": ["Non-stick Pan", "Chef Knife", "Air Fryers", "Coffee Machines", "Dinner Sets"],
+    "Cleaning": ["Vacuum Cleaner", "Microfiber Cloth", "Dishwashers", "Floor Mops", "Cleaning Sprays"],
+    "Lighting": ["LED Strip Lights", "Floor Lamps", "Smart Bulbs"],
+    "Storage": ["Modular Shelves", "Storage Bins", "Closet Organizers"],
+    "Bath Essentials": ["Towels", "Shower Curtains", "Bath Mats"],
+    "Bedding": ["Bedsheets", "Pillows", "Blankets"],
+    "Garden Supplies": ["Garden Tools", "Outdoor Furniture", "Planters"],
+    "Curtains & Blinds": ["Window Curtains", "Roller Blinds", "Drapes"]
   },
   "Groceries": {
     "Grains & Cereals": ["Organic Basmati Rice", "Quinoa"],
@@ -698,8 +716,8 @@ const addAllToCart = () => {
     
     {/* Left: Inventory Title, Address, Product Count */}
     <div className="flex-1">
-      <div className="flex items-center gap-4 flex-wrap md:pl-16 md:pt-4">
-        <h2 className="text-4xl md:text-5xl font-bold md:leading-tight mb-6 tracking-tight text-between">
+      <div className="flex items-center gap-4 flex-wrap md:pl-16 md:pt-4 ">
+        <h2 className="text-4xl md:text-5xl font-bold md:leading-tight mb-2 tracking-tight text-between">
               <span className="bg-black bg-clip-text text-transparent font-eudoxus">
                 Your Own
               </span>
@@ -708,11 +726,11 @@ const addAllToCart = () => {
               </span>
 
         </h2>
-        <span className="bg-gray-100 text-gray-800 px-3 rounded-full text-sm font-semibold shadow-sm mb-4">
+        <span className="bg-gray-100 text-gray-800 px-3 rounded-full text-sm font-semibold shadow-sm">
           {currentProducts.length} products
         </span>
       </div>
-      <div className="text-xl text-gray-600 mb-10  text-left pl-16 mb-8 font-eudoxus w-full pr-16">
+      <div className="text-xl text-gray-600 mb-4  text-left pl-16 mb-4 font-eudoxus w-full pr-16">
               123, Main Bazaar Road, Connaught Place, New Delhi, 110001
       </div>
      
@@ -926,13 +944,13 @@ const addAllToCart = () => {
           <div className="bg-white rounded-3xl shadow-sm border-2 border-gray-200 p-4 sticky top-[120px] mb-4">
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-gray-50 border-b">
+                <thead className="bg-blue-800 rounded-3xl">
                   <tr>
-                    <th className="text-left p-2 sm:p-4 text-xs sm:text-sm font-semibold text-gray-900">Product</th>
-                    <th className="text-left p-2 sm:p-4 text-xs sm:text-sm font-semibold text-gray-900 hidden sm:table-cell">Distributor</th>
-                    <th className="text-left p-2 sm:p-4 text-xs sm:text-sm font-semibold text-gray-900">Price Range</th>
-                    <th className="text-left p-2 sm:p-4 text-xs sm:text-sm font-semibold text-gray-900 hidden lg:table-cell">Daily Avg Sales</th>
-                    <th className="text-right p-2 sm:p-4 text-xs sm:text-sm font-semibold text-gray-900">Stock Status</th>
+                    <th className="text-left p-2 sm:p-4 text-xs sm:text-sm font-semibold text-white rounded-tl-3xl">Product</th>
+                    <th className="text-left p-2 sm:p-4 text-xs sm:text-sm font-semibold text-white hidden sm:table-cell">Distributor</th>
+                    <th className="text-left p-2 sm:p-4 text-xs sm:text-sm font-semibold text-white">Price Range</th>
+                    <th className="text-left p-2 sm:p-4 text-xs sm:text-sm font-semibold text-white hidden lg:table-cell">Daily Avg Sales</th>
+                    <th className="text-right p-2 sm:p-4 text-xs sm:text-sm font-semibold text-white rounded-tr-3xl">Stock Status</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
