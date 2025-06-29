@@ -13,6 +13,7 @@ import ExploreSection from "../../components/ExploreSection";
 
 import { useRef, useEffect, useState } from "react";
 
+
 const handleAnimationComplete = () => {
   console.log('All letters have animated!');
 };
@@ -99,7 +100,9 @@ export default function LandingPage() {
   const [selectedCard, setSelectedCard] = useState(null);
   const [selectedFeature, setSelectedFeature] = useState(null);
   const [isDarkMode, setIsDarkMode] = useState(false);
-
+  const [isVideoLoaded, setIsVideoLoaded] = useState(false);
+  const videoRef = useRef(null);
+  
   // Sledge Software Solutions section
   const sledgeRef = useRef(null);
   const [sledgeScale, setSledgeScale] = useState(1);
@@ -124,6 +127,33 @@ export default function LandingPage() {
   // Newsletter section
   const newsletterRef = useRef(null);
   const [isNewsletterVisible, setIsNewsletterVisible] = useState(false);
+
+  const flipVariants = {
+    initial: {
+    opacity: 0,
+    y: 40, // start from below
+  },
+  enter: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.5,
+      ease: [0.4, 0, 0.2, 1],
+    },
+  },
+  exit: {
+    opacity: 0,
+    y: -20, // fade and go upward
+    transition: {
+      duration: 0.4,
+      ease: [0.4, 0, 0.2, 1],
+    },
+  },
+  };
+
+  const handleVideoLoad = () => {
+    setIsVideoLoaded(true);
+  };
 
    useEffect(() => {
     // Detect initial system theme
@@ -214,6 +244,7 @@ export default function LandingPage() {
     return () => observer.disconnect();
   }, []);
 
+  // Main Animations
   useEffect(() => {
   let ticking = false;
   
@@ -296,22 +327,26 @@ export default function LandingPage() {
   return () => window.removeEventListener("scroll", handleScroll);
 }, []);
 
+
   return (
-    <div className={`min-h-screen font-eudoxus transition-colors duration-300 ${isDarkMode ? 'bg-gray-900 text-gray-100' : 'bg-white text-gray-900'}`}>
+   <div className={`min-h-screen font-eudoxus transition-colors duration-300 ${isDarkMode ? 'bg-gray-900 text-gray-100' : 'bg-white text-gray-900'}`}>
 
       {/* Hero Section with animated width and border radius */}
-      <section
-        ref={heroRef}
-        className="relative flex flex-col justify-center overflow-hidden p-0 m-0 mx-auto"
-        style={{
-          width: `${heroWidth}vw`,
-          height: "100vh",
-          borderRadius: `${heroRadius}px`,
-          background: isDarkMode ? "#1f2937" : "#fff",
-          boxShadow: heroRadius !== 0 ? (isDarkMode ? "0 8px 32px 0 rgba(0,0,0,0.4)" : "0 8px 32px 0 rgba(36,41,54,0.13)") : undefined,
-          transform: "translateZ(0)", // Force hardware acceleration
-          willChange: "width, border-radius", // Optimize for changes
-        }}
+      <motion.section
+          ref={heroRef}
+          className="relative flex flex-col justify-center overflow-hidden p-0 m-0 mx-auto"
+          initial="initial"
+          animate="enter"
+           exit="exit"
+          variants={flipVariants}
+          style={{
+            width: `${heroWidth}vw`,
+            height: "100vh",
+            borderRadius: `${heroRadius}px`,
+             transformStyle: "preserve-3d",
+            perspective: 1000,
+            boxShadow: "0 20px 40px rgba(0, 0, 0, 0.2)",
+          }}
       >
         {/* Fullscreen Video - only covers the hero section */}
         <video
@@ -392,7 +427,7 @@ export default function LandingPage() {
             Learn more
           </button>
         </div>
-      </section>
+      </motion.section>
       
       {/* Why Do We Exist Section */}
       <section

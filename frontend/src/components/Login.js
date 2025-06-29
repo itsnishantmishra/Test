@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { User, Building2, Users, Mail, Lock, Phone, MapPin, FileText, Eye, EyeOff } from 'lucide-react';
+import { motion } from "framer-motion";
 
 export default function Login() {
   const [activeTab, setActiveTab] = useState('login');
@@ -9,6 +10,29 @@ export default function Login() {
   const [message, setMessage] = useState({ type: '', text: '' });
   const [location, setLocation] = useState("");
   
+  const flipVariants = {
+    initial: {
+    opacity: 0,
+    y: 40, // start from below
+  },
+  enter: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.7,
+      ease: [0.4, 0, 0.2, 1],
+    },
+  },
+  exit: {
+    opacity: 0,
+    y: -20, // fade and go upward
+    transition: {
+      duration: 0.7,
+      ease: [0.4, 0, 0.2, 1],
+    },
+  },
+  };
+
   useEffect(() => {
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(
@@ -132,14 +156,22 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-4 ">
-      <div className="h-[70vh] w-[70vw] mx-auto bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl border border-gray-100/50 flex overflow-hidden">
+     <motion.div
+      className="fixed w-full h-full bg-gray-800 text-white flex items-center justify-center shadow-lg"
+      initial="initial"
+      animate="enter"
+      exit="exit"
+      variants={flipVariants}
+      style={{ transformStyle: "preserve-3d", perspective: 1000,  transformStyle: "preserve-3d",perspective: 1000,boxShadow: "0 20px 40px rgba(0, 0, 0, 0.2)",}}
+    >
+
+      <div className="h-[80vh] w-[80vw] mx-auto bg-gray-300 backdrop-blur-xl rounded-3xl shadow-2xl border border-gray-100/50 flex overflow-auto">
         {/* Left Panel - Form Content */}
-        <div className="flex-1 flex items-center justify-center p-10">
+        <div className="flex-1 flex items-center justify-center h-full">
           <div className="w-full max-w-xl">
             {/* Header */}
             <div className="text-center mb-10 h-full">
-              <h1 className="text-7xl md:text-5xl font-bold leading-tight mb-6 tracking-tight pr-8">Business Portal</h1>
+              <h1 className="text-7xl md:text-5xl font-bold leading-tight mb-6 tracking-tight pr-8 text-gray-800">Business Portal</h1>
               <p className="text-5xl md:text-3xl font-bold leading-tight mb-6 tracking-tight text-blue-400 pr-8">Sign in to your account</p>
             </div>
 
@@ -385,18 +417,32 @@ export default function Login() {
         </div>
 
         {/* Right Panel */}
-        <div className="hidden lg:flex lg:w-1/3 bg-gradient-to-br from-gray-900 to-gray-800 items-center justify-center p-8">
-          <div className="text-center text-white max-w-sm">
-            <div className="w-20 h-20 bg-white/10 rounded-3xl flex items-center justify-center mx-auto mb-8 backdrop-blur-sm">
-              <Building2 className="w-10 h-10" />
-            </div>
-            <h2 className="text-2xl font-normal mb-6 tracking-tight">Welcome to Business Portal</h2>
-            <p className="text-gray-300 leading-relaxed text-sm">
-              Connect with retailers, distributors, and partners. Manage your business operations efficiently.
-            </p>
-          </div>
-        </div>
-      </div>
+        <div
+  className="hidden lg:flex lg:w-480 lg:h-500 bg-center bg-cover items-start justify-center p-8 relative overflow-hidden rounded-xl shadow-lg"
+  style={{
+    backgroundImage:
+      "url('https://store.storeimages.cdn-apple.com/1/as-images.apple.com/is/store-card-50-TAA-202310?wid=960&hei=1000&fmt=p-jpg&qlt=95&.v=VXV6Z09DaTFST3FqTnRkTjNkSENPM1ZnVFR5VGxOMG5WYlh6ZVpnWVpmOVNTeEZoVVBncVRqTkNMNS9uNklFcGdNL0tvRHFBWjFabEJvUTIxa3lDRWI2aER5OTZhZjhhVzlPaThxMkc0QVE')",
+  }}
+>
+  {/* Gradient Overlay */}
+  <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/30 to-transparent z-0" />
+
+  {/* Content */}
+  <div className="relative z-10 text-center text-white max-w-sm mt-8">
+    <div className="w-20 h-20 bg-white/10 rounded-3xl flex items-center justify-center mx-auto mb-4 backdrop-blur-sm">
+      <Building2 className="w-10 h-10" />
     </div>
+    <h2 className="text-2xl font-semibold mb-4 tracking-tight">
+      Welcome to Business Portal
+    </h2>
+    <p className="text-gray-300 leading-relaxed text-sm">
+      Connect with retailers, distributors, and partners. Manage your business operations efficiently.
+    </p>
+  </div>
+        </div>
+
+
+      </div>
+    </motion.div>
   );
 }

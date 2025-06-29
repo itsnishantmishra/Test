@@ -114,6 +114,7 @@ const Shop = () => {
   const [sortMode, setSortMode] = useState("none");
   const [isDarkMode, setIsDarkMode] = useState(false);
   
+  // Dark Mode Logic
    useEffect(() => {
       // Detect initial system theme
       const darkThemeQuery = window.matchMedia('(prefers-color-scheme: dark)');

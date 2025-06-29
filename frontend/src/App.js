@@ -1,5 +1,7 @@
 import React from "react";
-import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
+import { useState } from "react";
+import { BrowserRouter as Router, Route, Routes, Navigate, useLocation } from "react-router-dom";
+import { AnimatePresence } from "framer-motion";
 
 // Components
 import NavbarWrap from "./components/Structure";
@@ -50,10 +52,26 @@ import DeliveryPartners from "./pages/Landing/Partners/DeliveryPartners";
 // Not Found Page
 import NotFound from "./pages/Utilities/NotFound";
 
+function AnimatedRoutes() {
+  const location = useLocation();
+
+  return (
+    <div className="relative w-full h-screen overflow-hidden">
+      <AnimatePresence mode="wait">
+        <Routes location={location} key={location.pathname}>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+        </Routes>
+      </AnimatePresence>
+    </div>
+  );
+}
+
 function App() {
   return (
     <AuthProvider>
     <Router>
+      
       <Routes>
         {/* Home Page */}
         <Route
