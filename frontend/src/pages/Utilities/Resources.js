@@ -1,6 +1,5 @@
 import { motion, useAnimation, useInView, useTransform, useScroll } from "framer-motion";
 import { BarChart, CreditCard, Package, ShoppingCart, TrendingUp, Users, Moon, Sun, ArrowRight, Star } from "lucide-react";
-import { Parallax, ParallaxLayer } from '@react-spring/parallax';
 import Footer from "../../components/Footer";
 import kiranaShop from "../../assets/945.png";
 import SplitText from "../Utilities/SplitText";
