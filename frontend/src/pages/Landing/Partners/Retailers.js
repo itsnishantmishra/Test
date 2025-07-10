@@ -1,82 +1,168 @@
-import React from "react";
+import React, { useRef, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 
+const features = [
+	{
+		title: "Smart Inventory",
+		desc: "Track and manage your stock in real-time with ease.",
+		img: "https://via.placeholder.com/600x300",
+	},
+	{
+		title: "Easy Billing",
+		desc: "Generate invoices and manage transactions effortlessly.",
+		img: "https://via.placeholder.com/600x300",
+	},
+	{
+		title: "Customer Insights",
+		desc: "Understand your customers and boost loyalty.",
+		img: "https://via.placeholder.com/600x300",
+	},
+	{
+		title: "Growth Analytics",
+		desc: "Get actionable insights to grow your retail business.",
+		img: "https://via.placeholder.com/600x300",
+	},
+];
+
+function useScrollReveal(threshold = 0.2) {
+	const ref = useRef(null);
+	const [inView, setInView] = useState(false);
+
+	useEffect(() => {
+		const observer = new window.IntersectionObserver(
+			([entry]) => {
+				if (entry.isIntersecting) {
+					setInView(true);
+					observer.disconnect();
+				}
+			},
+			{ threshold }
+		);
+		if (ref.current) observer.observe(ref.current);
+		return () => observer.disconnect();
+	}, [threshold]);
+
+	return [ref, inView];
+}
+
 export default function Retailers() {
-  return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-blue-100 text-gray-900">
-      {/* Hero Section */}
-      <section className="relative text-center py-20 px-6 bg-gradient-to-r from-blue-800 to-blue-600 text-white">
-        <div className="max-w-4xl mx-auto">
-          <motion.h1
-            className="text-5xl font-extrabold leading-tight drop-shadow-md"
-            initial={{ opacity: 0, y: -50 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-          >
-            Retailers
-          </motion.h1>
-          <motion.p
-            className="mt-6 text-lg font-medium"
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-          >
-            Empowering retailers with tools to manage inventory, billing, and customer relationships.
-          </motion.p>
-        </div>
-      </section>
+	const [isDarkMode, setIsDarkMode] = useState(false);
+	const [selectedFeature, setSelectedFeature] = useState(null);
+	const [featuresInViewRef, featuresInView] = useScrollReveal();
 
-      {/* Retailers Section */}
-      <section className="py-16 px-6 max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
-        <motion.div
-          whileHover={{ scale: 1.05 }}
-          className="bg-white shadow-lg rounded-lg overflow-hidden transition-transform"
-        >
-          <img
-            src="https://images.unsplash.com/photo-1556742400-b5b7c512f6b6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzNjUyOXwwfDF8c2VhcmNofDJ8fHJldGFpbGVyc3xlbnwwfHx8fDE2ODIxODI5ODc&ixlib=rb-1.2.1&q=80&w=1080"
-            alt="Retailers"
-            className="w-full h-64 object-cover"
-          />
-          <div className="p-6">
-            <h3 className="text-xl font-bold text-blue-800">Retailer Benefits</h3>
-            <p className="mt-2 text-gray-700">
-              Access tools to manage inventory, billing, and customer relationships seamlessly.
-            </p>
-          </div>
-        </motion.div>
-        <motion.div
-          whileHover={{ scale: 1.05 }}
-          className="bg-white shadow-lg rounded-lg overflow-hidden transition-transform"
-        >
-          <img
-            src="https://images.unsplash.com/photo-1515165562835-cf75965c0b8e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzNjUyOXwwfDF8c2VhcmNofDJ8fHJldGFpbGVyc3xlbnwwfHx8fDE2ODIxODI5ODc&ixlib=rb-1.2.1&q=80&w=1080"
-            alt="Retailer Tools"
-            className="w-full h-64 object-cover"
-          />
-          <div className="p-6">
-            <h3 className="text-xl font-bold text-blue-800">Retailer Tools</h3>
-            <p className="mt-2 text-gray-700">
-              Leverage advanced tools to track sales, manage stock, and grow your business.
-            </p>
-          </div>
-        </motion.div>
-      </section>
+	useEffect(() => {
+		const darkThemeQuery = window.matchMedia("(prefers-color-scheme: dark)");
+		setIsDarkMode(darkThemeQuery.matches);
+		const handleThemeChange = (e) => setIsDarkMode(e.matches);
+		darkThemeQuery.addEventListener("change", handleThemeChange);
+		return () => darkThemeQuery.removeEventListener("change", handleThemeChange);
+	}, []);
 
-      {/* Call-to-Action Section */}
-      <section className="py-16 bg-gradient-to-r from-blue-800 to-blue-600 text-white text-center">
-        <div className="max-w-3xl mx-auto">
-          <h2 className="text-3xl font-bold">Join Our Retailer Network</h2>
-          <p className="mt-4 text-lg">
-            Partner with us to streamline your operations and grow your business.
-          </p>
-          <motion.button
-            className="mt-8 px-12 py-4 text-lg bg-white text-blue-800 shadow-lg rounded-md hover:bg-gray-100 transition-transform"
-            whileHover={{ scale: 1.1 }}
-          >
-            Get Started
-          </motion.button>
-        </div>
-      </section>
-    </div>
-  );
+	return (
+		<div
+			className={`min-h-screen font-eudoxus transition-colors duration-300 ${
+				isDarkMode ? "bg-gray-900 text-gray-100" : "bg-white text-gray-900"
+			}`}
+		>
+			{/* Hero Section */}
+			<section className="relative flex flex-col justify-center items-start min-h-[10vh] px-8 py-24 pl-16">
+				<motion.h1
+					className="text-4xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-purple-500 via-violet-500 to-teal-400 bg-clip-text text-transparent"
+					initial={{ opacity: 0, y: 40 }}
+					animate={{ opacity: 1, y: 0 }}
+					transition={{ duration: 0.7 }}
+				>
+					Retailers
+				</motion.h1>
+				<motion.p
+					className="text-lg md:text-2xl mb-8 max-w-2xl"
+					initial={{ opacity: 0, y: 40 }}
+					animate={{ opacity: 1, y: 0 }}
+					transition={{ duration: 0.7, delay: 0.2 }}
+				>
+					Empowering retailers with modern tools for inventory, billing, and
+					customer relationships.
+				</motion.p>
+				<motion.button
+					className="px-8 py-3 rounded-full bg-black text-white font-semibold shadow-lg hover:bg-gray-800 transition"
+					whileHover={{ scale: 1.05 }}
+				>
+					Join as Retailer
+				</motion.button>
+			</section>
+
+			{/* Features Section */}
+			<section
+				ref={featuresInViewRef}
+				className={`w-fullrelative flex flex-col justify-center overflow-hidden mx-auto md:pt-8 px-4 md:pl-16 pr-4 md:pr-16 transition-all duration-1000 ease-out ${
+					featuresInView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-20"
+				} ${isDarkMode ? "bg-gray-900" : "bg-black"}`}
+				style={{
+					width: "100vw",
+					minHeight: "10vh",
+					borderRadius: "0px",
+				}}
+			>
+				<h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-500 via-violet-500 to-teal-400 mb-8 md:mb-16">
+					A Glance
+				</h2>
+				<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+					{features.map((feature, idx) => (
+						<motion.div
+							key={idx}
+							whileHover={{ scale: 1.05 }}
+							className={`text-white p-8 rounded-2xl shadow-xl cursor-pointer flex flex-col justify-between h-[250px] ${
+								isDarkMode ? "bg-gray-700 hover:bg-gray-600" : "bg-gray-900 hover:bg-gray-800"
+							}`}
+							style={{
+								transition: `all 800ms cubic-bezier(0.4,0,0.2,1)`,
+								transitionDelay: featuresInView ? `${200 + idx * 100}ms` : "0ms",
+							}}
+							onClick={() => setSelectedFeature(idx)}
+						>
+							<div>
+								<h3 className="text-xl md:text-2xl font-bold text-white mb-2">
+									{feature.title}
+								</h3>
+								<p className="text-gray-300 text-base md:text-lg leading-relaxed">
+									{feature.desc}
+								</p>
+							</div>
+						</motion.div>
+					))}
+				</div>
+			</section>
+
+			{/* Modal Overlay for Feature Details */}
+			{selectedFeature !== null && (
+				<div
+					className="fixed inset-0 z-50 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center p-4"
+					onClick={() => setSelectedFeature(null)}
+				>
+					<div
+						className={`relative rounded-2xl p-4 md:p-6 w-full max-w-2xl bg-white text-gray-900`}
+						onClick={(e) => e.stopPropagation()}
+					>
+						<button
+							onClick={() => setSelectedFeature(null)}
+							className="absolute top-2 right-4 text-2xl hover:text-red-500"
+						>
+							&times;
+						</button>
+						<img
+							src={features[selectedFeature].img}
+							alt={features[selectedFeature].title}
+							className="w-full h-48 object-cover rounded-lg mb-4"
+						/>
+						<h2 className="text-2xl font-bold mb-2">
+							{features[selectedFeature].title}
+						</h2>
+						<p className="text-base">
+							{features[selectedFeature].desc}
+						</p>
+					</div>
+				</div>
+			)}
+		</div>
+	);
 }

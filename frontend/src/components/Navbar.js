@@ -64,7 +64,7 @@ export default function Navbar({ onLoginClick }) {
   // Dynamic background and blur for navbar
   const navBg = (isAtTop && !openDropdown && !isMobileMenuOpen)
     ? "transparent"
-    : ""; // soft blue-grey when scrolled
+    : "black-200"; // soft blue-grey when scrolled
 
   const navBlur = (isAtTop && !openDropdown && !isMobileMenuOpen)
     ? "blur(0px)"

@@ -1,5 +1,6 @@
-import { motion, useAnimation, useInView } from "framer-motion";
+import { motion, useAnimation, useInView, useTransform, useScroll } from "framer-motion";
 import { BarChart, CreditCard, Package, ShoppingCart, TrendingUp, Users, Moon, Sun, ArrowRight, Star } from "lucide-react";
+import { Parallax, ParallaxLayer } from '@react-spring/parallax';
 import Footer from "../../components/Footer";
 import kiranaShop from "../../assets/945.png";
 import SplitText from "../Utilities/SplitText";
@@ -109,6 +110,7 @@ export default function LandingPage() {
   const [sledgeTranslate, setSledgeTranslate] = useState(0);
   const [bgReveal, setBgReveal] = useState(0);
   const [isSledgeVisible, setIsSledgeVisible] = useState(false);
+  const sledgeImageRef = useRef(null);
 
   // Why Sledge Ref Section
   const whySledgeRef = useRef(null);
@@ -132,44 +134,45 @@ export default function LandingPage() {
     initial: {
     opacity: 0,
     y: 40, // start from below
-  },
-  enter: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.5,
-      ease: [0.4, 0, 0.2, 1],
     },
-  },
-  exit: {
-    opacity: 0,
-    y: -20, // fade and go upward
-    transition: {
-      duration: 0.4,
-      ease: [0.4, 0, 0.2, 1],
+    enter: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.5,
+        ease: [0.4, 0, 0.2, 1],
+      },
     },
-  },
-  };
-
-  const handleVideoLoad = () => {
-    setIsVideoLoaded(true);
-  };
-
-   useEffect(() => {
-    // Detect initial system theme
-    const darkThemeQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    setIsDarkMode(darkThemeQuery.matches);
-
-    // Listen for system theme changes
-    const handleThemeChange = (e) => {
-      setIsDarkMode(e.matches);
+    exit: {
+      opacity: 0,
+      y: -20, // fade and go upward
+      transition: {
+        duration: 0.4,
+        ease: [0.4, 0, 0.2, 1],
+      },
+    },
     };
 
-    darkThemeQuery.addEventListener('change', handleThemeChange);
+    
+  const handleVideoLoad = () => {
+    setIsVideoLoaded(true);
+    };
+    // Dark Theme
+    useEffect(() => {
+      // Detect initial system theme
+      const darkThemeQuery = window.matchMedia('(prefers-color-scheme: dark)');
+      setIsDarkMode(darkThemeQuery.matches);
 
-    // Cleanup listener when component unmounts
-    return () => darkThemeQuery.removeEventListener('change', handleThemeChange);
-  }, []);
+      // Listen for system theme changes
+      const handleThemeChange = (e) => {
+        setIsDarkMode(e.matches);
+      };
+
+      darkThemeQuery.addEventListener('change', handleThemeChange);
+
+      // Cleanup listener when component unmounts
+      return () => darkThemeQuery.removeEventListener('change', handleThemeChange);
+    }, []);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -304,7 +307,7 @@ export default function LandingPage() {
           
           // Only calculate animation if section is in viewport
           if (rect.top <= windowHeight && rect.bottom >= 0) {
-            const start = windowHeight * 0.3;
+            const start = windowHeight * 1;
             const end = -windowHeight * 0.2;
             let progress = 0;
             if (rect.top < start) {
@@ -327,10 +330,10 @@ export default function LandingPage() {
   return () => window.removeEventListener("scroll", handleScroll);
 }, []);
 
-
+  
   return (
    <div className={`min-h-screen font-eudoxus transition-colors duration-300 ${isDarkMode ? 'bg-gray-900 text-gray-100' : 'bg-white text-gray-900'}`}>
-
+      <div>
       {/* Hero Section with animated width and border radius */}
       <motion.section
           ref={heroRef}
@@ -345,7 +348,7 @@ export default function LandingPage() {
             borderRadius: `${heroRadius}px`,
              transformStyle: "preserve-3d",
             perspective: 1000,
-            boxShadow: "0 20px 40px rgba(0, 0, 0, 0.2)",
+            
           }}
       >
         {/* Fullscreen Video - only covers the hero section */}
@@ -427,8 +430,7 @@ export default function LandingPage() {
             Learn more
           </button>
         </div>
-      </motion.section>
-      
+      </motion.section>                          
       {/* Why Do We Exist Section */}
       <section
         ref={ExistRef}
@@ -439,22 +441,25 @@ export default function LandingPage() {
           transitionDelay: isInView ? '200ms' : '0ms' // Added delay for later appearance
         }}
       >
-        <div className={`w-full rounded-2xl flex flex-col items-start overflow-hidden ${isDarkMode ? 'bg-gray-900' : 'bg-white'}`}>
-          <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight mb-4 md:mb-6 tracking-tight text-left pl-4 pt-6 md:pt-12">
+        <div className={`w-full justify-between items-center rounded-2xl flex flex-col items-start overflow-hidden ${isDarkMode ? 'bg-gray-900' : 'bg-white'}`}>
+          <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight mb-4 md:mb-6 tracking-tight text-left md:pr-20 pt-6 md:pt-12">
             <span className="bg-gradient-to-r from-purple-500 via-violet-500 to-teal-400 bg-clip-text text-transparent font-eudoxus">
               Why Do We Exist
             </span>
           </h2>
-          <div className={`text-base md:text-xl text-left pl-4 mb-4 md:mb-8 font-eudoxus w-full pr-4 md:pr-16 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-            We exist to empower retailers and distributors with modern, efficient, and elegant software solutions that bridge the gap in the supply chain, enabling growth and clarity for every business.
+          <div className={`justify-between text-center text-base md:text-xl text-left pl-4 md:mt-4 font-eudoxus w-full pr-4 md:pr-16 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+            To empower retailers and distributors with modern, efficient, and elegant software solutions 
+          </div>
+          <div className={`justify-between text-center text-base md:mt-2 md:text-xl  pl-4  mb-4 md:mb-8 font-eudoxus w-2/3 pr-4 md:pr-16 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+             in the supply chain, enabling growth and clarity for every business.
           </div>
         </div>
       </section>
-
+      </div>
       {/* Sledge Software Solutions Section */}    
       <section
         ref={sledgeRef}
-        className={`text-center px-4 md:px-6 py-16 md:py-28 lg:py-40 max-w-5xl mx-auto relative overflow-hidden transition-all duration-1000 ease-out transform ${
+        className={`text-center px-4 md:mb-8 md:px-6 py-16 md:py-28 lg:py-40 max-w-5xl mx-auto relative overflow-hidden transition-all duration-1000 ease-out transform ${
           isSledgeVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-20'
         }`}
         style={{ 
@@ -463,19 +468,21 @@ export default function LandingPage() {
         }}
       >
         {/* Background reveal: white to image, revealed from bottom */}
-        <div className="absolute inset-0 w-full h-full pointer-events-none select-none z-0">
+        <div className="absolute inset-0 w-full h-full pointer-events-none select-none z-0 overflow-hidden">
           {/* Background always */}
           <div className={`absolute inset-0 ${isDarkMode ? 'bg-gray-900' : 'bg-white'}`} />
           {/* Image revealed from bottom as you scroll */}
           <img
             src={kiranaShop}
             alt="Background"
-            className="absolute left-0 bottom-0 w-full object-cover transition-all duration-500"
+            className="md:mt-32 absolute left-0 bottom-0 w-full object-cover transition-all duration-500 md:mt-16"
             style={{
               height: `${bgReveal * 100}%`,
               opacity: bgReveal,
               filter: `blur(${10 - 10 * bgReveal}px) ${isDarkMode ? 'brightness(0.6) contrast(1.1)'  : ''}`,
-              transition: "height 0.4s cubic-bezier(0.4,0,0.2,1), opacity 0.4s, filter 0.4s"
+              transition: "height 0.2s cubic-bezier(0.22, 1, 0.36, 1), opacity 1s ease-out, filter 1s ease-out"
+
+
             }}
           />
         </div>
@@ -483,7 +490,7 @@ export default function LandingPage() {
           className="relative z-10 transition-all duration-300"
           style={{
             transform: `scale(${sledgeScale}) translateY(${sledgeTranslate}px)`,
-            transition: "transform 0.4s cubic-bezier(0.4,0,0.2,1)"
+           transition: "height 0.2s cubic-bezier(0.22, 1, 0.36, 1), opacity 1s ease-out, filter 1s ease-out"
           }}
         >
           <h1 className={`text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight mb-4 md:mb-6 tracking-tight ${isDarkMode ? 'text-white' : 'text-black'}`}>
@@ -692,9 +699,11 @@ export default function LandingPage() {
       {/* Testimonials */}
       <section className="bg-gray-900 px-4 py-4">
           <div className="max-w-full mx-auto text-left md:pl-16 mt-16 md:text-7xl mb-16">
-             <h2 className={`text-4xl sm:text-5xl text-white md:text-6xl lg:text-7xl font-bold leading-tight mb-6 tracking-tight  ${isDarkMode ? 'text-white' : 'text-black'}`}>
-                The Masses 
+             <h2 className="text-3xl sm:text-4xl md:text-7xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-500 via-violet-500 to-teal-400 mb-8 md:mb-16">
+               The Masses
              </h2>
+             
+             
             <div className="grid gap-8 md:grid-cols-3 md:pt-4">
               {testimonials.map((t, index) => (
                 <div

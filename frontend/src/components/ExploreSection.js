@@ -60,7 +60,7 @@ const ExploreSection = () => {
   return (
     <motion.section
       ref={sectionRef}
-      className="w-full relative z-30 flex flex-col items-center pt-24"
+      className="w-full relative  z-30 flex flex-col items-center pt-24"
       variants={containerVariants}
       initial="hidden"
       animate={controls}
