@@ -10,8 +10,9 @@ import Home3 from "../../assets/Home3.png";
 import Home4 from "../../assets/Home4.png";
 import Money from "../../assets/HomeMoney.png";
 import ExploreSection from "../../components/ExploreSection";
+import BG2 from "../../assets/Background2.png";
 
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect, useState,} from "react";
 
 
 const handleAnimationComplete = () => {
@@ -68,6 +69,41 @@ const features = [
     img: "https://via.placeholder.com/600x300"
   }
 ];
+
+const Modalfeatures = [
+  {
+    title: "Inventory Management",
+    desc: "Managing stock shouldn’t be a guessing game. Our Inventory Management system gives you real-time updates on what’s in stock, what’s running low, and what’s moving fast—so you can make smart, data-driven decisions. From barcode tracking to automated low-stock alerts, you’ll never have to worry about overordering or missing a sale. Whether you’re running a warehouse, retail store, or supply hub, the interface is intuitive and scalable to fit your operations. Say goodbye to outdated spreadsheets and hello to seamless stock control. Your business deserves a smarter, smoother way to manage inventory—this is it.",
+    img: "https://support.apple.com/content/dam/edam/applecare/images/en_US/psp/psp_heroes/hero-banner-support-home.image.small_2x.jpg"
+  },
+  {
+    title: "Billing Solutions",
+    desc: "Billing should be fast, reliable, and professional—and that’s exactly what we deliver. With our comprehensive billing tools, you can generate invoices, send them instantly to customers, track payments, and set up recurring billing without a hitch. The system integrates seamlessly with your sales and customer data, giving you a full view of your financials in one place. Accept multiple payment modes and get notified when payments are delayed. Every invoice you send reflects your brand with customizable layouts and logos. Whether it’s a one-time transaction or a monthly subscription, billing has never been this easy or elegant.",
+    img: "https://support.apple.com/content/dam/edam/applecare/images/en_US/psp/psp_heroes/hero-banner-support-home.image.small_2x.jpg"
+  },
+  {
+    title: "Business Credit Management",
+    desc: "Extend credit with confidence using our advanced business credit management system. Easily set credit limits for customers, monitor outstanding balances, and automate friendly payment reminders. Designed with transparency and accountability in mind, our tools help you maintain strong business relationships while protecting your bottom line. Detailed credit reports and real-time repayment tracking help you spot risks early and take action quickly. Whether you’re managing dozens of customers or just starting to offer credit, the system scales with your growth. Build trust, increase sales, and manage debt effectively—all from one centralized dashboard that puts you in control.",
+    img: "https://support.apple.com/content/dam/edam/applecare/images/en_US/psp_heros/psp-hero-banner-watch.image.small_2x.jpg"
+  },
+  {
+    title: "Supply Chain Management",
+    desc: "Your supply chain is the backbone of your business—and we make sure it runs smoothly. Our supply chain management tools offer full visibility across procurement, warehousing, shipping, and delivery. Monitor supplier performance, reduce lead times, and forecast inventory needs with intelligent suggestions. You can track each order in real-time and resolve bottlenecks before they impact your customers. With built-in collaboration features, everyone from vendors to logistics managers stays in sync. Whether you’re handling simple deliveries or complex networks, this platform brings order and clarity to the chaos of supply. Get control, stay ahead, and keep everything moving efficiently.",
+    img: "https://images.unsplash.com/photo-1605902711912-cfb43c4437e3?auto=format&fit=crop&w=1400&q=80"
+  },
+  {
+    title: "Growth & Analytics",
+    desc: "Data is only useful if it drives action. Our analytics dashboard turns complex numbers into clear, beautiful insights that help you grow faster. Track customer behavior, product performance, revenue trends, and operational KPIs—all in real time. Our tools help you identify what’s working, fix what isn’t, and uncover opportunities you didn’t even know existed. Use filters, visualizations, and comparison tools to go deep into your metrics. Whether you're preparing a pitch, tracking a campaign, or optimizing a workflow, our analytics help you move forward with confidence. It's not just about numbers—it's about smarter decisions and sustainable success.",
+    img: "https://support.apple.com/content/dam/edam/applecare/images/en_US/psp_heros/psp-hero-banner-watch.image.small_2x.jpg"
+  },
+  {
+    title: "Curated Business Support",
+    desc: "Behind every successful business is a great support system. We go beyond software by offering personalized guidance, industry connections, and human expertise tailored to your unique needs. Whether you're seeking funding, improving operations, or expanding into new markets, our network of advisors and curated tools helps you get there faster. You can book strategy sessions, access expert content, or simply chat with a specialist who understands your space. Business is a journey—and you shouldn’t walk it alone. With our support, you gain a team that grows with you, every step of the way.",
+    img: "https://support.apple.com/content/dam/edam/applecare/images/en_US/psp/psp_heroes/hero-banner-support-home.image.small_2x.jpg"
+  }
+];
+
+
 
 function useScrollReveal(threshold = 0.2) {
   const ref = useRef(null);
@@ -152,6 +188,7 @@ export default function LandingPage() {
     },
     };
 
+    
     
   const handleVideoLoad = () => {
     setIsVideoLoaded(true);
@@ -329,6 +366,11 @@ export default function LandingPage() {
   return () => window.removeEventListener("scroll", handleScroll);
 }, []);
 
+//Scroll Parallax
+    let {scrollYProgress} = useScroll();
+    let scrolly = useTransform(scrollYProgress, [0,1], ["0%","100%"]);
+
+
   
   return (
    <div className={`min-h-screen font-eudoxus transition-colors duration-300 ${isDarkMode ? 'bg-gray-900 text-gray-100' : 'bg-white text-gray-900'}`}>
@@ -457,108 +499,78 @@ export default function LandingPage() {
       </div>
       {/* Sledge Software Solutions Section */}    
       <section
-        ref={sledgeRef}
-        className={`text-center px-4 md:mb-8 md:px-6 py-16 md:py-28 lg:py-40 max-w-5xl mx-auto relative overflow-hidden transition-all duration-1000 ease-out transform ${
-          isSledgeVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-20'
-        }`}
-        style={{ 
-          minHeight: "60vh",
-          transitionDelay: isSledgeVisible ? '300ms' : '0ms'
-        }}
+      ref={sledgeRef}
+      className={`text-center px-4 md:mb-8 md:px-6 py-16 md:py-28 lg:py-60 rounded-3xl max-w-7xl mx-auto relative overflow-hidden transition-all duration-1000 ease-out transform ${
+      isSledgeVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-20'
+      }`}
+      style={{
+      transitionDelay: isSledgeVisible ? '300ms' : '0ms'
+      }}
       >
-        {/* Background reveal: white to image, revealed from bottom */}
-        <div className="absolute inset-0 w-full h-full pointer-events-none select-none z-0 overflow-hidden">
-          {/* Background always */}
-          <div className={`absolute inset-0 ${isDarkMode ? 'bg-gray-900' : 'bg-white'}`} />
-          {/* Image revealed from bottom as you scroll */}
-          <img
-            src={kiranaShop}
-            alt="Background"
-            className="md:mt-32 absolute left-0 bottom-0 w-full object-cover transition-all duration-500 md:mt-16"
-            style={{
-              height: `${bgReveal * 100}%`,
-              opacity: bgReveal,
-              filter: `blur(${10 - 10 * bgReveal}px) ${isDarkMode ? 'brightness(0.6) contrast(1.1)'  : ''}`,
-              transition: "height 0.2s cubic-bezier(0.22, 1, 0.36, 1), opacity 1s ease-out, filter 1s ease-out"
+        {/* Apple Background Image */}
+        <motion.div
+        className="absolute inset-0 w-full h-full pointer-events-none select-none z-0"
+        style={{
+        backgroundImage: `url(${BG2})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "repeat",
+        minHeight: "120vh",
+        opacity:0.8,
+        filter: isDarkMode ? 'brightness(0.6) contrast(1.1)' : "brightness(0.7) contrast(1.3)",
+        scrolly
+      }}
+        />
 
+        {/* Dark overlay for better text readability */}
+        <div className="absolute inset-0 bg-black/30 z-1" />
 
-            }}
-          />
-        </div>
-        <div
-          className="relative z-10 transition-all duration-300"
-          style={{
-            transform: `scale(${sledgeScale}) translateY(${sledgeTranslate}px)`,
-           transition: "height 0.2s cubic-bezier(0.22, 1, 0.36, 1), opacity 1s ease-out, filter 1s ease-out"
-          }}
-        >
-          <h1 className={`text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight mb-4 md:mb-6 tracking-tight ${isDarkMode ? 'text-white' : 'text-black'}`}>
-            Sledge 
-          </h1>
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-4 md:mb-6 tracking-tight text-blue-400">
-            Software Solutions
-          </h1>
-          <p className={`text-base md:text-xl mb-6 md:mb-10 max-w-2xl mx-auto px-4 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-            A premium UI crafted with Eudoxus Sans for clarity, elegance, and modern appeal. Designed for forward-thinkers.
-          </p>
-          <button className={`px-6 md:px-8 py-2 md:py-3 text-base md:text-lg rounded-full transition-all ${
-            isDarkMode 
-              ? 'bg-white text-gray-900 hover:bg-gray-100' 
-              : 'bg-black text-white hover:bg-gray-900'
-          }`}>
-            Explore Now
-          </button>
-        </div>
-      </section>
-
-      {/* --- Fullscreen Scrollable Rounded Rectangles Section --- */}
-      <div>
-        <ExploreSection />
+        {/* Your existing background reveal logic (optional - remove if not needed) */}
+      <div className="absolute inset-0 w-full h-full pointer-events-none select-none z-2 overflow-hidden">
+        {/* Background always */}
+        <div className={`absolute inset-0 ${isDarkMode ? 'bg-gray-900' : 'bg-white'} opacity-0`} />
+        {/* Image revealed from bottom as you scroll */}
+        <img
+        src={kiranaShop}
+        alt="Background"
+        className="md:mt-32 absolute left-0 bottom-0 w-full object-cover transition-all duration-500 md:mt-16"
+        style={{
+        height: `${bgReveal * 95}%`,
+        opacity: 1, // Reduced opacity so it blends with Apple background
+        filter: `blur(${10 - 10 * bgReveal}px) ${isDarkMode ? 'brightness(0.6) contrast(1.1)' : ''}`,
+        transition: "height 0.2s cubic-bezier(0.22, 1, 0.36, 1), opacity 1s ease-out, filter 1s ease-out"
+        }}
+        />
       </div>
-      
-      {/* Modal Overlay */}
-      {selectedFeature !== null && (
-        <div
-          className="fixed inset-0 z-50 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center p-4"
-          onClick={() => setSelectedFeature(null)}
-        >
-          <div
-            className={`relative rounded-2xl p-4 md:p-6 w-full max-w-4xl h-[90vh] md:h-[95vh] overflow-auto ${
-              isDarkMode ? 'bg-gray-800 text-white' : 'bg-white text-gray-900'
-            }`}
-            onClick={(e) => e.stopPropagation()} // prevent close on inner click
-          >
-            {/* Close Button */}
-            <button
-              onClick={() => setSelectedFeature(null)}
-              className={`absolute top-2 md:top-3 right-3 md:right-4 text-xl md:text-2xl hover:text-red-500 ${
-                isDarkMode ? 'text-gray-300' : 'text-gray-600'
-              }`}
-            >
-              &times;
-            </button>
 
-            {/* Image */}
-            <img
-              src={kiranaShop}
-              alt={features[selectedFeature].title}
-              className="w-full h-48 md:h-64 object-cover rounded-lg mb-4"
-              style={{
-                filter: isDarkMode ? 'brightness(0.9)' : 'none'
-              }}
-            />
+      <div
+      className="relative z-10 transition-all duration-300"
+      style={{
+      transform: `scale(${sledgeScale}) translateY(${sledgeTranslate}px)`,
+      transition: "height 0.2s cubic-bezier(0.22, 1, 0.36, 1), opacity 1s ease-out, filter 1s ease-out"
+      }}
+      >
+      <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight mb-4 md:mb-6 tracking-tight text-white drop-shadow-lg">
+      Sledge
+      </h1>
+      <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-4 md:mb-6 tracking-tight text-blue-400 drop-shadow-lg">
+      Software Solutions
+      </h1>
+      <p className="text-base md:text-xl mb-6 md:mb-10 max-w-2xl mx-auto px-4 text-gray-200 drop-shadow-lg">
+      A premium UI crafted with Eudoxus Sans for clarity, elegance, and modern appeal. Designed for forward-thinkers.
+      </p>
+      <button className="px-6 md:px-8 py-2 md:py-3 text-base md:text-lg rounded-full transition-all bg-white text-gray-900 hover:bg-gray-100 shadow-lg">
+      Explore Now
+      </button>
+      </div>
+        </section>
 
-            {/* Title & Description */}
-            <h2 className={`text-2xl md:text-3xl font-bold mb-2 ${isDarkMode ? 'text-blue-400' : 'text-blue-900'}`}>
-              {features[selectedFeature].title}
-            </h2>
-            <p className={`text-base md:text-lg ${isDarkMode ? 'text-gray-300' : 'text-gray-800'}`}>
-              {features[selectedFeature].desc}
-            </p>
-          </div>
+        {/* --- Fullscreen Scrollable Rounded Rectangles Section --- */}
+        <div>
+          <ExploreSection />
         </div>
-      )}
-
+        
+        
       {/* Why Choose Sledge Section */}
       <section
         ref={whySledgeRef}
@@ -646,16 +658,68 @@ export default function LandingPage() {
                   <p className="text-gray-300 text-base md:text-lg leading-relaxed">
                     {feature.desc}
                   </p>
-                  <div className="mt-4 flex items-center text-blue-400 group-hover:text-blue-300 transition-colors">
+
+                  <button
+                    type="button"
+                    className="mt-4 flex items-center text-blue-400 group-hover:text-blue-300 transition-colors focus:outline-none"
+                    onClick={() => setSelectedFeature(idx)}
+                  >
                     <span className="text-sm font-medium">Learn more</span>
                     <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
-                  </div>
+                  </button>
                 </div>
               </div>
             ))}
           </div>
         </div>
       </section>
+
+      {/* Modal Overlay */}
+        {selectedFeature !== null && (
+          <div
+            className="fixed inset-0 z-50 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center p-4 overflow-auto"
+            onClick={() => setSelectedFeature(null)}
+          >
+            <div
+              className={`  ml-8 mr-8 relative rounded-2xl p-4 md:p-6 w-full max-w-7xl h-[95vh] md:h-[90vh] overflow-auto ${
+                isDarkMode ? 'bg-gray-800 text-white' : 'bg-white text-gray-900'
+              }`}
+              onClick={(e) => e.stopPropagation()} // prevent close on inner click
+            >
+              {/* Close Button */}
+              <button
+                onClick={() => setSelectedFeature(null)}
+                className={`absolute top-2 md:top-1 right-3 md:right-1 text-xl md:text-4xl hover:text-red-500 ${
+                  isDarkMode ? 'text-gray-300' : 'text-gray-600'
+                }`}
+              >
+                &times;
+              </button>
+
+              {/* Image */}
+              <img
+              src={Modalfeatures[selectedFeature].img}
+              alt={Modalfeatures[selectedFeature].title}
+              className=" bg-white w-full h-64 md:h-[400px] object-cover rounded-xl mb-4 mt-4"
+              style={{
+                filter: isDarkMode ? 'brightness(0.9)' : 'none'
+              }}
+            />
+
+
+              {/* Title & Description */}
+              <h2 className={`text-2xl md:text-5xl font-bold mb-8 mt-8 pt-4 text-left pl-16  ${isDarkMode ? 'text-blue-400' : 'text-blue-900'}`}>
+                {Modalfeatures[selectedFeature].title}
+              </h2>
+              <div className={`rounded-3xl pt-3 pb-3 ${isDarkMode ? 'bg-gray-600' : 'bg-gray-100'}`}>
+              <p className={`text-base md:text-2xl mt-4 pl-8 pr-8 py-8 tracking-wide ${isDarkMode ? 'text-gray-100' : 'text-gray-500'}`}>
+                {Modalfeatures[selectedFeature].desc}
+              </p>
+              </div>
+            </div>
+          </div>
+        )}
+
 
       <section 
         ref={pricingRef}

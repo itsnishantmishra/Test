@@ -12,12 +12,15 @@ export default function Navbar({ onLoginClick }) {
   const [shake, setShake] = useState(false);
   const navbarRef = useRef(null);
   const navigate = useNavigate();
+  const closeTimeout = useRef(null);
 
+  // The toggleDropdown function is no longer needed for desktop hover functionality
+  // but is kept for the mobile click functionality.
   const toggleDropdown = (name) => {
     setOpenDropdown((prev) => (prev === name ? null : name));
   };
 
-  const closeDropdown = () => {
+  const closeDropdowns = () => {
     setOpenDropdown(null);
   };
 
@@ -42,14 +45,13 @@ export default function Navbar({ onLoginClick }) {
             setShowNavbar(true);
           } else {
             setShowNavbar(false);
+            closeDropdowns(); // Close dropdowns when scrolling down
           }
           setLastScrollY(currentY);
           // At top logic
           const atTop = currentY < 10;
           if (atTop !== isAtTop) {
             setIsAtTop(atTop);
-            // Shake effect when navbar hits top
-            
           }
           ticking = false;
         });
@@ -59,13 +61,14 @@ export default function Navbar({ onLoginClick }) {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
     // eslint-disable-next-line
-  }, [lastScrollY, isAtTop, shake]);
+  }, [lastScrollY, isAtTop]);
 
   // Dynamic background and blur for navbar
   const navBg = (isAtTop && !openDropdown && !isMobileMenuOpen)
     ? "transparent"
-    : "black-200"; // soft blue-grey when scrolled
+    : "rgb(15 23 42 / 0.95)"; // Solid dark slate color with 95% opacity on scroll
 
+  
   const navBlur = (isAtTop && !openDropdown && !isMobileMenuOpen)
     ? "blur(0px)"
     : "blur(12px)";
@@ -78,7 +81,18 @@ export default function Navbar({ onLoginClick }) {
   const shakeClass = shake
     ? "animate-navbar-shake"
     : "";
+  
+    const handleMouseEnter = () => {
+    clearTimeout(closeTimeout.current);
+    setOpenDropdown("vision");
+  };
 
+  const handleMouseLeave = () => {
+    closeTimeout.current = setTimeout(() => {
+      setOpenDropdown(null);
+    }, 150); // slight delay prevents flicker
+  };
+      
   return (
     <>
       <style>
@@ -107,38 +121,21 @@ export default function Navbar({ onLoginClick }) {
           WebkitBackdropFilter: navBlur,
           boxShadow: (isAtTop && !openDropdown && !isMobileMenuOpen)
             ? "none"
-            : "0 4px 32px 0 rgba(36,41,54,0.13)",
+            : "0 4px 32px 0 rgba(15,23,42,0.13)",
           borderBottom: "none",
           borderBottomLeftRadius: "0",
           borderBottomRightRadius: "0",
           transition: "background 0.7s cubic-bezier(.4,0,.2,1), backdrop-filter 0.7s cubic-bezier(.4,0,.2,1), box-shadow 0.7s cubic-bezier(.4,0,.2,1), border-radius 0.7s cubic-bezier(.4,0,.2,1), padding 0.7s cubic-bezier(.4,0,.2,1), opacity 0.7s cubic-bezier(.4,0,.2,1), transform 0.7s cubic-bezier(.4,0,.2,1)"
         }}
       >
-        {/* Overlay for dropdown highlight */}
-        {!isMobileMenuOpen && (
-          <div
-            className={`fixed inset-0] transition-all duration-500 ease-[cubic-bezier(.4,0,.2,1)]`}
-            style={{
-              background: "rgba(36, 41, 54, 0.75)",
-              pointerEvents: "auto",
-              transition: "background 0.5s cubic-bezier(.4,0,.2,1)"
-            }}
-            onClick={() => {
-              setOpenDropdown(null);
-              setIsMobileMenuOpen(false);
-            }}
-          />
-        )}
-
         <div className="w-full flex items-center justify-between px-[17px]">
           {/* Desktop: Dropdowns left, login center, logo right */}
           <div className="hidden lg:flex flex-1 items-center space-x-6">
-            {/* Example for Vision Dropdown */}
-            <div className="relative">
+            {/* Vision Dropdown on Hover */}
+            <div className="relative" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
               <button
-                onClick={() => toggleDropdown("vision")}
                 className={`text-white text-lg font-bold transition font-inter ${
-                  openDropdown === "vision" ? "-translate-y-1" : "hover:text-blue-400"
+                  openDropdown === "vision" ? "-translate-y-1 text-blue-400" : "hover:text-blue-400"
                 }`}
                 style={{
                   fontFamily: "'Inter', 'Helvetica Neue', Arial, 'sans-serif'",
@@ -151,7 +148,7 @@ export default function Navbar({ onLoginClick }) {
                 Vision
               </button>
               {openDropdown === "vision" && (
-                <div className="absolute left-0 mt-2 flex flex-col shadow-lg rounded-md py-2 z-60 min-w-48"
+                <div className="absolute left-0 flex flex-col shadow-lg rounded-md py-2 z-60 min-w-48"
                   style={{
                     background: "#fff", // White background
                     boxShadow: "0 8px 32px 0 rgba(0,0,0,0.12)"
@@ -161,7 +158,7 @@ export default function Navbar({ onLoginClick }) {
                     to="/vision/goals"
                     className="px-4 py-2 text-blue-900 hover:bg-blue-50 rounded-md whitespace-nowrap font-light"
                     style={{ fontFamily: "'Inter', 'Helvetica Neue', Arial, 'sans-serif'", fontWeight: 300 }}
-                    onClick={closeDropdown}
+                    onClick={closeDropdowns}
                   >
                     Our Goals
                   </Link>
@@ -169,7 +166,7 @@ export default function Navbar({ onLoginClick }) {
                     to="/vision/founders"
                     className="px-4 py-2 text-blue-900 hover:bg-blue-50 rounded-md whitespace-nowrap font-light"
                     style={{ fontFamily: "'Inter', 'Helvetica Neue', Arial, 'sans-serif'", fontWeight: 300 }}
-                    onClick={closeDropdown}
+                    onClick={closeDropdowns}
                   >
                     Founders
                   </Link>
@@ -177,7 +174,7 @@ export default function Navbar({ onLoginClick }) {
                     to="/vision/investors"
                     className="px-4 py-2 text-blue-900 hover:bg-blue-50 rounded-md whitespace-nowrap font-light"
                     style={{ fontFamily: "'Inter', 'Helvetica Neue', Arial, 'sans-serif'", fontWeight: 300 }}
-                    onClick={closeDropdown}
+                    onClick={closeDropdowns}
                   >
                     Investors
                   </Link>
@@ -185,12 +182,11 @@ export default function Navbar({ onLoginClick }) {
               )}
             </div>
 
-            {/* Support Dropdown */}
-            <div className="relative">
+            {/* Support Dropdown on Hover */}
+            <div className="relative" onMouseEnter={() => setOpenDropdown("support")} onMouseLeave={() => setOpenDropdown(null)}>
               <button
-                onClick={() => toggleDropdown("support")}
                 className={`text-white text-lg font-bold transition font-inter ${
-                  openDropdown === "support" ? "-translate-y-1" : "hover:text-blue-400"
+                  openDropdown === "support" ? "-translate-y-1 text-blue-400" : "hover:text-blue-400"
                 }`}
                 style={{
                   fontFamily: "'Inter', 'Helvetica Neue', Arial, 'sans-serif'",
@@ -213,7 +209,7 @@ export default function Navbar({ onLoginClick }) {
                     to="/support/tracking"
                     className="px-4 py-2 text-blue-900 hover:bg-blue-50 rounded-md whitespace-nowrap font-light"
                     style={{ fontFamily: "'Inter', 'Helvetica Neue', Arial, 'sans-serif'", fontWeight: 300 }}
-                    onClick={closeDropdown}
+                    onClick={closeDropdowns}
                   >
                     Tracking
                   </Link>
@@ -221,7 +217,7 @@ export default function Navbar({ onLoginClick }) {
                     to="/support/grievances"
                     className="px-4 py-2 text-blue-900 hover:bg-blue-50 rounded-md whitespace-nowrap font-light"
                     style={{ fontFamily: "'Inter', 'Helvetica Neue', Arial, 'sans-serif'", fontWeight: 300 }}
-                    onClick={closeDropdown}
+                    onClick={closeDropdowns}
                   >
                     Grievances
                   </Link>
@@ -229,7 +225,7 @@ export default function Navbar({ onLoginClick }) {
                     to="/support/contact-us"
                     className="px-4 py-2 text-blue-900 hover:bg-blue-50 rounded-md whitespace-nowrap font-light"
                     style={{ fontFamily: "'Inter', 'Helvetica Neue', Arial, 'sans-serif'", fontWeight: 300 }}
-                    onClick={closeDropdown}
+                    onClick={closeDropdowns}
                   >
                     Contact Us
                   </Link>
@@ -237,12 +233,11 @@ export default function Navbar({ onLoginClick }) {
               )}
             </div>
 
-            {/* Services Dropdown */}
-            <div className="relative">
+            {/* Services Dropdown on Hover */}
+            <div className="relative" onMouseEnter={() => setOpenDropdown("services")} onMouseLeave={() => setOpenDropdown(null)}>
               <button
-                onClick={() => toggleDropdown("services")}
                 className={`text-white text-lg font-bold transition font-inter ${
-                  openDropdown === "services" ? "-translate-y-1" : "hover:text-blue-400"
+                  openDropdown === "services" ? "-translate-y-1 text-blue-400" : "hover:text-blue-400"
                 }`}
                 style={{
                   fontFamily: "'Inter', 'Helvetica Neue', Arial, 'sans-serif'",
@@ -265,7 +260,7 @@ export default function Navbar({ onLoginClick }) {
                     to="/services/inventory-management"
                     className="px-4 py-2 text-blue-900 hover:bg-blue-50 rounded-md whitespace-nowrap font-light"
                     style={{ fontFamily: "'Inter', 'Helvetica Neue', Arial, 'sans-serif'", fontWeight: 300 }}
-                    onClick={closeDropdown}
+                    onClick={closeDropdowns}
                   >
                     Inventory Management
                   </Link>
@@ -273,7 +268,7 @@ export default function Navbar({ onLoginClick }) {
                     to="/services/billing-credit-management"
                     className="px-4 py-2 text-blue-900 hover:bg-blue-50 rounded-md whitespace-nowrap font-light"
                     style={{ fontFamily: "'Inter', 'Helvetica Neue', Arial, 'sans-serif'", fontWeight: 300 }}
-                    onClick={closeDropdown}
+                    onClick={closeDropdowns}
                   >
                     Billing and Credit Management
                   </Link>
@@ -281,7 +276,7 @@ export default function Navbar({ onLoginClick }) {
                     to="/services/customer-automation"
                     className="px-4 py-2 text-blue-900 hover:bg-blue-50 rounded-md whitespace-nowrap font-light"
                     style={{ fontFamily: "'Inter', 'Helvetica Neue', Arial, 'sans-serif'", fontWeight: 300 }}
-                    onClick={closeDropdown}
+                    onClick={closeDropdowns}
                   >
                     Customer Automation
                   </Link>
@@ -289,7 +284,7 @@ export default function Navbar({ onLoginClick }) {
                     to="/services/supply-chain-optimizations"
                     className="px-4 py-2 text-blue-900 hover:bg-blue-50 rounded-md whitespace-nowrap font-light"
                     style={{ fontFamily: "'Inter', 'Helvetica Neue', Arial, 'sans-serif'", fontWeight: 300 }}
-                    onClick={closeDropdown}
+                    onClick={closeDropdowns}
                   >
                     Supply Chain Optimizations
                   </Link>
@@ -297,7 +292,7 @@ export default function Navbar({ onLoginClick }) {
                     to="/services/ai-driven-analytics"
                     className="px-4 py-2 text-blue-900 hover:bg-blue-50 rounded-md whitespace-nowrap font-light"
                     style={{ fontFamily: "'Inter', 'Helvetica Neue', Arial, 'sans-serif'", fontWeight: 300 }}
-                    onClick={closeDropdown}
+                    onClick={closeDropdowns}
                   >
                     AI Driven Analytics
                   </Link>
@@ -305,12 +300,11 @@ export default function Navbar({ onLoginClick }) {
               )}
             </div>
 
-            {/* Partners Dropdown */}
-            <div className="relative">
+            {/* Partners Dropdown on Hover */}
+            <div className="relative" onMouseEnter={() => setOpenDropdown("partners")} onMouseLeave={() => setOpenDropdown(null)}>
               <button
-                onClick={() => toggleDropdown("partners")}
                 className={`text-white text-lg font-bold transition font-inter ${
-                  openDropdown === "partners" ? "-translate-y-1" : "hover:text-blue-400"
+                  openDropdown === "partners" ? "-translate-y-1 text-blue-400" : "hover:text-blue-400"
                 }`}
                 style={{
                   fontFamily: "'Inter', 'Helvetica Neue', Arial, 'sans-serif'",
@@ -333,7 +327,7 @@ export default function Navbar({ onLoginClick }) {
                     to="/partners/retailers"
                     className="px-4 py-2 text-blue-900 hover:bg-blue-50 rounded-md whitespace-nowrap font-light"
                     style={{ fontFamily: "'Inter', 'Helvetica Neue', Arial, 'sans-serif'", fontWeight: 300 }}
-                    onClick={closeDropdown}
+                    onClick={closeDropdowns}
                   >
                     Retailers
                   </Link>
@@ -341,7 +335,7 @@ export default function Navbar({ onLoginClick }) {
                     to="/partners/distributors"
                     className="px-4 py-2 text-blue-900 hover:bg-blue-50 rounded-md whitespace-nowrap font-light"
                     style={{ fontFamily: "'Inter', 'Helvetica Neue', Arial, 'sans-serif'", fontWeight: 300 }}
-                    onClick={closeDropdown}
+                    onClick={closeDropdowns}
                   >
                     Distributors
                   </Link>
@@ -349,7 +343,7 @@ export default function Navbar({ onLoginClick }) {
                     to="/partners/delivery-partners"
                     className="px-4 py-2 text-blue-900 hover:bg-blue-50 rounded-md whitespace-nowrap font-light"
                     style={{ fontFamily: "'Inter', 'Helvetica Neue', Arial, 'sans-serif'", fontWeight: 300 }}
-                    onClick={closeDropdown}
+                    onClick={closeDropdowns}
                   >
                     Delivery Partners
                   </Link>
@@ -605,8 +599,6 @@ export default function Navbar({ onLoginClick }) {
                   </div>
                 )}
               </div>
-
-              
             </div>
           </div>
         )}

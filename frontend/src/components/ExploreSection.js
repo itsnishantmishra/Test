@@ -1,34 +1,55 @@
-import { motion, useAnimation, useInView } from "framer-motion";
+import { motion, useAnimation, useInView, AnimatePresence } from "framer-motion";
 import { useRef, useEffect, useState } from "react";
 
 const ExploreSection = () => {
   const controls = useAnimation();
   const sectionRef = useRef(null);
-  const isInView = useInView(sectionRef, { once: true, amount:0.25 });
+  const isInView = useInView(sectionRef, { once: true, amount: 0.25 });
   const [selectedCard, setSelectedCard] = useState(null);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   const useIsMobile = () => {
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+    const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
-  useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth < 768);
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
+    useEffect(() => {
+      const handleResize = () => setIsMobile(window.innerWidth < 768);
+      window.addEventListener("resize", handleResize);
+      return () => window.removeEventListener("resize", handleResize);
+    }, []);
 
-  return isMobile;
-};
+    return isMobile;
+  };
 
   useEffect(() => {
     if (isInView) controls.start("visible");
   }, [isInView]);
 
   const cards = [
-    { img: "https://www.apple.com/v/iphone/home/cb/images/overview/consider/apple_intelligence__gbh77cvflkia_large.jpg", title: "Shop" },
-    { img: "https://www.apple.com/v/iphone/home/cb/images/overview/consider/camera__exi2qfijti0y_large.jpg", title: "Inventory" },
-    { img: "https://www.apple.com/v/iphone/home/cb/images/overview/consider/privacy__ckc0wa30o55y_large_2x.jpg", title: "Orders" },
-    { img: "https://www.apple.com/v/iphone/home/cb/images/overview/consider/safety__bwp7rsowtjiu_large.jpg", title: "Shelf" },
-    { img: "https://www.apple.com/v/iphone/home/cb/images/overview/consider/apple_intelligence__gbh77cvflkia_large.jpg", title: "You" }
+    { 
+      img: "https://www.apple.com/v/iphone/home/cb/images/overview/consider/apple_intelligence__gbh77cvflkia_large.jpg", 
+      title: "Shop",
+      description: "Discover our curated collection of premium products. Browse through categories, find the perfect items, and enjoy a seamless shopping experience with personalized recommendations."
+    },
+    { 
+      img: "https://www.apple.com/v/iphone/home/cb/images/overview/consider/camera__exi2qfijti0y_large.jpg", 
+      title: "Inventory",
+      description: "Real-time inventory management with smart tracking. Monitor stock levels, receive alerts for low inventory, and optimize your supply chain with our advanced analytics."
+    },
+    { 
+      img: "https://www.apple.com/v/iphone/home/cb/images/overview/consider/privacy__ckc0wa30o55y_large_2x.jpg", 
+      title: "Orders",
+      description: "Streamlined order processing and tracking. From placement to delivery, manage every aspect of your orders with our comprehensive order management system."
+    },
+    { 
+      img: "https://www.apple.com/v/iphone/home/cb/images/overview/consider/safety__bwp7rsowtjiu_large.jpg", 
+      title: "Shelf",
+      description: "Organize and optimize your product display. Smart shelf management with automated restocking suggestions and visual merchandising tools."
+    },
+    { 
+      img: "https://www.apple.com/v/iphone/home/cb/images/overview/consider/apple_intelligence__gbh77cvflkia_large.jpg", 
+      title: "You",
+      description: "Your personalized dashboard and profile. Access your preferences, order history, saved items, and customize your experience to match your unique needs."
+    }
   ];
 
   const containerVariants = {
@@ -56,11 +77,23 @@ const ExploreSection = () => {
       }
     }
   };
+
+  const handleCardClick = (idx) => {
+    setSelectedCard(idx);
+    setIsExpanded(true);
+  };
+
+  const handleCloseExpanded = () => {
+    setIsExpanded(false);
+    setTimeout(() => setSelectedCard(null), 300);
+  };
+
   const isMobile = useIsMobile();
+
   return (
     <motion.section
       ref={sectionRef}
-      className="w-full relative  z-30 flex flex-col items-center pt-24"
+      className="w-full relative z-30 flex flex-col items-center pt-24"
       variants={containerVariants}
       initial="hidden"
       animate={controls}
@@ -78,28 +111,21 @@ const ExploreSection = () => {
         }}
       >
         {cards.map((card, idx) => {
-          const isSelected = selectedCard === idx;
-
           return (
             <motion.div
               key={idx}
               className="flex-shrink-0 rounded-3xl shadow-lg flex items-center justify-center overflow-hidden relative cursor-pointer"
-              onClick={() => setSelectedCard(isSelected ? null : idx)}
+              onClick={() => handleCardClick(idx)}
               variants={cardVariants}
               style={{
-                width: isSelected ? "95vw" : isMobile ? "75vw" : "22vw",
-                minWidth: isSelected ? "95vw" : isMobile ? "75vw" : "22vw",
-                maxWidth: isSelected ? "95vw" : isMobile ? "75vw" : "22vw",
-                height: isMobile ?  "70vh": "95vh",
+                width: isMobile ? "75vw" : "22vw",
+                height: isMobile ? "70vh" : "95vh",
                 scrollSnapAlign: "start",
-                zIndex: isSelected ? 20 : 1,
-                transform: isSelected ? "scale(1.01)" : "none",
-                transition: "transform 0.4s ease-in-out"
+                zIndex: 1
               }}
             >
               <img
                 src={card.img}
-                alt={card.title}
                 className="object-cover w-full h-full rounded-3xl"
                 draggable={false}
                 loading="lazy"
@@ -111,21 +137,129 @@ const ExploreSection = () => {
                   {card.title}
                 </div>
                 <div className="text-base font-medium text-blue-200">
-                  {card.title} section
                 </div>
               </div>
-
-              {isSelected && (
-                <div
-                  className="absolute bottom-6 left-6 right-6 z-10 bg-white/80 backdrop-blur-md rounded-xl p-4 text-gray-900"
-                >
-                  <p>This is the detailed description of the {card.title} section.</p>
-                </div>
-              )}
             </motion.div>
           );
         })}
       </motion.div>
+
+      {/* Expanded Card Modal */}
+      <AnimatePresence>
+        {isExpanded && selectedCard !== null && (
+          <motion.div
+            className="fixed inset-0 z-50 flex items-center justify-center"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+            onClick={handleCloseExpanded}
+          >
+            {/* Background blur overlay */}
+            <motion.div
+              className="absolute inset-0 bg-black/30 backdrop-blur-md"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.4, ease: "easeInOut" }}
+            />
+
+            {/* Expanded card */}
+            <motion.div
+              className="relative w-[90vw] max-w-4xl h-[80vh] rounded-3xl overflow-hidden shadow-2xl"
+              initial={{ 
+                scale: 0.8, 
+                opacity: 0,
+                y: 50
+              }}
+              animate={{ 
+                scale: 1, 
+                opacity: 1,
+                y: 0
+              }}
+              exit={{ 
+                scale: 0.8, 
+                opacity: 0,
+                y: 50
+              }}
+              transition={{ 
+                type: "spring",
+                stiffness: 300,
+                damping: 30,
+                duration: 0.6
+              }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Background image with blur */}
+              <div className="absolute inset-0">
+                <img
+                  src={cards[selectedCard].img}
+                  alt={cards[selectedCard].title}
+                  className="object-cover w-full h-full filter blur-sm scale-105"
+                  draggable={false}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-black/40" />
+              </div>
+
+              {/* Content */}
+              <div className="relative z-10 h-full flex flex-col justify-between p-8">
+                {/* Header */}
+                <div className="text-white">
+                  <motion.h3
+                    className="font-eudoxus text-5xl font-bold tracking-tight mb-4"
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.2, duration: 0.5 }}
+                  >
+                    {cards[selectedCard].title}
+                  </motion.h3>
+                  <motion.p
+                    className="text-xl text-blue-200 mb-8"
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.3, duration: 0.5 }}
+                  >
+                  </motion.p>
+                </div>
+
+                {/* Text box */}
+                <motion.div
+                  className="bg-white/95 backdrop-blur-xl rounded-2xl p-8 shadow-xl"
+                  initial={{ opacity: 0, y: 50, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  transition={{ 
+                    delay: 0.4, 
+                    duration: 0.6,
+                    type: "spring",
+                    stiffness: 200,
+                    damping: 20
+                  }}
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <h4 className="text-2xl font-bold text-gray-900 mb-4">
+                    The {cards[selectedCard].title} Section
+                  </h4>
+                  <p className="text-gray-700 leading-relaxed text-lg">
+                    {cards[selectedCard].description}
+                  </p>
+                  
+                  {/* Action buttons */}
+                  <div className="flex flex-col items-center gap-4 mt-6">
+                    <button 
+                      className="px-8 py-3 bg-gradient-to-r from-blue-500 to-teal-500 text-white rounded-xl hover:from-blue-600 hover:to-teal-600 transition-all duration-200 font-medium shadow-lg"
+                      onClick={handleCloseExpanded}
+                    >
+                      Close
+                    </button>
+                  </div>
+                </motion.div>
+              </div>
+
+
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.section>
   );
 };
