@@ -1169,245 +1169,189 @@ export default function LandingPage() {
 
 
       
-          {/* Subscribe to Newsletter Section */}
-          <section 
-            ref={newsletterRef}
-            className={`relative min-h-screen py-20 overflow-hidden ${
-              isDarkMode ? 'bg-black' : 'bg-white'
-            }`}
-          >
-            {/* Animated Background */}
-            <div className="absolute inset-0 pointer-events-none">
-              {/* Dynamic Gradient Orbs */}
-              <div 
-                className="absolute w-96 h-96 bg-gradient-to-r from-purple-500/30 to-pink-500/30 rounded-full blur-3xl animate-pulse"
-                style={{
-                  top: '20%',
-                  left: '10%',
-                  transform: `translate(${mousePosition.x * 0.02}px, ${mousePosition.y * 0.02}px)`,
-                  transition: 'transform 0.3s ease-out'
-                }}
-              />
-              <div 
-                className="absolute w-80 h-80 bg-gradient-to-r from-blue-500/20 to-cyan-500/20 rounded-full blur-3xl animate-pulse"
-                style={{
-                  top: '60%',
-                  right: '15%',
-                  animationDelay: '1s',
-                  transform: `translate(${mousePosition.x * -0.01}px, ${mousePosition.y * -0.01}px)`,
-                  transition: 'transform 0.3s ease-out'
-                }}
-              />
-              <div 
-                className="absolute w-64 h-64 bg-gradient-to-r from-violet-500/25 to-indigo-500/25 rounded-full blur-3xl animate-pulse"
-                style={{
-                  top: '40%',
-                  left: '50%',
-                  animationDelay: '2s',
-                  transform: `translate(${mousePosition.x * 0.015}px, ${mousePosition.y * 0.015}px)`,
-                  transition: 'transform 0.3s ease-out'
-                }}
-              />
-              
-              {/* Floating Particles */}
-              {[...Array(20)].map((_, i) => (
-                <div
-                  key={i}
-                  className={`absolute w-1 h-1 rounded-full ${isDarkMode ? 'bg-white/20' : 'bg-black/10'} animate-pulse`}
-                  style={{
-                    top: `${Math.random() * 100}%`,
-                    left: `${Math.random() * 100}%`,
-                    animationDelay: `${Math.random() * 1}s`,
-                    animationDuration: `${2 + Math.random() * 3}s`
-                  }}
-                />
-              ))}
-            </div>
-
-            {/* Newsletter Content */}
-            <div
-              className={`relative z-10 w-full flex flex-col items-center justify-center text-center px-4 md:px-8 transition-all duration-1000 ease-out transform ${
-                isNewsletterVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-32'
-              }`}
+        {/* Subscribe to Newsletter Section */}
+        <section 
+          ref={newsletterRef}
+          className={`relative min-h-screen py-20 overflow-hidden ${
+            isDarkMode ? 'bg-black' : 'bg-white'
+          }`}
+        >
+          {/* Animated Background */}
+          <div className="absolute inset-0 pointer-events-none">
+            {/* Dynamic Gradient Orbs */}
+            <div 
+              className="absolute w-96 h-96 bg-gradient-to-r from-purple-500/30 to-pink-500/30 rounded-full blur-3xl animate-pulse"
               style={{
-                transitionDelay: isNewsletterVisible ? '200ms' : '0ms'
+                top: '20%',
+                left: '10%',
+                transform: `translate(${mousePosition.x * 0.02}px, ${mousePosition.y * 0.02}px)`,
+                transition: 'transform 0.3s ease-out'
               }}
-            >
-              <div className="max-w-6xl mx-auto space-y-12">
-                {/* Hero Text */}
-                <div className="space-y-8">
-                  <div className="inline-flex items-center space-x-3 px-6 py-3 rounded-full bg-gradient-to-r from-blue-500/20 to-pink-500/20 backdrop-blur-xl border border-white/10">
-                    <Sparkles className="w-5 h-5 text-purple-400" />
-                    <span className={`text-sm font-medium ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
-                      Newsletter
-                    </span>
-                  </div>
-                  
-                  <h2 className={`text-4xl md:text-6xl lg:text-7xl font-black leading-none tracking-tight transition-all duration-700 ${
-                    isDarkMode ? 'text-white' : 'text-gray-900'
-                  }`}>
-                    <span className="block">Subscribe to </span>
-                    <span className="block bg-gradient-to-r from-blue-600 via-blue-400 to-pink-400 bg-clip-text text-transparent animate-pulse">
-                      Sledge
-                    </span>
-                    <span className="block text-xl md:text-3xl lg:text-4xl font-light mt-4 opacity-70">
-                      Stay ahead of tomorrow
-                    </span>
-                  </h2>
-                  
-                  <p className={`text-lg md:text-xl max-w-3xl mx-auto leading-relaxed font-light ${
-                    isDarkMode ? 'text-gray-300' : 'text-gray-700'
-                  }`}>
-                    Exclusive insights, breakthrough innovations, and the future of business.
-                    <span className="block mt-2 bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent font-medium">
-                      Delivered with precision.
-                    </span>
-                  </p>
-                </div>
+            />
+            <div 
+              className="absolute w-80 h-80 bg-gradient-to-r from-blue-500/20 to-cyan-500/20 rounded-full blur-3xl animate-pulse"
+              style={{
+                top: '60%',
+                right: '15%',
+                animationDelay: '1s',
+                transform: `translate(${mousePosition.x * -0.01}px, ${mousePosition.y * -0.01}px)`,
+                transition: 'transform 0.3s ease-out'
+              }}
+            />
+            <div 
+              className="absolute w-64 h-64 bg-gradient-to-r from-violet-500/25 to-indigo-500/25 rounded-full blur-3xl animate-pulse"
+              style={{
+                top: '40%',
+                left: '50%',
+                animationDelay: '2s',
+                transform: `translate(${mousePosition.x * 0.015}px, ${mousePosition.y * 0.015}px)`,
+                transition: 'transform 0.3s ease-out'
+              }}
+            />
+            
+            {/* Floating Particles */}
+            {[...Array(20)].map((_, i) => (
+              <div
+                key={i}
+                className={`absolute w-1 h-1 rounded-full ${isDarkMode ? 'bg-white/20' : 'bg-black/10'} animate-pulse`}
+                style={{
+                  top: `${Math.random() * 100}%`,
+                  left: `${Math.random() * 100}%`,
+                  animationDelay: `${Math.random() * 1}s`,
+                  animationDuration: `${2 + Math.random() * 3}s`
+                }}
+              />
+            ))}
+          </div>
 
-                {/* Form Container */}
-                <div className={`relative max-w-2xl mx-auto p-8 md:p-12 rounded-3xl backdrop-blur-2xl transition-all duration-500 hover:scale-105 ${
-                  isDarkMode 
-                    ? 'bg-white/5 border border-white/10 shadow-2xl shadow-purple-500/10' 
-                    : 'bg-black/5 border border-black/10 shadow-2xl shadow-black/10'
+          {/* Newsletter Content */}
+          <div
+            className={`relative z-10 w-full flex flex-col items-center justify-center text-center px-4 md:px-8 transition-all duration-1000 ease-out transform ${
+              isNewsletterVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-32'
+            }`}
+            style={{
+              transitionDelay: isNewsletterVisible ? '200ms' : '0ms'
+            }}
+          >
+            <div className="max-w-6xl mx-auto space-y-12">
+              {/* Hero Text */}
+              <div className="space-y-8">
+                <div className="inline-flex items-center space-x-3 px-6 py-3 rounded-full bg-gradient-to-r from-blue-500/20 to-pink-500/20 backdrop-blur-xl border border-white/10">
+                  <Sparkles className="w-5 h-5 text-purple-400" />
+                  <span className={`text-sm font-medium ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+                    Newsletter
+                  </span>
+                </div>
+                
+                <h2 className={`text-4xl md:text-6xl lg:text-7xl font-black leading-none tracking-tight transition-all duration-700 ${
+                  isDarkMode ? 'text-white' : 'text-gray-900'
                 }`}>
-                  {/* Glow Effect */}
-                  <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-purple-500/20 via-pink-500/20 to-blue-500/20 blur-xl opacity-0 hover:opacity-100 transition-opacity duration-500"></div>
-                  
-                  <div className="relative z-10 space-y-8">
-                    <div className="space-y-6">
-                      <div className="relative group">
-                        <input
-                          type="text"
-                          name="name"
-                          value={formData.name}
-                          onChange={handleInputChange}
-                          className={`w-full px-8 py-6 text-lg rounded-2xl border-2 transition-all duration-300 focus:outline-none focus:scale-105 placeholder:text-lg ${
-                            isDarkMode
-                              ? 'border-gray-700 bg-gray-900/50 text-white placeholder-gray-500 focus:border-purple-400 focus:bg-gray-900/70 focus:shadow-2xl focus:shadow-purple-500/20'
-                              : 'border-gray-300 bg-white/70 text-gray-900 placeholder-gray-600 focus:border-purple-500 focus:bg-white focus:shadow-2xl focus:shadow-purple-500/20'
-                          }`}
-                          placeholder="Your name"
-                        />
-                        <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-purple-500 to-pink-500 opacity-0 group-hover:opacity-20 transition-opacity duration-300 pointer-events-none"></div>
-                      </div>
-
-                      <div className="relative group">
-                        <input
-                          type="email"
-                          name="email"
-                          value={formData.email}
-                          onChange={handleInputChange}
-                          className={`w-full px-8 py-6 text-lg rounded-2xl border-2 transition-all duration-300 focus:outline-none focus:scale-105 placeholder:text-lg ${
-                            isDarkMode
-                              ? 'border-gray-700 bg-gray-900/50 text-white placeholder-gray-500 focus:border-purple-400 focus:bg-gray-900/70 focus:shadow-2xl focus:shadow-purple-500/20'
-                              : 'border-gray-300 bg-white/70 text-gray-900 placeholder-gray-600 focus:border-purple-500 focus:bg-white focus:shadow-2xl focus:shadow-purple-500/20'
-                          }`}
-                          placeholder="your@email.com"
-                        />
-                        <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-purple-500 to-pink-500 opacity-0 group-hover:opacity-20 transition-opacity duration-300 pointer-events-none"></div>
-                      </div>
-                    </div>
-
-                    <button
-                      onClick={handleSubmit}
-                      disabled={isSubmitting || !formData.name || !formData.email}
-                      className={`group w-full px-12 py-6 rounded-2xl font-semibold text-lg transition-all duration-300 transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none bg-gradient-to-r from-purple-600 via-blue-600 to-blue-400 text-white hover:from-purple-500 hover:via-blue-400 hover:to-purple-500 hover:shadow-blue-500/50 ${
-                        isSubmitting ? 'animate-pulse' : ''
-                      }`}
-                    >
-                      {isSubmitting ? (
-                        <div className="flex items-center justify-center space-x-3">
-                          <div className=" text-2xl w-6 h-6 border-3 border-white/30 border-t-white rounded-full animate-spin"></div>
-                          <span>Joining the future...</span>
-                        </div>
-                      ) : (
-                        <div className="flex items-center justify-center space-x-3">
-                          <span>Join</span>
-                          <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform duration-300" />
-                        </div>
-                      )}
-                    </button>
-                  </div>
-                </div>
-
-                {/* Trust Indicators */}
-                <div className={`flex flex-wrap items-center justify-center gap-4 md:gap-8 text-sm ${
-                  isDarkMode ? 'text-gray-400' : 'text-gray-600'
+                  <span className="block">Subscribe to </span>
+                  <span className="block bg-gradient-to-r from-blue-600 via-blue-400 to-pink-400 bg-clip-text text-transparent animate-pulse">
+                    Sledge
+                  </span>
+                  <span className="block text-xl md:text-3xl lg:text-4xl font-light mt-4 opacity-70">
+                    Stay ahead of tomorrow
+                  </span>
+                </h2>
+                
+                <p className={`text-lg md:text-xl max-w-3xl mx-auto leading-relaxed font-light ${
+                  isDarkMode ? 'text-gray-300' : 'text-gray-700'
                 }`}>
-                  <div className="flex items-center space-x-2">
-                    <CheckCircle className="w-5 h-5 text-green-400" />
-                    <span>No spam, ever</span>
+                  Exclusive insights, breakthrough innovations, and the future of business.
+                  <span className="block mt-2 bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent font-medium">
+                    Delivered with precision.
+                  </span>
+                </p>
+              </div>
+
+              {/* Tally Form Container */}
+              <div className={`relative max-w-3xl mx-auto p-8 md:p-12 rounded-3xl backdrop-blur-2xl transition-all duration-500 hover:scale-105 overflow-hidden${
+                isDarkMode 
+                  ? 'bg-white/5 border border-white/10 shadow-2xl shadow-purple-500/10' 
+                  : 'bg-black/5 border border-black/10 shadow-2xl shadow-black/10'
+              }`}>
+                {/* Glow Effect */}
+                <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-purple-500/20 via-pink-500/20 to-blue-500/20 blur-xl opacity-0 hover:opacity-100 transition-opacity duration-500"></div>
+                
+                {/* Tally Form Embed */}
+                <div className="relative z-10">
+                  <div className="overflow-hidden rounded-2xl">
+                    <iframe
+                      src="https://tally.so/embed/3yAaYx?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1"
+                      width="100%"
+                      height="600"
+                      frameBorder="0"
+                      marginHeight="0"
+                      marginWidth="0"
+                      title="Newsletter Subscription"
+                      className="w-full min-h-[400px] transition-all duration-300"
+                      style={{
+                        background: 'transparent',
+                        border: 'none',
+                        borderRadius: '1rem',
+                        overflow:"hidden"
+                      }}
+                    ></iframe>
                   </div>
-                  <div className="flex items-center space-x-2">
-                    <CheckCircle className="w-5 h-5 text-green-400" />
-                    <span>Unsubscribe anytime</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <CheckCircle className="w-5 h-5 text-green-400" />
-                    <span>Premium content</span>
+                  
+                  {/* Custom Overlay for Enhanced Design */}
+                  <div className="absolute inset-0 pointer-events-none">
+                    {/* Subtle gradient overlay */}
+                    <div className={`absolute inset-0 rounded-2xl bg-gradient-to-br opacity-5 ${
+                      isDarkMode ? 'from-purple-400/20 to-blue-400/20' : 'from-purple-500/10 to-blue-500/10'
+                    }`}></div>
+                    
+                    {/* Corner accent elements */}
+                    <div className="absolute top-4 left-4 w-3 h-3 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full opacity-30 animate-pulse"></div>
+                    <div className="absolute top-4 right-4 w-2 h-2 bg-gradient-to-r from-blue-400 to-cyan-400 rounded-full opacity-40 animate-pulse" style={{animationDelay: '0.5s'}}></div>
+                    <div className="absolute bottom-4 left-4 w-2 h-2 bg-gradient-to-r from-violet-400 to-indigo-400 rounded-full opacity-35 animate-pulse" style={{animationDelay: '1s'}}></div>
+                    <div className="absolute bottom-4 right-4 w-3 h-3 bg-gradient-to-r from-pink-400 to-rose-400 rounded-full opacity-30 animate-pulse" style={{animationDelay: '1.5s'}}></div>
                   </div>
                 </div>
+                
+                {/* Decorative Elements */}
+                <div className="absolute -top-6 -left-6 w-12 h-12 bg-gradient-to-r from-purple-500/30 to-pink-500/30 rounded-full blur-xl animate-pulse"></div>
+                <div className="absolute -bottom-6 -right-6 w-16 h-16 bg-gradient-to-r from-blue-500/20 to-cyan-500/20 rounded-full blur-xl animate-pulse" style={{animationDelay: '1s'}}></div>
+              </div>
+
+              {/* Trust Indicators */}
+              <div className={`flex flex-wrap items-center justify-center gap-4 md:gap-8 text-sm ${
+                isDarkMode ? 'text-gray-400' : 'text-gray-600'
+              }`}>
+                <div className="flex items-center space-x-2">
+                  <CheckCircle className="w-5 h-5 text-green-400" />
+                  <span>No spam, ever</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <CheckCircle className="w-5 h-5 text-green-400" />
+                  <span>Unsubscribe anytime</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <CheckCircle className="w-5 h-5 text-green-400" />
+                  <span>Premium content</span>
+                </div>
+              </div>
+              
+              {/* Enhanced CTA Section */}
+              <div className="space-y-6">
+                <div className={`inline-flex items-center space-x-2 px-4 py-2 rounded-full text-sm font-medium ${
+                  isDarkMode ? 'bg-purple-900/30 text-purple-300' : 'bg-purple-100 text-purple-700'
+                }`}>
+                  <ArrowRight className="w-4 h-4" />
+                  <span>Join 10,000+ innovators already subscribed</span>
+                </div>
+                
+                <p className={`text-sm max-w-2xl mx-auto leading-relaxed ${
+                  isDarkMode ? 'text-gray-500' : 'text-gray-500'
+                }`}>
+                  By subscribing, you agree to receive our newsletter and promotional emails. 
+                  You can unsubscribe at any time. We respect your privacy and never share your data.
+                </p>
               </div>
             </div>
-
-            {/* Thank You Popup */}
-            {showThankYou && (
-              <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center z-50 p-4">
-                <div className={`relative max-w-lg w-full rounded-3xl p-12 shadow-2xl transition-all duration-500 transform scale-100 ${
-                  isDarkMode ? 'bg-gray-900 border border-gray-700' : 'bg-white border border-gray-200'
-                }`}>
-                  {/* Confetti Effect */}
-                  <div className="absolute inset-0 overflow-hidden rounded-3xl">
-                    {[...Array(10)].map((_, i) => (
-                      <div
-                        key={i}
-                        className="absolute w-2 h-2 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full animate-bounce"
-                        style={{
-                          top: `${Math.random() * 100}%`,
-                          left: `${Math.random() * 100}%`,
-                          animationDelay: `${Math.random() * 0.5}s`,
-                          animationDuration: `${0.2 + Math.random()}s`
-                        }}
-                      />
-                    ))}
-                  </div>
-
-                  <button
-                    onClick={closeThankYou}
-                    className={`absolute top-6 right-6 p-3 rounded-full transition-all duration-300 hover:scale-110 ${
-                      isDarkMode ? 'text-gray-400 hover:text-white hover:bg-gray-800' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
-                    }`}
-                  >
-                    <X className="w-6 h-6" />
-                  </button>
-
-                  <div className="relative z-10 text-center space-y-8">
-                    <div className="w-24 h-24 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full flex items-center justify-center mx-auto shadow-2xl shadow-green-500/30 animate-pulse">
-                      <CheckCircle className="w-12 h-12 text-white" />
-                    </div>
-                    
-                    <div className="space-y-4">
-                      <h3 className={`text-4xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent`}>
-                        Welcome to the Future!
-                      </h3>
-                      <p className={`text-xl ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
-                        You're now part of an exclusive community of innovators and visionaries.
-                      </p>
-                      <div className={`p-6 rounded-2xl ${isDarkMode ? 'bg-gray-800/50' : 'bg-gray-50'}`}>
-                        <p className={`text-lg font-medium ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
-                          🚀 What's next?
-                        </p>
-                        <p className={`text-sm mt-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                          Check your inbox for your welcome gift and exclusive early access to our newest features.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-          </section>
+          </div>
+        </section>
           </div>
 
   );
