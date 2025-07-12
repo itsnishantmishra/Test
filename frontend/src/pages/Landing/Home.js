@@ -1,5 +1,5 @@
 import { motion, useAnimation, useInView, useTransform, useScroll } from "framer-motion";
-import { BarChart, CreditCard, Package, ShoppingCart, TrendingUp, Users, Moon, Sun, ArrowRight, Star } from "lucide-react";
+import { BarChart, CreditCard, Package, ShoppingCart, TrendingUp, Users, Moon, Sun, ArrowRight, Star, CheckCircle, X, Sparkles } from "lucide-react";
 import Footer from "../../components/Footer";
 import kiranaShop from "../../assets/945.png";
 import SplitText from "../Utilities/SplitText";
@@ -11,6 +11,7 @@ import Home4 from "../../assets/Home4.png";
 import Money from "../../assets/HomeMoney.png";
 import ExploreSection from "../../components/ExploreSection";
 import BG2 from "../../assets/Background2.png";
+import CardSwap, { Card } from '../Utilities/CardSwap/cardSwap'
 
 import { useRef, useEffect, useState,} from "react";
 
@@ -18,24 +19,41 @@ import { useRef, useEffect, useState,} from "react";
 const handleAnimationComplete = () => {
   console.log('All letters have animated!');
 };
-const testimonials = [
-    {
-      quote: "This product redefined my workflow — pure excellence.",
-      name: "Aarav Mehta",
-      role: "UX Designer",
-    },
-    {
-      quote: "Everything just works. Effortlessly smooth experience.",
-      name: "Sara Li",
-      role: "Product Manager",
-    },
-    {
-      quote: "The design feels thoughtful. Apple-level polish, truly.",
-      name: "Jordan Smith",
-      role: "Developer Advocate",
-    },
-  ];
 
+
+const testimonials = [
+  {
+    name: 'Jane Doe',
+    role: 'Product Designer',
+    quote: 'This product has completely transformed the way we work. Simple, elegant, and powerful.',
+    image: 'https://randomuser.me/api/portraits/women/44.jpg',
+    rating: 5,
+  },
+  {
+    name: 'John Smith',
+    role: 'Software Engineer',
+    quote: 'Fast, intuitive and polished — couldn’t ask for more.',
+    image: 'https://randomuser.me/api/portraits/men/32.jpg',
+    rating: 4,
+  },
+  {
+    name: 'Alicia Keys',
+    role: 'Business Analyst',
+    quote: 'Saved us hours of manual work. The simplicity is genius.',
+    image: 'https://randomuser.me/api/portraits/women/68.jpg',
+    rating: 5,
+  },
+  {
+    name: 'Michael Chen',
+    role: 'CTO, TechLabs',
+    quote: 'Reliable, elegant and extremely efficient. Highly recommended!',
+    image: 'https://randomuser.me/api/portraits/men/45.jpg',
+    rating: 5,
+  },
+];
+
+
+  
 
 const features = [
   {
@@ -138,6 +156,13 @@ export default function LandingPage() {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isVideoLoaded, setIsVideoLoaded] = useState(false);
   const videoRef = useRef(null);
+
+  // Newsletter Section
+  const [showThankYou, setShowThankYou] = useState(false);
+  const [formData, setFormData] = useState({ name: '', email: '' });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+
   
   // Sledge Software Solutions section
   const sledgeRef = useRef(null);
@@ -188,8 +213,68 @@ export default function LandingPage() {
     },
     };
 
+    // Newsletter Working Logic
     
+      useEffect(() => {
+          const observer = new IntersectionObserver(
+            ([entry]) => {
+              if (entry.isIntersecting) {
+                setIsNewsletterVisible(true);
+              }
+            },
+            { threshold: 0.1 }
+          );
+
+          if (newsletterRef.current) {
+            observer.observe(newsletterRef.current);
+          }
+
+          return () => observer.disconnect();
+        }, []);
+
+      useEffect(() => {
+          const handleMouseMove = (e) => {
+            if (newsletterRef.current) {
+              const rect = newsletterRef.current.getBoundingClientRect();
+              setMousePosition({ 
+                x: e.clientX - rect.left, 
+                y: e.clientY - rect.top 
+              });
+            }
+          };
+
+        const section = newsletterRef.current;
+            if (section) {
+              section.addEventListener('mousemove', handleMouseMove);
+              return () => section.removeEventListener('mousemove', handleMouseMove);
+            }
+  }, []);
+
+        const handleSubmit = async (e) => {
+          e.preventDefault();
+          if (!formData.name || !formData.email) return;
+          
+          setIsSubmitting(true);
+          
+          // Simulate API call - replace with your actual API call
+          await new Promise(resolve => setTimeout(resolve, 1500));
+          
+          setIsSubmitting(false);
+          setShowThankYou(true);
+          setFormData({ name: '', email: '' });
+        };
+
+        const handleInputChange = (e) => {
+          setFormData({ ...formData, [e.target.name]: e.target.value });
+        };
+
+        const closeThankYou = () => {
+          setShowThankYou(false);
+        };
+  
     
+
+
   const handleVideoLoad = () => {
     setIsVideoLoaded(true);
     };
@@ -283,7 +368,35 @@ export default function LandingPage() {
     return () => observer.disconnect();
   }, []);
 
+  // Function for smooth scrolling
+ const handleSmoothScroll = (id, duration = 700) => {
+  const element = document.getElementById(id);
+  if (!element) return;
+
+  const targetY = element.getBoundingClientRect().top + window.pageYOffset;
+  const startY = window.pageYOffset;
+  const diff = targetY - startY;
+  let start;
+
+  function step(timestamp) {
+    if (!start) start = timestamp;
+    const time = timestamp - start;
+    // Ease in-out
+    const percent = Math.min(time / duration, 1);
+    const ease = percent < 0.5
+      ? 2 * percent * percent
+      : -1 + (4 - 2 * percent) * percent;
+    window.scrollTo(0, startY + diff * ease);
+    if (time < duration) {
+      window.requestAnimationFrame(step);
+    }
+  }
+  window.requestAnimationFrame(step);
+};
+
+
   // Main Animations
+
   useEffect(() => {
   let ticking = false;
   
@@ -325,7 +438,7 @@ export default function LandingPage() {
               progress = Math.min(1, Math.max(0, (start - rect.top) / (start - end)));
             }
             const width = Math.round((100 - 15 * progress) * 100) / 100;
-            const radius = Math.round(progress * 48 * 100) / 100;
+            const radius = Math.round(progress * 48 * 100) / 100; // Fixed: multiply by 100 for proper rounding
             whySledgeRef.current.style.width = `${width}vw`;
             whySledgeRef.current.style.borderRadius = `${radius}px`;
           }
@@ -373,8 +486,10 @@ export default function LandingPage() {
 
   
   return (
-   <div className={`min-h-screen font-eudoxus transition-colors duration-300 ${isDarkMode ? 'bg-gray-900 text-gray-100' : 'bg-white text-gray-900'}`}>
+   <div className={`min-h-screen font-eudoxus transition-colors duration-300 overflow-x-hidden -mb-16 ${isDarkMode ? 'bg-gray-900 text-gray-100' : 'bg-white text-gray-900'}`}>
       <div>
+
+
       {/* Hero Section with animated width and border radius */}
       <motion.section
           ref={heroRef}
@@ -427,14 +542,14 @@ export default function LandingPage() {
         />
         {/* Content aligned to left and above the video */}
         <div 
-          className="max-w-4xl relative z-20 flex flex-col items-start px-4 md:px-7 lg:px-12 ml-4 md:ml-16 lg:ml-8"
+          className="max-w-4xl relative z-20 flex flex-col items-start px-4 md:px-7 lg:px-12 ml-4 md:ml-16 lg:ml-8" // Reverted max-w-full, mx-auto, text-center
           style={{
             transform: "translateZ(0)", // Force hardware acceleration to prevent wobbling
           }}
         >
           <SplitText
             text="Bridging Retailers"
-            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl py-2 font-bold leading-tight mb-3 md:mb-6 tracking-tight text-white text-left"
+            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl py-2 font-bold leading-tight mb-3 md:mb-6 tracking-tight text-white text-left md:text-left" // Added md:text-left
             delay={80}
             duration={0.4}
             ease="power3.out"
@@ -448,7 +563,7 @@ export default function LandingPage() {
           />
           <SplitText
             text="& Distributors"
-            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-4 md:mb-6 tracking-tight text-white text-left"
+            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-4 md:mb-6 tracking-tight text-white text-left md:text-left" // Added md:text-left
             delay={80}
             duration={0.4}
             ease="power3.out"
@@ -461,6 +576,7 @@ export default function LandingPage() {
             onLetterAnimationComplete={handleAnimationComplete}
           />
           <button
+            onClick={() => handleSmoothScroll('why-sledge-section')} // Smooth scroll to Why Choose Sledge
             className="mt-4 md:mt-8 px-6 md:px-10 py-2 md:py-3 border border-white text-white rounded-full bg-white bg-opacity-0 backdrop-sm font-medium transition hover:bg-opacity-20 text-sm md:text-base"
             style={{
               font:"Eudoxus Sans",
@@ -471,55 +587,62 @@ export default function LandingPage() {
             Learn more
           </button>
         </div>
-      </motion.section>                          
+      </motion.section>     
+
+
+
       {/* Why Do We Exist Section */}
       <section
         ref={ExistRef}
-        className={`flex justify-between items-center py-8 md:py-14 pl-16 pr-2 w-full transition-all duration-1000 ease-out transform ${
+        className={`flex flex-col md:flex-row justify-between items-center py-8 md:py-14 px-4 md:px-16 w-full transition-all duration-1000 ease-out transform ${
           isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-20'
         } ${isDarkMode ? 'bg-gray-900' : 'bg-white'}`}
         style={{
           transitionDelay: isInView ? '200ms' : '0ms' // Added delay for later appearance
         }}
       >
-        <div className={`w-full justify-between items-center rounded-2xl flex flex-col items-start overflow-hidden ${isDarkMode ? 'bg-gray-900' : 'bg-white'}`}>
-          <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight mb-4 md:mb-6 tracking-tight text-left md:pr-20 pt-6 md:pt-12">
+        <div className={`w-full flex flex-col items-center md:items-start overflow-hidden md:ml-2 ml-0${isDarkMode ? 'bg-gray-900' : 'bg-white'}`}> {/* Reverted items-center for mobile */}
+          <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight mb-4 md:mb-6 tracking-tight text-left md:text-left md:pr-20 pt-6 md:pt-12"> {/* Reverted text-center for mobile */}
             <span className="bg-gradient-to-r from-purple-500 via-violet-500 to-teal-400 bg-clip-text text-transparent font-eudoxus">
               Why Do We Exist
             </span>
           </h2>
-          <div className={`justify-between text-center text-base md:text-xl text-left pl-4 md:mt-4 font-eudoxus w-full pr-4 md:pr-16 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+          <div className={`text-sm md:text-xl text-center md:text-left pl-0 md:mt-4 font-eudoxus w-full ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}> {/* Reverted text-center for mobile */}
             To empower retailers and distributors with modern, efficient, and elegant software solutions 
           </div>
-          <div className={`justify-between text-center text-base md:mt-2 md:text-xl  pl-4  mb-4 md:mb-8 font-eudoxus w-2/3 pr-4 md:pr-16 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+          <div className={`text-sm md:mt-2 md:text-xl text-center md:text-left pl-0 mb-4 md:mb-8 font-eudoxus w-full ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}> {/* Reverted text-center for mobile */}
              in the supply chain, enabling growth and clarity for every business.
           </div>
         </div>
       </section>
+
+
       </div>
+
+
       {/* Sledge Software Solutions Section */}    
       <section
       ref={sledgeRef}
-      className={`text-center px-4 md:mb-8 md:px-6 py-16 md:py-28 lg:py-60 rounded-3xl max-w-7xl mx-auto relative overflow-hidden transition-all duration-1000 ease-out transform ${
+      className={`text-center px-4 md:mb-8 py-16 md:py-28 lg:py-60 rounded-3xl w-full max-w-xl md:max-w-7xl mx-auto relative overflow-hidden transition-all duration-1000 ease-out transform ${ // Reverted max-w-full to max-w-7xl
       isSledgeVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-20'
       }`}
       style={{
-      transitionDelay: isSledgeVisible ? '300ms' : '0ms'
+      transitionDelay: isSledgeVisible ? '300ms' : '0ms',
+       minHeight: '70vh' // force enough height to keep content in view on mobile
+       
       }}
       >
         {/* Apple Background Image */}
         <motion.div
-        className="absolute inset-0 w-full h-full pointer-events-none select-none z-0"
-        style={{
-        backgroundImage: `url(${BG2})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundRepeat: "repeat",
-        minHeight: "120vh",
-        opacity:0.8,
-        filter: isDarkMode ? 'brightness(0.6) contrast(1.1)' : "brightness(0.7) contrast(1.3)",
-        scrolly
-      }}
+          className=" absolute inset-0 w-full h-full pointer-events-none select-none z-0"
+          style={{
+            backgroundImage: `url(${BG2})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            backgroundRepeat: "no-repeat",
+            opacity: 0.8,
+            filter: isDarkMode ? 'brightness(0.6) contrast(1.1)' : "brightness(0.7) contrast(1.3)",
+          }}
         />
 
         {/* Dark overlay for better text readability */}
@@ -550,36 +673,42 @@ export default function LandingPage() {
       transition: "height 0.2s cubic-bezier(0.22, 1, 0.36, 1), opacity 1s ease-out, filter 1s ease-out"
       }}
       >
-      <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight mb-4 md:mb-6 tracking-tight text-white drop-shadow-lg">
+      <h1 className="text-7xl mt-[150px] md:mt-0 sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight md:mb-6 tracking-tight text-white drop-shadow-lg">
       Sledge
       </h1>
-      <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-4 md:mb-6 tracking-tight text-blue-400 drop-shadow-lg">
+      <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-2 md:mb-6 tracking-tight text-blue-400 drop-shadow-lg">
       Software Solutions
       </h1>
       <p className="text-base md:text-xl mb-6 md:mb-10 max-w-2xl mx-auto px-4 text-gray-200 drop-shadow-lg">
       A premium UI crafted with Eudoxus Sans for clarity, elegance, and modern appeal. Designed for forward-thinkers.
       </p>
-      <button className="px-6 md:px-8 py-2 md:py-3 text-base md:text-lg rounded-full transition-all bg-white text-gray-900 hover:bg-gray-100 shadow-lg">
+      <button 
+        onClick={() => handleSmoothScroll('explore-section')} // Smooth scroll to ExploreSection
+        className="px-6 md:px-8 py-2 md:py-3 text-base md:text-lg rounded-full transition-all bg-white text-gray-900 hover:bg-gray-100 shadow-lg">
       Explore Now
       </button>
       </div>
-        </section>
+      </section>
 
-        {/* --- Fullscreen Scrollable Rounded Rectangles Section --- */}
-        <div>
+
+
+      {/* --- Fullscreen Scrollable Rounded Rectangles Section --- */}
+      <div id="explore-section"> {/* Added ID for smooth scrolling */}
           <ExploreSection />
-        </div>
+      </div>
         
         
       {/* Why Choose Sledge Section */}
       <section
         ref={whySledgeRef}
-        className={`w-full relative flex flex-col justify-center overflow-hidden mx-auto pt-8 md:pt-8 px-4 md:pl-16 pr-4 md:pr-16 transition-all duration-1000 ease-out ${
+        id="why-sledge-section"
+        className={`w-full relative flex flex-col justify-center overflow-hidden mx-auto pt-8 md:pt-8 px-4 md:px-16 transition-all duration-1000 ease-out ${
           isWhySledgeVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-20'
         } ${isDarkMode ? 'bg-gray-800' : 'bg-black'}`}
         style={{
           width: "100vw", // will be overridden dynamically
-          height: "130vh",
+          height: "auto", // Changed to auto for responsiveness
+          minHeight: "100vh", // Ensure it takes at least full viewport height
           borderRadius: "0px",
           boxShadow: heroRadius !== "0px" ? (isDarkMode ? "0 8px 32px 0 rgba(0,0,0,0.6)" : "0 8px 32px 0 rgba(36,41,54,0.13)") : undefined,
           transform: "translateZ(0)",
@@ -595,17 +724,17 @@ export default function LandingPage() {
             transitionDelay: isWhySledgeVisible ? '400ms' : '0ms',
           }}
         >
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-500 via-violet-500 to-teal-400 mb-8 md:mb-16">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-500 via-violet-500 to-teal-400 mb-8 md:mb-16 text-center md:text-left"> {/* Reverted text-center for mobile */}
             Why Choose Sledge
           </h2>
 
    {/* Mobile: Vertical stacked features with vertical scroll */}
-        <div className="block md:hidden max-h-[100vh] overflow-y-auto px-4 space-y-4 pb-4">
+        <div className="block md:hidden max-h-[calc(140vh-150px)] gap-2 overflow-y-auto px-0 space-y-4 pb-8"> {/* Adjusted max-h for better spacing */}
           {features.map((feature, idx) => (
             <div
               key={idx}
               onClick={() => setSelectedFeature(idx)}
-              className={`text-white p-6rounded-3xl shadow-xl cursor-pointer hover:scale-105 transition-transform flex flex-col justify-between ${
+              className={`text-white p-6 rounded-3xl shadow-xl cursor-pointer hover:scale-105 transition-transform flex flex-col justify-between ${
                 isDarkMode ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-900 hover:bg-gray-800'
               }`}
               style={{
@@ -620,7 +749,7 @@ export default function LandingPage() {
                   {feature.title}
                 </h3>
               </div>
-              <p className="mt-3 text-white text-sm text-center">
+              <p className="mt-3 text-white text-sm text-center mb-2">
                 {feature.desc}
               </p>
             </div>
@@ -629,7 +758,7 @@ export default function LandingPage() {
 
 
           {/* Desktop: Grid layout */}
-          <div className="hidden md:grid grid-cols-1 sm:grid-cols-2 gap-6">
+          <div className="hidden md:grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"> {/* Added lg:grid-cols-3 for larger screens */}
             {features.map((feature, idx) => (
               <div
                 key={idx}
@@ -674,6 +803,8 @@ export default function LandingPage() {
         </div>
       </section>
 
+
+
       {/* Modal Overlay */}
         {selectedFeature !== null && (
           <div
@@ -681,7 +812,7 @@ export default function LandingPage() {
             onClick={() => setSelectedFeature(null)}
           >
             <div
-              className={`  ml-8 mr-8 relative rounded-2xl p-4 md:p-6 w-full max-w-7xl h-[95vh] md:h-[90vh] overflow-auto ${
+              className={`mx-auto relative rounded-2xl p-4 md:p-6 w-full max-w-7xl h-[95vh] md:h-[90vh] overflow-auto ${
                 isDarkMode ? 'bg-gray-800 text-white' : 'bg-white text-gray-900'
               }`}
               onClick={(e) => e.stopPropagation()} // prevent close on inner click
@@ -708,11 +839,11 @@ export default function LandingPage() {
 
 
               {/* Title & Description */}
-              <h2 className={`text-2xl md:text-5xl font-bold mb-8 mt-8 pt-4 text-left pl-16  ${isDarkMode ? 'text-blue-400' : 'text-blue-900'}`}>
+              <h2 className={`text-2xl md:text-5xl font-bold mb-8 mt-8 pt-4 text-left pl-4 md:pl-16  ${isDarkMode ? 'text-blue-400' : 'text-blue-900'}`}>
                 {Modalfeatures[selectedFeature].title}
               </h2>
               <div className={`rounded-3xl pt-3 pb-3 ${isDarkMode ? 'bg-gray-600' : 'bg-gray-100'}`}>
-              <p className={`text-base md:text-2xl mt-4 pl-8 pr-8 py-8 tracking-wide ${isDarkMode ? 'text-gray-100' : 'text-gray-500'}`}>
+              <p className={`text-base md:text-2xl mt-4 px-4 py-8 tracking-wide ${isDarkMode ? 'text-gray-100' : 'text-gray-500'}`}>
                 {Modalfeatures[selectedFeature].desc}
               </p>
               </div>
@@ -721,146 +852,563 @@ export default function LandingPage() {
         )}
 
 
+
+      {/* AI */}
       <section 
         ref={pricingRef}
-        className={`w-full py-12 md:py-24 px-4 md:px-8 lg:px-16 transition-all duration-1000 ease-out transform ${
+        className={`w-full  md:py-0 px-4 md:px-8 lg:px-2 transition-all duration-1000 ease-out transform ${
           isPricingVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-20'
         } ${isDarkMode ? 'bg-gray-900' : 'bg-white'}`}
         style={{
           transitionDelay: isPricingVisible ? '500ms' : '0ms'
         }}
       >
-        <h2 className={`text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight mb-6 tracking-tight  ${isDarkMode ? 'text-white' : 'text-black'}`}>
-          Low On Margins, We Care Too
-        </h2>
+      
+      <div className="flex flex-row  md:flex-row items-left justify-top md:gap-4 gap-0 px-4 md:px-12 lg:px-20 md:pb-4">
+        {/* Left Text Section */}
+        <div className="w-full md:w-1/2 text-center md:text-left md:mt-64 mt-32">
+          <h2 className="text-3xl md:text-5xl font-bold mb-4">Still Managing Manually</h2>
+          <p className="text-gray-600 md:text-2xl mb-6">
+           Innovation meets AI
+          </p>
+          <button className="bg-blue-600 text-white px-6 py-3 rounded-full hover:bg-blue-700 transition">
+            Learn More
+          </button>
+        </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center sm:pl-64 ">
-          {/* Left Content */}
-          <div>
-            <h1 className={`text-6xl md:text-8xl font-extrabold leading-none mb-4 md:mb-6 font-arial pl-2 md:pl-16 sm:pl-32  ${isDarkMode ? 'text-white' : 'text-black'}`}>99</h1>
-            <p className={`text-lg md:text-2xl leading-snug max-w-md px-2 md:px-0  ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
-              the cost for all this because,<br />
-              <span className="font-semibold"> Sledge is never a burden.</span>
-            </p>
-          </div>
-
-          {/* Right Image Placeholder */}
-          <div className={`w-full h-[250px] md:h-[400px] rounded-2xl flex justify-end ${isDarkMode ? 'bg-gray-700' : 'bg-gray-200'}`}>
-            {/* Replace src with your image */}
+        {/* Right CardSwap Section */}
+        <div style={{ height: '600px', position: 'relative' }} className="w-full md:w-1/2 md:-mt-24 mb-32">
+      <CardSwap
+        cardDistance={60}
+        verticalDistance={70}
+        delay={2500}
+        pauseOnHover={false}
+      >
+        {/* Card 1 */}
+        <Card>
+          <div className={`border  shadow-lg overflow-hidden transition-transform transform hover:-translate-y-1 hover:shadow-xl duration-300 ${
+            isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
+          }`}>
+            <div className="p-6 md:p-8">
+              <h3 className="text-xl font-semibold mb-2">
+                Automated Orders
+              </h3>
+              <p className={isDarkMode ? 'text-gray-300' : 'text-gray-600'}>
+                AI-powered analytics to help you stay ahead of the curve.
+              </p>
+            </div>
             <img
-              src={Money}
-              alt="Sledge Pricing Visual"
-              className="object-cover w-full h-full justify-end rounded-2xl md:rounded-3xl"
-              style={{
-                filter: isDarkMode ? 'brightness(0.9) contrast(1.1)' : 'none'
-              }}
+              src="https://www.apple.com/v/watch/br/images/overview/consider/feature_health__b2yo83wkzoaa_small_2x.jpg"
+              alt="Insights"
+              className="w-full h-72 object-cover"
             />
           </div>
-        </div>
-      </section>
+        </Card>
 
-      {/* Testimonials */}
-      <section className="bg-gray-900 px-4 py-4">
-          <div className="max-w-full mx-auto text-left md:pl-16 mt-16 md:text-7xl mb-16">
-             <h2 className="text-3xl sm:text-4xl md:text-7xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-500 via-violet-500 to-teal-400 mb-8 md:mb-16">
-               The Masses
-             </h2>
-             
-             
-            <div className="grid gap-8 md:grid-cols-3 md:pt-4">
-              {testimonials.map((t, index) => (
-                <div
-                  key={index}
-                  className="bg-gray-200 p-6 rounded-3xl shadow-sm hover:shadow-md transition duration-300"
-                >
-                 {[...Array(testimonials.rating)].map((t, i) => (
-                    <Star key={5} className="w-5 h-5 text-yellow-400 fill-current" />
-                  ))}
-                  <p className="text-lg text-gray-800 mb-4 italic">“{t.quote}”</p>
-                  <div className="text-sm text-gray-600 font-medium">
-                    {t.name}
-                  </div>
-                  <div className="text-xs text-gray-400">{t.role}</div>
-                    </div>
-              ))}
+        {/* Card 2 */}
+        <Card>
+          <div className={`border shadow-lg overflow-hidden transition-transform transform hover:-translate-y-1 hover:shadow-xl duration-300 ${
+            isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
+          }`}>
+            <div className="p-6 md:p-8">
+              <h3 className="text-xl font-semibold mb-2">
+                In Sights
+              </h3>
+              <p className={isDarkMode ? 'text-gray-300' : 'text-gray-600'}>
+                AI-powered analytics to help you stay ahead of the curve.
+              </p>
             </div>
-            <div className="grid gap-8 md:grid-cols-3 md:pt-4">
-              {testimonials.map((t, index) => (
-                <div
-                  key={index}
-                  className="bg-gray-200 p-6 rounded-3xl shadow-sm hover:shadow-md transition duration-300"
-                >
-                  {[...Array(testimonials.rating)].map((t, i) => (
-                    <Star key={5} className="w-5 h-5 text-yellow-400 fill-current" />
-                  ))}
-                  <p className="text-lg text-gray-800 mb-4 italic">“{t.quote}”</p>
-                  <div className="text-sm text-gray-600 font-medium">
-                    {t.name}
-                  </div>
-                  <div className="text-xs text-gray-400">{t.role}</div>
-                    </div>
-              ))}
+            <img
+              src="https://www.apple.com/v/watch/br/images/overview/consider/feature_fitness__b5owsglf0ieu_small_2x.jpg"
+              alt="Insights"
+              className="w-full h-72 object-cover"
+            />
+          </div>
+        </Card>
+
+        {/* Card 3 */}
+        <Card>
+          <div className={`border shadow-lg overflow-hidden transition-transform transform hover:-translate-y-1 hover:shadow-xl duration-300 ${
+            isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
+          }`}>
+            <div className="p-6 md:p-8">
+              <h3 className="text-xl font-semibold mb-2">
+                Automatic Leads
+              </h3>
+              <p className={isDarkMode ? 'text-gray-300' : 'text-gray-600'}>
+                AI-powered analytics to help you stay ahead of the curve.
+              </p>
+            </div>
+            <img
+              src="https://www.apple.com/v/watch/br/images/overview/consider/feature_connectivity__cwtqydvy2laq_small.jpg"
+              alt="Insights"
+              className="w-full h-72 object-cover"
+            />
+          </div>
+        </Card>
+
+        {/* Card 4 */}
+        <Card>
+          <div className={`border shadow-lg overflow-hidden transition-transform transform hover:-translate-y-1 hover:shadow-xl duration-300 ${
+            isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
+          }`}>
+            <div className="p-6 md:p-8">
+              <h3 className="text-xl font-semibold mb-2">
+                AI Inventory Control
+              </h3>
+              <p className={isDarkMode ? 'text-gray-300' : 'text-gray-600'}>
+                AI-powered analytics to help you stay ahead of the curve.
+              </p>
+            </div>
+            <img
+              src="https://www.apple.com/v/watch/br/images/overview/consider/feature_health__b2yo83wkzoaa_small_2x.jpg"
+              alt="Insights"
+              className="w-full h-72 object-cover"
+            />
+          </div>
+        </Card>
+      </CardSwap>
+    </div>
+      </div>
+       </section>
+
+
+
+        {/* Pricing Section */}
+        <section className={`px-4 md:mt-8 mt-4 md:pt-40 pt-32 md:ml-0 ml-4 ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-white text-gray-900'}`}>
+          <div className="max-w-7xl mx-auto flex flex-row lg:flex-row items-center justify-between gap-4 md:gap-12 md:mt-0 mt-16">
+
+            {/* Left Section - Pricing Card */}
+            <div className="w-full lg:w-1/2 md:w-1/2 w-[600px] h-[300px] md:h-2/3 pt-16">
+              <div className={`rounded-3xl shadow-xl p-10 md:p-10 hover:shadow-2xl transition duration-300 ${
+                isDarkMode ? 'bg-gray-800 border border-gray-700' : 'bg-gray-200 border border-gray-200'
+              }`}>
+                
+                {/* Price */}
+                <div className="flex justify-center items-end gap-2 mb-4">
+                  <span className={`text-5xl sm:text-6xl md:text-7xl font-extrabold ${
+                    isDarkMode ? 'text-white' : 'text-gray-700'
+                  }`}>
+                    ₹99
+                  </span>
+                  <span className={`text-base mb-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>/month</span>
+                </div>
+
+                {/* Features */}
+                <ul className={`text-sm md:text-base space-y-4 mb-10 text-center pr-8 ${
+                  isDarkMode ? 'text-gray-300' : 'text-gray-600'
+                }`}>
+                  <li> Unlimited access to all features</li>
+                  <li> AI-powered automation tools</li>
+                  <li>24/7 support & updates</li>
+                  <li> Instant onboarding</li>
+                </ul>
+
+                {/* CTA Button */}
+                <div className="flex justify-center">
+                  <button className="bg-blue-600 hover:bg-blue-700 text-white text-lg px-4 py-3 rounded-full transition duration-300 shadow-md hover:shadow-lg md:w-1/3 w-auto">
+                    Get Started Now
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Section - Text */}
+            <div className="w-full lg:w-1/2 text-left pt-40 md:pt-16">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-2">
+                Low on Margins,
+              </h2>
+              <p className="text-2xl md:text-2xl mb-6">
+                We care too..
+              </p>
+              <p className={`text-sm md:text-lg ${
+                isDarkMode ? 'text-gray-300' : 'text-gray-600'
+              }`}>
+                Whether you're scaling your business or just starting out, got you covered.
+              </p>
             </div>
 
           </div>
         </section>
-      
-      {/* Subscribe to Newsletter Section */}
-      <div 
-        ref={newsletterRef}
-        className={`w-full py-12 md:py-20 flex flex-col items-center justify-center text-center px-4 transition-all duration-1000 ease-out transform ${
-          isNewsletterVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-20'
-        } ${isDarkMode ? 'bg-gray-900' : 'bg-white'}`}
-        style={{
-          transitionDelay: isNewsletterVisible ? '600ms' : '0ms'
-        }}
-      >
-        <h2 className={`text-3xl md:text-4xl lg:text-5xl font-bold mb-4 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Subscribe to Our Newsletter</h2>
-        <p className={`text-base md:text-lg max-w-xl mb-6 md:mb-8 px-4 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-          Stay updated with the latest features, business tools, and tips to grow with Sledge.
-        </p>
 
-        <form className="w-full max-w-sm md:max-w-md flex flex-col gap-4">
-          <input
-            type="text"
-            placeholder="Name"
-            className={`flex-1 px-4 md:px-6 py-2 md:py-3 rounded-full border focus:outline-none focus:ring-2 focus:ring-violet-500 transition-colors ${
-              isDarkMode 
-                ? 'border-gray-600 bg-gray-800 text-white placeholder-gray-400' 
-                : 'border-gray-300 bg-white text-gray-900 placeholder-gray-500'
+
+
+
+
+      {/* Highlight Section */}
+      <section className={`w-full py-16 md:pt-40 pt-40 pl-8 -ml-8 ${isDarkMode ? 'bg-gray-900' : 'bg-white'}`}>
+        <div className="max-w-[90%] mx-auto md:h-[80vh] h-[60vh] flex flex-row lg:flex-row md:gap-8 gap-4">
+
+          {/* Left Subsection */}
+          <div className={`w-full lg:w-1/2 relative rounded-3xl overflow-hidden flex items-start justify-center p-6 md:p-10 ${
+            isDarkMode ? 'bg-gray-800' : 'bg-gray-100'
+          }`}>
+
+            {/* Text content (top 40%) */}
+            <div className="z-10 w-full text-center mt-2 md:mt-8">
+              <h3 className={`text-2xl md:text-3xl font-semibold tracking-tight ${
+                isDarkMode ? 'text-white' : 'text-gray-900'
+              }`}>
+                Built for Modern World
+              </h3>
+              <p className={`mt-2 text-sm md:text-base mb-2 ${
+                isDarkMode ? 'text-gray-300' : 'text-gray-700'
+              }`}>
+                Experience design and efficiency like never before.
+              </p>
+            </div>
+
+            {/* Background image at bottom 60% */}
+            <div
+              className="absolute bottom-0 left-0 w-full h-[70%] z-0"
+              style={{
+                backgroundImage: `url('https://www.apple.com/v/watch/br/images/overview/essentials/banner_bands__cd5m1690azaq_medium.jpg')`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center'
+              }}
+            ></div>
+          </div>
+
+          {/* Right Subsection */}
+          <div
+            className="w-full lg:w-1/2 relative rounded-3xl overflow-hidden flex items-center justify-center p-6 md:p-10"
+            style={{
+              backgroundImage: `url('https://www.apple.com/v/watch/br/images/overview/essentials/banner_airpods__dc2h7dg71l0m_large.jpg')`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              backgroundColor: isDarkMode ? '#1f2937' : '#e5e7eb' // Tailwind: gray-800 / gray-200
+            }}
+          >
+            <div className="bg-transparent rounded-xl px-6 py-2 text-center mb-16">
+              <h3 className={`text-3xl md:text-4xl font-bold tracking-tight ${
+                isDarkMode ? 'text-gray-900' : 'text-gray-900'
+              }`}>
+                Security at Peak
+              </h3>
+              <p className={`mt-3 mb-16 text-base md:text-lg ${
+                isDarkMode ? 'text-gray-900' : 'text-gray-700'
+              }`}>
+                AI powered Security mechanism
+              </p>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+
+      {/* Testimonials */}
+      <section className={`${isDarkMode ? 'bg-gray-900' : 'bg-white'} px-4 py-20`}>
+        <div className="max-w-6xl mx-auto">
+          
+          {/* Section Heading */}
+          <h2 className={`text-3xl sm:text-4xl md:text-5xl font-bold mb-16 text-center ${
+            isDarkMode ? 'text-white' : 'text-gray-900'
+          }`}>
+            What People Say
+          </h2>
+
+          {/* Testimonials Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            {testimonials.map((t, index) => (
+              <div
+                key={index}
+                className={`rounded-3xl p-6 shadow-md hover:shadow-lg transition-shadow duration-300 border ${
+                  isDarkMode
+                    ? 'bg-gray-800 border-gray-700 text-gray-200'
+                    : 'bg-white border-gray-200 text-gray-700'
+                }`}
+              >
+                {/* Avatar and Name */}
+                <div className="flex items-center gap-4 mb-4">
+                  <img
+                    src={t.image}
+                    alt={t.name}
+                    className="w-12 h-12 rounded-full object-cover"
+                  />
+                  <div>
+                    <div className={`text-sm font-semibold ${
+                      isDarkMode ? 'text-white' : 'text-gray-900'
+                    }`}>
+                      {t.name}
+                    </div>
+                    <div className={`text-xs ${
+                      isDarkMode ? 'text-gray-400' : 'text-gray-500'
+                    }`}>
+                      {t.role}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Quote */}
+                <p className={`text-sm leading-relaxed italic mb-4 ${
+                  isDarkMode ? 'text-gray-300' : 'text-gray-700'
+                }`}>
+                  “{t.quote}”
+                </p>
+
+                {/* Star Rating */}
+                <div className="flex items-center">
+                  {[...Array(t.rating)].map((_, i) => (
+                    <svg
+                      key={i}
+                      className="w-4 h-4 text-yellow-400 mr-1"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path d="M10 15l-5.878 3.09 1.122-6.545L.487 6.91l6.562-.955L10 0l2.951 5.955 6.562.955-4.757 4.635 1.122 6.545z" />
+                    </svg>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+
+
+      
+          {/* Subscribe to Newsletter Section */}
+          <section 
+            ref={newsletterRef}
+            className={`relative min-h-screen py-20 overflow-hidden ${
+              isDarkMode ? 'bg-black' : 'bg-white'
             }`}
-          />
-          <input
-            type="email"
-            placeholder="Email"
-            className={`flex-1 px-4 md:px-6 py-2 md:py-3 rounded-full border focus:outline-none focus:ring-2 focus:ring-violet-500 transition-colors ${
-              isDarkMode 
-                ? 'border-gray-600 bg-gray-800 text-white placeholder-gray-400' 
-                : 'border-gray-300 bg-white text-gray-900 placeholder-gray-500'
-            }`}
-          />
-        </form>
-        <button
-          type="submit"
-          className={`px-6 py-3 md:py-4 font-semibold rounded-full transition duration-300 mt-2 ${
-            isDarkMode 
-              ? 'bg-white text-gray-900 hover:bg-gray-100' 
-              : 'bg-black text-white hover:opacity-90'
-          }`}
-        >
-          Subscribe
-        </button>
-      </div>
-    </div>
+          >
+            {/* Animated Background */}
+            <div className="absolute inset-0 pointer-events-none">
+              {/* Dynamic Gradient Orbs */}
+              <div 
+                className="absolute w-96 h-96 bg-gradient-to-r from-purple-500/30 to-pink-500/30 rounded-full blur-3xl animate-pulse"
+                style={{
+                  top: '20%',
+                  left: '10%',
+                  transform: `translate(${mousePosition.x * 0.02}px, ${mousePosition.y * 0.02}px)`,
+                  transition: 'transform 0.3s ease-out'
+                }}
+              />
+              <div 
+                className="absolute w-80 h-80 bg-gradient-to-r from-blue-500/20 to-cyan-500/20 rounded-full blur-3xl animate-pulse"
+                style={{
+                  top: '60%',
+                  right: '15%',
+                  animationDelay: '1s',
+                  transform: `translate(${mousePosition.x * -0.01}px, ${mousePosition.y * -0.01}px)`,
+                  transition: 'transform 0.3s ease-out'
+                }}
+              />
+              <div 
+                className="absolute w-64 h-64 bg-gradient-to-r from-violet-500/25 to-indigo-500/25 rounded-full blur-3xl animate-pulse"
+                style={{
+                  top: '40%',
+                  left: '50%',
+                  animationDelay: '2s',
+                  transform: `translate(${mousePosition.x * 0.015}px, ${mousePosition.y * 0.015}px)`,
+                  transition: 'transform 0.3s ease-out'
+                }}
+              />
+              
+              {/* Floating Particles */}
+              {[...Array(20)].map((_, i) => (
+                <div
+                  key={i}
+                  className={`absolute w-1 h-1 rounded-full ${isDarkMode ? 'bg-white/20' : 'bg-black/10'} animate-pulse`}
+                  style={{
+                    top: `${Math.random() * 100}%`,
+                    left: `${Math.random() * 100}%`,
+                    animationDelay: `${Math.random() * 1}s`,
+                    animationDuration: `${2 + Math.random() * 3}s`
+                  }}
+                />
+              ))}
+            </div>
+
+            {/* Newsletter Content */}
+            <div
+              className={`relative z-10 w-full flex flex-col items-center justify-center text-center px-4 md:px-8 transition-all duration-1000 ease-out transform ${
+                isNewsletterVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-32'
+              }`}
+              style={{
+                transitionDelay: isNewsletterVisible ? '200ms' : '0ms'
+              }}
+            >
+              <div className="max-w-6xl mx-auto space-y-12">
+                {/* Hero Text */}
+                <div className="space-y-8">
+                  <div className="inline-flex items-center space-x-3 px-6 py-3 rounded-full bg-gradient-to-r from-blue-500/20 to-pink-500/20 backdrop-blur-xl border border-white/10">
+                    <Sparkles className="w-5 h-5 text-purple-400" />
+                    <span className={`text-sm font-medium ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+                      Newsletter
+                    </span>
+                  </div>
+                  
+                  <h2 className={`text-4xl md:text-6xl lg:text-7xl font-black leading-none tracking-tight transition-all duration-700 ${
+                    isDarkMode ? 'text-white' : 'text-gray-900'
+                  }`}>
+                    <span className="block">Subscribe to </span>
+                    <span className="block bg-gradient-to-r from-blue-600 via-blue-400 to-pink-400 bg-clip-text text-transparent animate-pulse">
+                      Sledge
+                    </span>
+                    <span className="block text-xl md:text-3xl lg:text-4xl font-light mt-4 opacity-70">
+                      Stay ahead of tomorrow
+                    </span>
+                  </h2>
+                  
+                  <p className={`text-lg md:text-xl max-w-3xl mx-auto leading-relaxed font-light ${
+                    isDarkMode ? 'text-gray-300' : 'text-gray-700'
+                  }`}>
+                    Exclusive insights, breakthrough innovations, and the future of business.
+                    <span className="block mt-2 bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent font-medium">
+                      Delivered with precision.
+                    </span>
+                  </p>
+                </div>
+
+                {/* Form Container */}
+                <div className={`relative max-w-2xl mx-auto p-8 md:p-12 rounded-3xl backdrop-blur-2xl transition-all duration-500 hover:scale-105 ${
+                  isDarkMode 
+                    ? 'bg-white/5 border border-white/10 shadow-2xl shadow-purple-500/10' 
+                    : 'bg-black/5 border border-black/10 shadow-2xl shadow-black/10'
+                }`}>
+                  {/* Glow Effect */}
+                  <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-purple-500/20 via-pink-500/20 to-blue-500/20 blur-xl opacity-0 hover:opacity-100 transition-opacity duration-500"></div>
+                  
+                  <div className="relative z-10 space-y-8">
+                    <div className="space-y-6">
+                      <div className="relative group">
+                        <input
+                          type="text"
+                          name="name"
+                          value={formData.name}
+                          onChange={handleInputChange}
+                          className={`w-full px-8 py-6 text-lg rounded-2xl border-2 transition-all duration-300 focus:outline-none focus:scale-105 placeholder:text-lg ${
+                            isDarkMode
+                              ? 'border-gray-700 bg-gray-900/50 text-white placeholder-gray-500 focus:border-purple-400 focus:bg-gray-900/70 focus:shadow-2xl focus:shadow-purple-500/20'
+                              : 'border-gray-300 bg-white/70 text-gray-900 placeholder-gray-600 focus:border-purple-500 focus:bg-white focus:shadow-2xl focus:shadow-purple-500/20'
+                          }`}
+                          placeholder="Your name"
+                        />
+                        <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-purple-500 to-pink-500 opacity-0 group-hover:opacity-20 transition-opacity duration-300 pointer-events-none"></div>
+                      </div>
+
+                      <div className="relative group">
+                        <input
+                          type="email"
+                          name="email"
+                          value={formData.email}
+                          onChange={handleInputChange}
+                          className={`w-full px-8 py-6 text-lg rounded-2xl border-2 transition-all duration-300 focus:outline-none focus:scale-105 placeholder:text-lg ${
+                            isDarkMode
+                              ? 'border-gray-700 bg-gray-900/50 text-white placeholder-gray-500 focus:border-purple-400 focus:bg-gray-900/70 focus:shadow-2xl focus:shadow-purple-500/20'
+                              : 'border-gray-300 bg-white/70 text-gray-900 placeholder-gray-600 focus:border-purple-500 focus:bg-white focus:shadow-2xl focus:shadow-purple-500/20'
+                          }`}
+                          placeholder="your@email.com"
+                        />
+                        <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-purple-500 to-pink-500 opacity-0 group-hover:opacity-20 transition-opacity duration-300 pointer-events-none"></div>
+                      </div>
+                    </div>
+
+                    <button
+                      onClick={handleSubmit}
+                      disabled={isSubmitting || !formData.name || !formData.email}
+                      className={`group w-full px-12 py-6 rounded-2xl font-semibold text-lg transition-all duration-300 transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none bg-gradient-to-r from-purple-600 via-blue-600 to-blue-400 text-white hover:from-purple-500 hover:via-blue-400 hover:to-purple-500 hover:shadow-blue-500/50 ${
+                        isSubmitting ? 'animate-pulse' : ''
+                      }`}
+                    >
+                      {isSubmitting ? (
+                        <div className="flex items-center justify-center space-x-3">
+                          <div className=" text-2xl w-6 h-6 border-3 border-white/30 border-t-white rounded-full animate-spin"></div>
+                          <span>Joining the future...</span>
+                        </div>
+                      ) : (
+                        <div className="flex items-center justify-center space-x-3">
+                          <span>Join</span>
+                          <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform duration-300" />
+                        </div>
+                      )}
+                    </button>
+                  </div>
+                </div>
+
+                {/* Trust Indicators */}
+                <div className={`flex flex-wrap items-center justify-center gap-4 md:gap-8 text-sm ${
+                  isDarkMode ? 'text-gray-400' : 'text-gray-600'
+                }`}>
+                  <div className="flex items-center space-x-2">
+                    <CheckCircle className="w-5 h-5 text-green-400" />
+                    <span>No spam, ever</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <CheckCircle className="w-5 h-5 text-green-400" />
+                    <span>Unsubscribe anytime</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <CheckCircle className="w-5 h-5 text-green-400" />
+                    <span>Premium content</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Thank You Popup */}
+            {showThankYou && (
+              <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center z-50 p-4">
+                <div className={`relative max-w-lg w-full rounded-3xl p-12 shadow-2xl transition-all duration-500 transform scale-100 ${
+                  isDarkMode ? 'bg-gray-900 border border-gray-700' : 'bg-white border border-gray-200'
+                }`}>
+                  {/* Confetti Effect */}
+                  <div className="absolute inset-0 overflow-hidden rounded-3xl">
+                    {[...Array(10)].map((_, i) => (
+                      <div
+                        key={i}
+                        className="absolute w-2 h-2 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full animate-bounce"
+                        style={{
+                          top: `${Math.random() * 100}%`,
+                          left: `${Math.random() * 100}%`,
+                          animationDelay: `${Math.random() * 0.5}s`,
+                          animationDuration: `${0.2 + Math.random()}s`
+                        }}
+                      />
+                    ))}
+                  </div>
+
+                  <button
+                    onClick={closeThankYou}
+                    className={`absolute top-6 right-6 p-3 rounded-full transition-all duration-300 hover:scale-110 ${
+                      isDarkMode ? 'text-gray-400 hover:text-white hover:bg-gray-800' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
+                    }`}
+                  >
+                    <X className="w-6 h-6" />
+                  </button>
+
+                  <div className="relative z-10 text-center space-y-8">
+                    <div className="w-24 h-24 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full flex items-center justify-center mx-auto shadow-2xl shadow-green-500/30 animate-pulse">
+                      <CheckCircle className="w-12 h-12 text-white" />
+                    </div>
+                    
+                    <div className="space-y-4">
+                      <h3 className={`text-4xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent`}>
+                        Welcome to the Future!
+                      </h3>
+                      <p className={`text-xl ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                        You're now part of an exclusive community of innovators and visionaries.
+                      </p>
+                      <div className={`p-6 rounded-2xl ${isDarkMode ? 'bg-gray-800/50' : 'bg-gray-50'}`}>
+                        <p className={`text-lg font-medium ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+                          🚀 What's next?
+                        </p>
+                        <p className={`text-sm mt-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                          Check your inbox for your welcome gift and exclusive early access to our newest features.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </section>
+          </div>
+
   );
 }
-
-
-
-
-
-
-
-
-
-
