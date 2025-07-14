@@ -4,6 +4,7 @@ import Footer from "./Footer";
 import Login from "./Login";
 
 export default function NavbarWrapper({ children }) {
+  
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
   const openLoginModal = () => setIsLoginModalOpen(true);
@@ -21,13 +22,13 @@ export default function NavbarWrapper({ children }) {
       <Footer />
 
       {/* Login Modal */}
-      {isLoginModalOpen && (
+            {isLoginModalOpen && (
         <div
-          className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm"  style={{ zIndex: 9999 }}
+          className="fixed inset-0 z-[9999] flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm px-4 sm:px-8 py-6 overflow-y-auto"
           onClick={closeLoginModal}
         >
           <div
-            className="bg-white p-8 rounded-lg shadow-lg w-full max-w-lg"
+            className="bg-white rounded-2xl shadow-2xl w-full max-w-xl max-h-full overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
             <Login />
