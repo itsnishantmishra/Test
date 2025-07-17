@@ -204,8 +204,12 @@ const ExploreSection = () => { // Removed isDarkMode from props to manage it int
                 {/* Overlay text */}
                 <div className="absolute top-0 left-0 p-5 z-10 text-white drop-shadow-lg">
                   <div className="font-eudoxus text-3xl font-bold tracking-tight">
-                    {card.title}
+                    {card.title}, 
+                    <div className="font-eudoxus text-sm font-bold tracking-tight text-blue-400">
+                    Click to know more
                   </div>
+                  </div>
+
                   <div className="text-base font-medium text-blue-200">
                   </div>
                 </div>
@@ -330,147 +334,135 @@ const ExploreSection = () => { // Removed isDarkMode from props to manage it int
         </AnimatePresence>
       </motion.section>
 
-      {/* Beautiful Apple-style Navigation Bar */}
-      <AnimatePresence>
-        {isInView && (
-          <motion.div
-            className="fixed bottom-6 md:left-[450px] left-[70px] letransform -translate-x-1/2 z-40"
-            initial={{ opacity: 0, y: 100, scale: 0.8 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 100, scale: 0.8 }}
-            transition={{
-              type: "spring",
-              stiffness: 300,
-              damping: 25,
-              duration: 0.8
-            }}
-          >
-            <div className="
-              backdrop-blur-2xl rounded-full px-10 py-2 border transition-all duration-300 bg-white/30 border-white/25 text-white"
-            >
-              <div className="flex items-center space-x-8">
+        {/* Apple Animation */}
+                <AnimatePresence>
+                  {isInView && (
+                    <motion.div
+                      className="fixed bottom-6 left-0 right-0 z-40 flex justify-center rounded-full"
+                      initial={{ opacity: 0, y: 100, scale: 0.8 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: 100, scale: 0.8 }}
+                      transition={{
+                        type: "spring",
+                        stiffness: 300,
+                        damping: 25,
+                        duration: 0.8,
+                      }}
+                    >
+                      <div
+                        className="
+                          backdrop-blur-xl bg-white/10 border border-white/20 rounded-full px-6 py-0 pt-2 
+                          shadow-2xl shadow-black/20 transition-all duration-300
+                          supports-[backdrop-filter]:bg-white/10
+                        "
+                        style={{
+                          backdropFilter: 'blur(20px) saturate(180%)',
+                          WebkitBackdropFilter: 'blur(20px) saturate(180%)',
+                        }}
+                      >
+                        <div className="flex items-center space-x-6">
+                          {/* Previous Button */}
+                          <motion.button
+                            onClick={scrollToPrev}
+                            disabled={currentCardIndex === 0}
+                            className={`
+                              flex items-center space-x-2 px-3 py-1.5 rounded-xl font-medium transition-all duration-300
+                              ${
+                                currentCardIndex === 0
+                                  ? "text-white/40 cursor-not-allowed"
+                                  : "text-white bg-white/20 hover:bg-white/30 active:bg-white/40 shadow-md hover:shadow-lg"
+                              }
+                            `}
+                            whileHover={currentCardIndex > 0 ? { scale: 1.05, y: -1 } : {}}
+                            whileTap={currentCardIndex > 0 ? { scale: 0.95 } : {}}
+                          >
+                            <svg
+                              className="w-4 h-4"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                              strokeWidth={2.5}
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M15 19l-7-7 7-7"
+                              />
+                            </svg>
+                            <span className="text-sm font-semibold">Prev</span>
+                          </motion.button>
 
-                {/* Previous Button */}
-                <motion.button
-                  onClick={scrollToPrev}
-                  disabled={currentCardIndex === 0}
-                  className={`
-                    flex items-center space-x-3 px-4 py-2 rounded-full font-semibold transition-all duration-300 bg-white text-black
-                  `}
-                  whileHover={currentCardIndex > 0 ? { scale: 1.05, y: -2 } : {}}
-                  whileTap={currentCardIndex > 0 ? { scale: 0.95 } : {}}
-                >
-                  <svg
-                    className="w-6 h-6"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    strokeWidth={2.5}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M15 19l-7-7 7-7"
-                    />
-                  </svg>
-                  <span className="text-lg font-bold">Prev</span>
-                </motion.button>
+                          {/* Center Info */}
+                          <div className="flex flex-col items-center space-y-2">
+                            {/* Card indicators */}
+                            <div className="flex space-x-2">
+                              {cards.map((_, index) => (
+                                <motion.button
+                                  key={index}
+                                  className={`
+                                    w-2 h-2 rounded-full transition-all duration-300
+                                    ${
+                                      index === currentCardIndex
+                                        ? "bg-white shadow-lg shadow-white/30"
+                                        : "bg-white/40 hover:bg-white/60"
+                                    }
+                                  `}
+                                  onClick={() => scrollToCard(index)}
+                                  whileHover={{ scale: 1.3 }}
+                                  whileTap={{ scale: 0.8 }}
+                                />
+                              ))}
+                            </div>
 
-                {/* Center Info */}
-                <div className="flex flex-col items-center space-y-3">
+                            {/* Current card info */}
+                            <div className="text-center">
+                              <div className="text-sm font-semibold text-white/90">
+                                {cards[currentCardIndex]?.title}
+                              </div>
+                              <div className="text-xs font-medium text-white/60">
+                                {currentCardIndex + 1} of {cards.length}
+                              </div>
+                            </div>
+                          </div>
 
-                  {/* Card indicators */}
-                  <div className="flex space-x-3">
-                    {cards.map((_, index) => (
-                      <motion.button
-                        key={index}
-                        className={`
-                          w-3 h-3 rounded-full transition-all duration-300
-                          ${index === currentCardIndex
-                            ?( 'bg-black shadow-lg shadow-black/30')
-                            :('bg-black/40 hover:bg-black/60')
-                          }
-                        `}
-                        onClick={() => scrollToCard(index)}
-                        whileHover={{ scale: 1.4 }}
-                        whileTap={{ scale: 0.9 }}
-                      />
-                    ))}
-                  </div>
+                          {/* Next Button */}
+                          <motion.button
+                            onClick={scrollToNext}
+                            disabled={currentCardIndex === cards.length - 1}
+                            className={`
+                              flex items-center space-x-2 px-3 py-1.5 rounded-xl font-medium transition-all duration-300
+                              ${
+                                currentCardIndex === cards.length - 1
+                                  ? "text-white/40 cursor-not-allowed"
+                                  : "text-white bg-white/20 hover:bg-white/30 active:bg-white/40 shadow-md hover:shadow-lg"
+                              }
+                            `}
+                            whileHover={
+                              currentCardIndex < cards.length - 1 ? { scale: 1.05, y: -1 } : {}
+                            }
+                            whileTap={currentCardIndex < cards.length - 1 ? { scale: 0.95 } : {}}
+                          >
+                            <span className="text-sm font-semibold">Next</span>
+                            <svg
+                              className="w-4 h-4"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                              strokeWidth={2.5}
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M9 5l7 7-7 7"
+                              />
+                            </svg>
+                          </motion.button>
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
 
-                  {/* Current card info */}
-                  <div className="text-center text-lg">
-                    <div className={`
-                      text-sm font-bold
-                      ${ 'text-white'}
-                    `}>
-                      {cards[currentCardIndex]?.title}
-                    </div>
-                    <div className={`
-                      text-xs font-medium
-                      ${ 'text-white/60'}
-                    `}>
-                      {currentCardIndex + 1} of {cards.length}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Next Button */}
-                <motion.button
-                  onClick={scrollToNext}
-                  disabled={currentCardIndex === cards.length - 1}
-                  className={`
-                    flex items-center space-x-3 px-4 py-2 rounded-full font-semibold transition-all duration-300
-                    ${currentCardIndex === cards.length - 1
-                      ? ( 'text-black/30 cursor-not-allowed')
-                      : ('text-black hover:bg-black/15 active:bg-black/25 shadow-lg hover:shadow-xl'
-                      )
-                    }
-                  `}
-                  whileHover={currentCardIndex < cards.length - 1 ? { scale: 1.05, y: -2 } : {}}
-                  whileTap={currentCardIndex < cards.length - 1 ? { scale: 0.95 } : {}}
-                >
-                  <span className="text-lg font-bold">Next</span>
-                  <svg
-                    className="w-6 h-6"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    strokeWidth={2.5}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M9 5l7 7-7 7"
-                    />
-                  </svg>
-                </motion.button>
-
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      <style jsx>{`
-        .overflow-x-auto::-webkit-scrollbar {
-          width: 8px; /* For vertical scrollbar */
-          height: 8px; /* For horizontal scrollbar */
-        }
-        .overflow-x-auto::-webkit-scrollbar-track {
-          background: transparent;
-        }
-        .overflow-x-auto::-webkit-scrollbar-thumb {
-          background-color: white;
-          border-radius: 4px;
-          border: 1px solid rgba(0,0,0,0.1);
-        }
-        .overflow-x-auto {
-          -ms-overflow-style: auto; /* Show scrollbar for IE/Edge */
-          scrollbar-width: thin; /* Show thin scrollbar for Firefox */
-          scrollbar-color: white transparent; /* Thumb color, Track color for Firefox */
-        }
-      `}</style>
     </>
   );
 };

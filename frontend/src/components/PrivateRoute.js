@@ -12,17 +12,8 @@ const PrivateRoute = ({ children}) => {
         <div className="flex flex-col min-h-screen">
           
           {/* Page Content */}
-          <main className={`flex-grow blur-background`}>{<div
-              className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 backdrop-blur-sm"
-            >
-              <div
-                className="bg-white p-8 rounded-lg shadow-lg w-full max-w-lg"
-              >
-                <Login />
-              </div>
-            </div>}</main>
-
           
+                <Login />
         </div>
       ); // Simulate clicking the login button
    // Prevent rendering the protected content

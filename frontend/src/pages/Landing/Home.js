@@ -156,7 +156,10 @@ export default function LandingPage() {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isVideoLoaded, setIsVideoLoaded] = useState(false);
   const videoRef = useRef(null);
-
+  const ref = useRef(null);
+  const controls = useAnimation();
+  const IsInView = useInView(ref, { amount: 0.5, once: false });
+  const timeoutRef = useRef(null);
   // Newsletter Section
   const [showThankYou, setShowThankYou] = useState(false);
   const [formData, setFormData] = useState({ name: '', email: '' });
@@ -273,6 +276,33 @@ export default function LandingPage() {
         };
   
     
+
+ // Apple Bg Image
+useEffect(() => {
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+
+  if (IsInView) {
+    clearTimeout(timeoutRef.current);
+    controls.start({
+      scale: 1.3,
+      transition: { duration: 1.2, ease: "easeOut" },
+    });
+  } else {
+    if (!isMobile) {
+      timeoutRef.current = setTimeout(() => {
+        controls.start({
+          scale: 1,
+          transition: { duration: 0.5, ease: "easeInOut" },
+        });
+      }, 300000); // adjust delay as needed
+    }
+  }
+
+  return () => clearTimeout(timeoutRef.current);
+}, [IsInView, controls]);
+
+
+
 
 
   const handleVideoLoad = () => {
@@ -620,74 +650,132 @@ export default function LandingPage() {
       </div>
 
 
-      {/* Sledge Software Solutions Section */}    
+      {/* Sledge Software Solutions Section */}
       <section
-      ref={sledgeRef}
-      className={`text-center px-4 md:mb-8 py-16 md:py-28 lg:py-60 rounded-3xl w-full max-w-xl md:max-w-7xl mx-auto relative overflow-hidden transition-all duration-1000 ease-out transform ${ // Reverted max-w-full to max-w-7xl
-      isSledgeVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-20'
-      }`}
-      style={{
-      transitionDelay: isSledgeVisible ? '300ms' : '0ms',
-       minHeight: '70vh' // force enough height to keep content in view on mobile
-       
-      }}
-      >
-        {/* Apple Background Image */}
-        <motion.div
-          className=" absolute inset-0 w-full h-full pointer-events-none select-none z-0"
-          style={{
-            backgroundImage: `url(${BG2})`,
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-            backgroundRepeat: "no-repeat",
-            opacity: 0.8,
-            filter: isDarkMode ? 'brightness(0.6) contrast(1.1)' : "brightness(0.7) contrast(1.3)",
-          }}
-        />
-
-        {/* Dark overlay for better text readability */}
-        <div className="absolute inset-0 bg-black/30 z-1" />
-
-        {/* Your existing background reveal logic (optional - remove if not needed) */}
-      <div className="absolute inset-0 w-full h-full pointer-events-none select-none z-2 overflow-hidden">
-        {/* Background always */}
-        <div className={`absolute inset-0 ${isDarkMode ? 'bg-gray-900' : 'bg-white'} opacity-0`} />
-        {/* Image revealed from bottom as you scroll */}
-        <img
-        src={kiranaShop}
-        alt="Background"
-        className="md:mt-32 absolute left-0 bottom-0 w-full object-cover transition-all duration-500 md:mt-16"
+        ref={sledgeRef}
+        className={`text-center px-4 md:mb-8 py-16 md:py-28 lg:py-60 rounded-3xl w-full max-w-xl md:max-w-7xl mx-auto relative overflow-hidden transition-all duration-1000 ease-out transform ${
+          isSledgeVisible ? 'opacity-100 translate-y-0' : 'opacity-100 translate-y-20'
+        }`}
         style={{
-        height: `${bgReveal * 95}%`,
-        opacity: 1, // Reduced opacity so it blends with Apple background
-        filter: `blur(${10 - 10 * bgReveal}px) ${isDarkMode ? 'brightness(0.6) contrast(1.1)' : ''}`,
-        transition: "height 0.2s cubic-bezier(0.22, 1, 0.36, 1), opacity 1s ease-out, filter 1s ease-out"
+          transitionDelay: isSledgeVisible ? '300ms' : '0ms',
+          minHeight: '70vh'
         }}
-        />
-      </div>
-
-      <div
-      className="relative z-10 transition-all duration-300"
-      style={{
-      transform: `scale(${sledgeScale}) translateY(${sledgeTranslate}px)`,
-      transition: "height 0.2s cubic-bezier(0.22, 1, 0.36, 1), opacity 1s ease-out, filter 1s ease-out"
-      }}
       >
-      <h1 className="text-7xl mt-[150px] md:mt-0 sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight md:mb-6 tracking-tight text-white drop-shadow-lg">
-      Sledge
-      </h1>
-      <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-2 md:mb-6 tracking-tight text-blue-400 drop-shadow-lg">
-      Software Solutions
-      </h1>
-      <p className="text-base md:text-xl mb-6 md:mb-10 max-w-2xl mx-auto px-4 text-gray-200 drop-shadow-lg">
-      A premium UI crafted with Eudoxus Sans for clarity, elegance, and modern appeal. Designed for forward-thinkers.
-      </p>
-      <button 
-        onClick={() => handleSmoothScroll('explore-section')} // Smooth scroll to ExploreSection
-        className="px-6 md:px-8 py-2 md:py-3 text-base md:text-lg rounded-full transition-all bg-white text-gray-900 hover:bg-gray-100 shadow-lg">
-      Explore Now
-      </button>
-      </div>
+        {/* Apple Background Image - Enhanced with gradient overlay */}
+<motion.div
+      ref={ref}
+      className="absolute inset-0 w-full h-full pointer-events-none select-none z-0 rounded-3xl"
+      initial={{ scale: 1 }}
+      animate={controls}
+      transition={{ duration: 1.2, ease: "easeInOut" }}
+      style={{
+        backgroundImage: `url(${BG2})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+        opacity: 1,
+        filter: isDarkMode ? 'brightness(0.5) contrast(1.2)' : "brightness(0.6) contrast(1.4)",
+        transformOrigin: "center",
+      }}
+    />
+
+
+        
+        {/* Enhanced gradient overlay for better text readability */}
+        <div className="absolute inset-0 z-1 " />
+        
+        {/* Background reveal logic - Desktop only animation */}
+        <div className="absolute inset-0 w-full h-full pointer-events-none select-none z-2 overflow-hidden">
+          {/* Static background for mobile */}
+          <div className={`absolute inset-0 ${isDarkMode ? 'bg-gray-900' : 'bg-white'} opacity-0`} />
+          
+          {/* Animated background image - Desktop only */}
+          <img
+            src={kiranaShop}
+            alt="Background"
+            className={`absolute left-0 bottom-0 w-full object-cover transition-all duration-500 ${
+              window.innerWidth >= 768 ? 'md:mt-16' : ''
+            }`}
+            style={{
+              // Mobile: Static centered image
+              ...(window.innerWidth < 768 ? {
+                height: '70%',
+                opacity: 1,
+                filter: `blur(0px) ${isDarkMode ? 'brightness(0.6) contrast(1.1)' : ''}`,
+                top: '65%',
+                transform: 'translateY(-50%)',
+                objectPosition: 'center'
+              } : {
+                // Desktop: Animated reveal
+                height: `${bgReveal * 90}%`,
+                opacity: 1,
+                filter: `blur(${10 - 10 * bgReveal}px) ${isDarkMode ? 'brightness(0.6) contrast(1.1)' : ''}`,
+                transition: "height 0.2s cubic-bezier(0.32, 1, 0.36, 1), opacity 1s ease-out, filter 1s ease-out"
+              })
+            }}
+          />
+        </div>
+        
+        {/* Content Container with enhanced styling */}
+        <div
+          className="relative z-10 transition-all duration-300 "
+          style={{
+            // Apply scaling and translation only on desktop
+            ...(window.innerWidth >= 768 ? {
+              transform: `scale(${sledgeScale}) translateY(${sledgeTranslate}px)`,
+              transition: "transform 0.2s cubic-bezier(0.22, 1, 0.36, 1), opacity 1s ease-out"
+            } : {
+              transform: 'none',
+              transition: "opacity 1s ease-out"
+            })
+          }}
+        >
+          {/* Enhanced title with better typography */}
+          <div className="mb-16 md:mb-16 md:-mt-16 -mt-[170px] ">
+            <h1 className="text-6xl mt-[120px] md:mt-0 sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-black leading-tight md:mb-4 tracking-tight text-white drop-shadow-2xl">
+              Sledge
+            </h1>
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold leading-tight mb-2 md:mb-6 tracking-tight bg-gradient-to-r from-blue-200 via-blue-600 to-blue-200 bg-clip-text text-transparent drop-shadow-lg">
+              Software Solutions
+            </h1>
+          </div>
+          
+          {/* Enhanced description with better spacing */}
+          <div className="mb-8 md:mb-12 ">
+            <p className="text-base md:text-xl lg:text-2xl text-bold  mb-4 max-w-3xl mx-auto px-4 text-gray-100 drop-shadow-lg font-medium leading-tight -mt-8">
+              Simplified B2B Solutions grassrooted at the end of the Supply Chain
+            </p>
+            <p className="text-sm md:text-lg lg:text-xl max-w-2xl mx-auto px-4 text-gray-300 drop-shadow-lg font-light">
+              Reducing your complexities, Easing your Operations.
+            </p>
+          </div>
+          
+          {/* Enhanced CTA button with premium styling */}
+          <div className="space-y-4 md:space-y-0 md:space-x-4 md:flex md:justify-center md:items-center">
+            <button
+              onClick={() => handleSmoothScroll('explore-section')}
+              className="group relative inline-flex items-center justify-center px-8 md:px-10 py-3 md:py-4 text-base md:text-lg lg:text-xl font-semibold rounded-full transition-all duration-300 bg-gradient-to-r from-blue-600 via-blue-500 to-purple-300 text-gray-100 hover:bg-gray-100 shadow-2xl hover:shadow-3xl transform hover:scale-105 active:scale-95 overflow-hidden"
+            >
+              <span className="relative z-10 flex items-center">
+                Explore Now
+                <svg className="ml-2 w-4 h-4 md:w-5 md:h-5 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                </svg>
+              </span>
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 opacity-0 group-hover:opacity-10 transition-opacity duration-300" />
+            </button>
+          </div>
+        </div>
+        
+        {/* Decorative elements for premium feel */}
+        <div className="absolute top-10 left-10 w-20 h-20 bg-gradient-to-br from-blue-400/20 to-purple-400/20 rounded-full blur-xl animate-pulse" />
+        <div className="absolute bottom-10 right-10 w-32 h-32 bg-gradient-to-br from-purple-400/20 to-pink-400/20 rounded-full blur-xl animate-pulse" style={{ animationDelay: '1s' }} />
+        
+        {/* Subtle grain texture overlay for premium feel */}
+        <div className="absolute inset-0 opacity-20 pointer-events-none z-5" style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
+          mixBlendMode: 'overlay'
+        }} />
       </section>
 
 
@@ -698,104 +786,151 @@ export default function LandingPage() {
       </div>
         
         
-      {/* Why Choose Sledge Section */}
-      <section
-        ref={whySledgeRef}
-        id="why-sledge-section"
-        className={`w-full relative flex flex-col justify-center overflow-hidden mx-auto pt-8 md:pt-8 px-4 md:px-16 transition-all duration-1000 ease-out ${
-          isWhySledgeVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-20'
-        } ${isDarkMode ? 'bg-gray-800' : 'bg-black'}`}
-        style={{
-          width: "100vw", // will be overridden dynamically
-          height: "auto", // Changed to auto for responsiveness
-          minHeight: "100vh", // Ensure it takes at least full viewport height
-          borderRadius: "0px",
-          boxShadow: heroRadius !== "0px" ? (isDarkMode ? "0 8px 32px 0 rgba(0,0,0,0.6)" : "0 8px 32px 0 rgba(36,41,54,0.13)") : undefined,
-          transform: "translateZ(0)",
-          willChange: "width, border-radius"
-        }}
-      >
-        <div 
-          className="w-full h-full"
-          style={{
-            // Apply scroll-based transforms to inner container instead
-            transform: isWhySledgeVisible ? 'none' : 'translateY(20px)',
-            transition: 'transform 1000ms ease-out',
-            transitionDelay: isWhySledgeVisible ? '400ms' : '0ms',
-          }}
-        >
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-500 via-violet-500 to-teal-400 mb-8 md:mb-16 text-center md:text-left"> {/* Reverted text-center for mobile */}
-            Why Choose Sledge
-          </h2>
 
-   {/* Mobile: Vertical stacked features with vertical scroll */}
-        <div className="block md:hidden max-h-[calc(140vh-150px)] gap-2 overflow-y-auto px-0 space-y-4 pb-8"> {/* Adjusted max-h for better spacing */}
-          {features.map((feature, idx) => (
-            <div
-              key={idx}
-              onClick={() => setSelectedFeature(idx)}
-              className={`text-white p-6 rounded-3xl shadow-xl cursor-pointer hover:scale-105 transition-transform flex flex-col justify-between ${
-                isDarkMode ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-900 hover:bg-gray-800'
-              }`}
-              style={{
-                transform: isWhySledgeVisible ? 'translateY(0)' : 'translateY(30px)',
-                opacity: isWhySledgeVisible ? 1 : 0,
-                transition: `all 800ms ease-out`,
-                transitionDelay: isWhySledgeVisible ? `${500 + idx * 100}ms` : '0ms',
-              }}
-            >
-              <div className="flex-grow flex items-end">
-                <h3 className="text-xl font-semibold text-center w-full">
-                  {feature.title}
-                </h3>
+{/* Why Choose Sledge Section */}
+<section
+  ref={whySledgeRef}
+  id="why-sledge-section"
+  className={`w-full relative flex flex-col justify-center overflow-hidden mx-auto pt-8 md:pt-16 px-4 md:px-16 transition-all duration-1000 ease-out ${
+    isWhySledgeVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-20'
+  } ${isDarkMode ? 'bg-gray-900' : 'bg-black'}`}
+  style={{
+    width: "100vw",
+    height: "auto",
+    minHeight: "100vh",
+    borderRadius: "0px",
+    boxShadow: heroRadius !== "0px" ? (isDarkMode ? "0 8px 32px 0 rgba(0,0,0,0.6)" : "0 8px 32px 0 rgba(36,41,54,0.13)") : undefined,
+    transform: "translateZ(0)",
+    willChange: "width, border-radius",
+    background: isDarkMode 
+      ? 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f172a 100%)'
+      : 'linear-gradient(135deg, #000000 0%, #1a1a2e 50%, #000000 100%)'
+  }}
+>
+  {/* Animated background particles */}
+  <div className="absolute inset-0 overflow-hidden pointer-events-none">
+    <div className="absolute top-20 left-10 w-2 h-2 bg-purple-500 rounded-full animate-pulse opacity-60"></div>
+    <div className="absolute top-40 right-20 w-1 h-1 bg-blue-400 rounded-full animate-ping opacity-40"></div>
+    <div className="absolute bottom-32 left-1/4 w-1.5 h-1.5 bg-teal-400 rounded-full animate-pulse opacity-50"></div>
+    <div className="absolute bottom-20 right-1/3 w-2 h-2 bg-violet-500 rounded-full animate-ping opacity-30"></div>
+  </div>
+
+  <div
+    className="w-full h-full relative z-10 pb-8"
+    style={{
+      transform: isWhySledgeVisible ? 'none' : 'translateY(20px)',
+      transition: 'transform 1000ms ease-out',
+      transitionDelay: isWhySledgeVisible ? '400ms' : '0ms',
+    }}
+  >
+    {/* Header */}
+    <div className="text-left mb-8 md:mb-16 ">
+      <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-violet-500 to-teal-400 mb-4">
+        Why Choose Sledge
+      </h2>
+      <p className="text-gray-400 text-lg md:text-xl max-w-2xl mx-right">
+        Experience the future of B2B with cutting-edge features designed for modern businesses
+      </p>
+    </div>
+
+    {/* Mobile: Enhanced vertical scroll with cards */}
+    <div className="block md:hidden">
+      <div className="max-h-[70vh] overflow-y-auto px-2 space-y-4 pb-8 scrollbar-hide">
+        {features.map((feature, idx) => (
+          <div
+            key={idx}
+            onClick={() => setSelectedFeature(idx)}
+            className="group relative cursor-pointer"
+            style={{
+              transform: isWhySledgeVisible ? 'translateY(0)' : 'translateY(30px)',
+              opacity: isWhySledgeVisible ? 1 : 0,
+              transition: `all 800ms ease-out`,
+              transitionDelay: isWhySledgeVisible ? `${500 + idx * 100}ms` : '0ms',
+            }}
+          >
+            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-white/5 to-white/10 backdrop-blur-xl border border-white/20 p-6 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl hover:shadow-purple-500/20">
+              {/* Gradient overlay */}
+              <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 via-transparent to-teal-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              
+              {/* Content */}
+              <div className="relative z-10 flex items-start space-x-4">
+                <div className="flex-shrink-0 p-3 rounded-xl bg-gradient-to-br from-purple-500/20 to-teal-500/20 border border-white/10">
+                  {idx === 0 && <Package className="w-6 h-6 text-blue-400" />}
+                  {idx === 1 && <CreditCard className="w-6 h-6 text-green-400" />}
+                  {idx === 2 && <Users className="w-6 h-6 text-purple-400" />}
+                  {idx === 3 && <TrendingUp className="w-6 h-6 text-orange-400" />}
+                  {idx === 4 && <BarChart className="w-6 h-6 text-pink-400" />}
+                  {idx === 5 && <ShoppingCart className="w-6 h-6 text-teal-400" />}
+                </div>
+                
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-xl font-bold text-white mb-2 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-purple-400 group-hover:to-teal-400 transition-all duration-300">
+                    {feature.title}
+                  </h3>
+                  <p className="text-gray-300 text-sm leading-relaxed mb-3">
+                    {feature.desc}
+                  </p>
+                  <div className="flex items-center text-purple-400 group-hover:text-teal-400 transition-colors">
+                    <span className="text-xs font-medium">Explore feature</span>
+                    <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
+                  </div>
+                </div>
               </div>
-              <p className="mt-3 text-white text-sm text-center mb-2">
-                {feature.desc}
-              </p>
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
+      </div>
+    </div>
 
-
-          {/* Desktop: Grid layout */}
-          <div className="hidden md:grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"> {/* Added lg:grid-cols-3 for larger screens */}
-            {features.map((feature, idx) => (
-              <div
-                key={idx}
-                className={`text-white p-8 rounded-2xl shadow-xl cursor-pointer hover:scale-105 transition-transform flex flex-col justify-between h-[250px] ${
-                  isDarkMode ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-900 hover:bg-gray-800'
-                }`}
-                style={{
-                  transform: isWhySledgeVisible ? 'translateY(0)' : 'translateY(30px)',
-                  opacity: isWhySledgeVisible ? 1 : 0,
+    {/* Desktop: Enhanced grid layout */}
+    <div className="hidden md:grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 lg:gap-8">
+      {features.map((feature, idx) => (
+        <div
+          key={idx}
+          className="group relative cursor-pointer h-[280px]"
+          style={{
+            transform: isWhySledgeVisible ? 'translateY(0)' : 'translateY(30px)',
+            opacity: isWhySledgeVisible ? 1 : 0,
                   transition: `all 800ms ease-out`,
                   transitionDelay: isWhySledgeVisible ? `${500 + idx * 100}ms` : '0ms',
                 }}
               >
-               <div className="bg-gray hover:bg-gray rounded-3xl p-6 md:p-8 h-full transition-all duration-300 group-hover:shadow-purple-500/10">
-                  <div className="flex items-center mb-4">
-                    {idx === 0 && <Package className="w-8 h-8 text-blue-400 mr-3" />}
-                    {idx === 1 && <CreditCard className="w-8 h-8 text-green-400 mr-3" />}
-                    {idx === 2 && <Users className="w-8 h-8 text-purple-400 mr-3" />}
-                    {idx === 3 && <TrendingUp className="w-8 h-8 text-orange-400 mr-3" />}
-                    {idx === 4 && <BarChart className="w-8 h-8 text-pink-400 mr-3" />}
-                    {idx === 5 && <ShoppingCart className="w-8 h-8 text-teal-400 mr-3" />}
-                    <h3 className="text-xl md:text-2xl font-bold text-white group-hover:text-blue-400 transition-colors">
-                      {feature.title}
-                    </h3>
+                <div className="relative h-full overflow-hidden rounded-3xl bg-gradient-to-br from-white/5 to-white/10 backdrop-blur-xl border border-white/20 p-8 transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/20">
+                  {/* Animated gradient overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 via-transparent to-teal-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                  
+                  {/* Glowing orb effect */}
+                  <div className="absolute -top-10 -right-10 w-20 h-20 bg-gradient-to-br from-purple-500/30 to-teal-500/30 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                  
+                  {/* Content */}
+                  <div className="relative z-10 h-full flex flex-col">
+                    <div className="flex items-center mb-6">
+                      <div className="p-4 rounded-2xl bg-gradient-to-br from-purple-500/20 to-teal-500/20 border border-white/10 mr-4 group-hover:scale-110 transition-transform duration-300">
+                        {idx === 0 && <Package className="w-8 h-8 text-blue-400" />}
+                        {idx === 1 && <CreditCard className="w-8 h-8 text-green-400" />}
+                        {idx === 2 && <Users className="w-8 h-8 text-purple-400" />}
+                        {idx === 3 && <TrendingUp className="w-8 h-8 text-orange-400" />}
+                        {idx === 4 && <BarChart className="w-8 h-8 text-pink-400" />}
+                        {idx === 5 && <ShoppingCart className="w-8 h-8 text-teal-400" />}
+                      </div>
+                      <h3 className="text-2xl font-bold text-white group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-purple-400 group-hover:to-teal-400 transition-all duration-300">
+                        {feature.title}
+                      </h3>
+                    </div>
+                    
+                    <p className="text-gray-300 text-lg leading-relaxed mb-6 flex-grow">
+                      {feature.desc}
+                    </p>
+                    
+                    <button
+                      type="button"
+                      className="flex items-center text-purple-400 group-hover:text-teal-400 transition-colors focus:outline-none group/button"
+                      onClick={() => setSelectedFeature(idx)}
+                    >
+                      <span className="text-sm font-medium">Learn more</span>
+                      <ArrowRight className="w-4 h-4 ml-2 group-hover/button:translate-x-1 transition-transform" />
+                    </button>
                   </div>
-                  <p className="text-gray-300 text-base md:text-lg leading-relaxed">
-                    {feature.desc}
-                  </p>
-
-                  <button
-                    type="button"
-                    className="mt-4 flex items-center text-blue-400 group-hover:text-blue-300 transition-colors focus:outline-none"
-                    onClick={() => setSelectedFeature(idx)}
-                  >
-                    <span className="text-sm font-medium">Learn more</span>
-                    <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
-                  </button>
                 </div>
               </div>
             ))}
@@ -805,47 +940,98 @@ export default function LandingPage() {
 
 
 
-      {/* Modal Overlay */}
+        {/* Modal Overlay */}
         {selectedFeature !== null && (
           <div
-            className="fixed inset-0 z-50 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center p-4 overflow-auto"
+            className="fixed inset-0 z-50 bg-black/70 backdrop-blur-md flex items-center justify-center p-2 sm:p-4 overflow-auto"
             onClick={() => setSelectedFeature(null)}
           >
             <div
-              className={`mx-auto relative rounded-2xl p-4 md:p-6 w-full max-w-7xl h-[95vh] md:h-[90vh] overflow-auto ${
-                isDarkMode ? 'bg-gray-800 text-white' : 'bg-white text-gray-900'
-              }`}
-              onClick={(e) => e.stopPropagation()} // prevent close on inner click
+              className={`mx-auto relative rounded-3xl w-full max-w-4xl max-h-[95vh] overflow-hidden ${
+                isDarkMode ? 'bg-gray-900/95' : 'bg-white/95'
+              } backdrop-blur-xl border border-white/20 shadow-2xl`}
+              onClick={(e) => e.stopPropagation()}
             >
-              {/* Close Button */}
-              <button
-                onClick={() => setSelectedFeature(null)}
-                className={`absolute top-2 md:top-1 right-3 md:right-1 text-xl md:text-4xl hover:text-red-500 ${
-                  isDarkMode ? 'text-gray-300' : 'text-gray-600'
-                }`}
-              >
-                &times;
-              </button>
+              {/* Header with close button */}
+              <div className="relative p-4 sm:p-6 pb-0">
+                <button
+                  onClick={() => setSelectedFeature(null)}
+                  className="absolute top-3 right-3 sm:top-4 sm:right-4 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center hover:bg-red-500/20 hover:border-red-500/40 transition-all duration-300 group z-10"
+                >
+                  <svg 
+                    className="w-5 h-5 sm:w-6 sm:h-6 text-gray-400 group-hover:text-red-400 transition-colors" 
+                    fill="none" 
+                    stroke="currentColor" 
+                    viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
 
-              {/* Image */}
-              <img
-              src={Modalfeatures[selectedFeature].img}
-              alt={Modalfeatures[selectedFeature].title}
-              className=" bg-white w-full h-64 md:h-[400px] object-cover rounded-xl mb-4 mt-4"
-              style={{
-                filter: isDarkMode ? 'brightness(0.9)' : 'none'
-              }}
-            />
+              {/* Scrollable content */}
+              <div className="max-h-[90vh] overflow-y-auto px-4 sm:px-6 pb-6">
+                {/* Image with gradient overlay */}
+                <div className="relative mb-6 sm:mb-8 rounded-2xl overflow-hidden group">
+                  <img
+                    src={Modalfeatures[selectedFeature].img}
+                    alt={Modalfeatures[selectedFeature].title}
+                    className="w-full h-48 sm:h-64 md:h-80 object-cover transition-transform duration-700 group-hover:scale-105"
+                    style={{
+                      filter: isDarkMode ? 'brightness(0.85) contrast(1.1)' : 'brightness(0.95)'
+                    }}
+                  />
+                  {/* Gradient overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent"></div>
+                  
+                  {/* Feature indicator */}
+                  <div className="absolute top-4 left-4 px-3 py-1 bg-white/10 backdrop-blur-sm rounded-full border border-white/20">
+                    <span className="text-white text-xs font-medium">Feature #{selectedFeature + 1}</span>
+                  </div>
+                </div>
 
+                {/* Title */}
+                <div className="mb-6 sm:mb-8">
+                  <h2 className={`text-2xl sm:text-3xl md:text-4xl font-bold mb-2 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-violet-500 to-teal-400`}>
+                    {Modalfeatures[selectedFeature].title}
+                  </h2>
+                  <div className="w-16 sm:w-20 h-1 bg-gradient-to-r from-purple-500 to-teal-500 rounded-full"></div>
+                </div>
 
-              {/* Title & Description */}
-              <h2 className={`text-2xl md:text-5xl font-bold mb-8 mt-8 pt-4 text-left pl-4 md:pl-16  ${isDarkMode ? 'text-blue-400' : 'text-blue-900'}`}>
-                {Modalfeatures[selectedFeature].title}
-              </h2>
-              <div className={`rounded-3xl pt-3 pb-3 ${isDarkMode ? 'bg-gray-600' : 'bg-gray-100'}`}>
-              <p className={`text-base md:text-2xl mt-4 px-4 py-8 tracking-wide ${isDarkMode ? 'text-gray-100' : 'text-gray-500'}`}>
-                {Modalfeatures[selectedFeature].desc}
-              </p>
+                {/* Description with enhanced styling */}
+                <div className={`relative rounded-2xl p-6 sm:p-8 ${isDarkMode ? 'bg-white/5' : 'bg-gray-50/80'} backdrop-blur-sm border border-white/10`}>
+                  {/* Decorative elements */}
+                  <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
+                    <div className="absolute top-4 left-4 w-2 h-2 bg-purple-500 rounded-full animate-pulse opacity-60"></div>
+                    <div className="absolute bottom-4 right-4 w-1.5 h-1.5 bg-teal-500 rounded-full animate-pulse opacity-40"></div>
+                  </div>
+                  
+                  {/* Content */}
+                  <div className="relative z-10">
+                    <p className={`text-base sm:text-lg md:text-xl leading-relaxed sm:leading-relaxed ${
+                      isDarkMode ? 'text-gray-200' : 'text-gray-700'
+                    }`}>
+                      {Modalfeatures[selectedFeature].desc}
+                    </p>
+                  </div>
+                  
+                  {/* Bottom accent */}
+                  <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-12 h-0.5 bg-gradient-to-r from-purple-500 to-teal-500 rounded-full"></div>
+                </div>
+
+                {/* Action buttons */}
+                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mt-6 sm:mt-8">
+                  <button
+                    className={`flex-1 px-6 py-3 rounded-xl font-medium border transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] ${
+                      isDarkMode 
+                        ? 'border-white/20 text-white hover:bg-white/10' 
+                        : 'border-gray-300 text-gray-700 hover:bg-gray-50'
+                    }`}
+                    onClick={() => setSelectedFeature(null)}
+                  >
+                    Close
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -853,248 +1039,342 @@ export default function LandingPage() {
 
 
 
-      {/* AI */}
-      <section 
-        ref={pricingRef}
-        className={`w-full  md:py-0 px-4 md:px-8 lg:px-2 transition-all duration-1000 ease-out transform ${
-          isPricingVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-20'
-        } ${isDarkMode ? 'bg-gray-900' : 'bg-white'}`}
-        style={{
-          transitionDelay: isPricingVisible ? '500ms' : '0ms'
-        }}
-      >
-      
-      <div className="flex flex-row  md:flex-row items-left justify-top md:gap-4 gap-0 px-4 md:px-12 lg:px-20 md:pb-4">
-        {/* Left Text Section */}
-        <div className="w-full md:w-1/2 text-center md:text-left md:mt-64 mt-32">
-          <h2 className="text-3xl md:text-5xl font-bold mb-4">Still Managing Manually</h2>
-          <p className="text-gray-600 md:text-2xl mb-6">
-           Innovation meets AI
-          </p>
-          <button className="bg-blue-600 text-white px-6 py-3 rounded-full hover:bg-blue-700 transition">
-            Learn More
-          </button>
-        </div>
+        {/* AI Section */}
+        <section
+          ref={pricingRef}
+          className={`w-full py-12 md:py-20 px-4 md:px-8 lg:px-12 transition-all duration-1000 ease-out transform ${
+            isPricingVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-20'
+          } ${isDarkMode ? 'bg-gray-900' : 'bg-white'}`}
+          style={{
+            transitionDelay: isPricingVisible ? '500ms' : '0ms'
+          }}
+        >
+          <div className="max-w-7xl mx-auto">
+            {/* Mobile Layout - Stack vertically */}
+            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8 lg:gap-12">
+              
+              {/* Left Text Section */}
+              <div className="w-full lg:w-5/12 text-center lg:text-left order-2 lg:order-1">
+                <div className="max-w-md mx-auto lg:mx-0">
+                  {/* Badge */}
+                  <div className="inline-flex items-center px-4 py-2 bg-blue-50 text-blue-600 rounded-full text-sm font-medium mb-6">
+                    <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                    </svg>
+                    AI-Powered
+                  </div>
+                  
+                  {/* Title */}
+                  <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6 text-gray-500 leading-tight">
+                    Still Managing
+                    <span className="text-blue-600 block">Manually?</span>
+                  </h2>
+                  
+                  {/* Subtitle */}
+                  <p className="text-lg sm:text-xl text-gray-600 mb-8 leading-relaxed">
+                    Innovation meets AI to automate your business processes and drive growth
+                  </p>
+                  
+                  
+                  
+                  {/* Stats */}
+                  <div className="hidden lg:flex items-center gap-8 mt-12">
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-blue-600">95%</div>
+                      <div className="text-sm text-gray-500">Automation</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-blue-600">3x</div>
+                      <div className="text-sm text-gray-500">Faster</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-blue-600">24/7</div>
+                      <div className="text-sm text-gray-500">Active</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
 
-        {/* Right CardSwap Section */}
-        <div style={{ height: '600px', position: 'relative' }} className="w-full md:w-1/2 md:-mt-24 mb-32">
-      <CardSwap
-        cardDistance={60}
-        verticalDistance={70}
-        delay={2500}
-        pauseOnHover={false}
-      >
-        {/* Card 1 */}
-        <Card>
-          <div className={`border  shadow-lg overflow-hidden transition-transform transform hover:-translate-y-1 hover:shadow-xl duration-300 ${
-            isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
-          }`}>
-            <div className="p-6 md:p-8">
-              <h3 className="text-xl font-semibold mb-2">
-                Automated Orders
-              </h3>
-              <p className={isDarkMode ? 'text-gray-300' : 'text-gray-600'}>
-                AI-powered analytics to help you stay ahead of the curve.
-              </p>
-            </div>
-            <img
-              src="https://www.apple.com/v/watch/br/images/overview/consider/feature_health__b2yo83wkzoaa_small_2x.jpg"
-              alt="Insights"
-              className="w-full h-72 object-cover"
-            />
-          </div>
-        </Card>
+              {/* Right CardSwap Section */}
+              <div className="w-full lg:w-7/12 order-1 lg:order-2 ml-0 md:ml-60 pl-0 md:pl-32 bg-transparent">
+                <div className="relative">
+                  {/* Mobile: Smaller card container */}
+                  <div 
+                    className="relative mx-auto lg:mx-0 mb-64 md:mb-0 md:-mt-0 -mt-16"
+                    style={{ 
+                      height: '400px', 
+                      maxWidth: '320px',
+                      '@media (min-width: 1024px)': {
+                        height: '600px',
+                        maxWidth: 'none'
+                      }
+                    }}
+                  >
+                    <CardSwap
+                      cardDistance={40} // Reduced for mobile
+                      verticalDistance={50} // Reduced for mobile
+                      delay={2500}
+                      pauseOnHover={false}
+                    >
+                      {/* Card 1 */}
+                      <Card>
+                        <div className={`rounded-2xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl hover:scale-105 ${
+                          isDarkMode ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-gray-100'
+                        }`}>
+                          <div className="p-4 sm:p-6 lg:p-8">
+                            <div className="flex items-center mb-3">
+                              <div className="p-2 bg-blue-100 rounded-lg mr-3">
+                                <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                                </svg>
+                              </div>
+                              <h3 className="text-lg sm:text-xl font-semibold text-gray-500">
+                                Automated Orders
+                              </h3>
+                            </div>
+                            <p className="text-sm sm:text-base text-gray-600 mb-4">
+                              AI-powered order processing to streamline your workflow
+                            </p>
+                          </div>
+                          <img
+                            src="https://www.apple.com/v/watch/br/images/overview/consider/feature_health__b2yo83wkzoaa_small_2x.jpg"
+                            alt="Automated Orders"
+                            className="w-full h-80 sm:h-64 lg:h-64 object-cover"
+                          />
+                        </div>
+                      </Card>
 
-        {/* Card 2 */}
-        <Card>
-          <div className={`border shadow-lg overflow-hidden transition-transform transform hover:-translate-y-1 hover:shadow-xl duration-300 ${
-            isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
-          }`}>
-            <div className="p-6 md:p-8">
-              <h3 className="text-xl font-semibold mb-2">
-                In Sights
-              </h3>
-              <p className={isDarkMode ? 'text-gray-300' : 'text-gray-600'}>
-                AI-powered analytics to help you stay ahead of the curve.
-              </p>
-            </div>
-            <img
-              src="https://www.apple.com/v/watch/br/images/overview/consider/feature_fitness__b5owsglf0ieu_small_2x.jpg"
-              alt="Insights"
-              className="w-full h-72 object-cover"
-            />
-          </div>
-        </Card>
+                      {/* Card 2 */}
+                      <Card>
+                        <div className={`rounded-2xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl hover:scale-105 ${
+                          isDarkMode ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-gray-100'
+                        }`}>
+                          <div className="p-4 sm:p-6 lg:p-8">
+                            <div className="flex items-center mb-3">
+                              <div className="p-2 bg-blue-100 rounded-lg mr-3">
+                                <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                                </svg>
+                              </div>
+                              <h3 className="text-lg sm:text-xl font-semibold text-gray-500">
+                                Smart Insights
+                              </h3>
+                            </div>
+                            <p className="text-sm sm:text-base text-gray-600 mb-4">
+                              Advanced analytics to help you make data-driven decisions
+                            </p>
+                          </div>
+                          <img
+                            src="https://www.apple.com/v/watch/br/images/overview/consider/feature_fitness__b5owsglf0ieu_small_2x.jpg"
+                            alt="Smart Insights"
+                            className="w-full h-80 sm:h-64 lg:h-64 object-cover"
+                          />
+                        </div>
+                      </Card>
 
-        {/* Card 3 */}
-        <Card>
-          <div className={`border shadow-lg overflow-hidden transition-transform transform hover:-translate-y-1 hover:shadow-xl duration-300 ${
-            isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
-          }`}>
-            <div className="p-6 md:p-8">
-              <h3 className="text-xl font-semibold mb-2">
-                Automatic Leads
-              </h3>
-              <p className={isDarkMode ? 'text-gray-300' : 'text-gray-600'}>
-                AI-powered analytics to help you stay ahead of the curve.
-              </p>
-            </div>
-            <img
-              src="https://www.apple.com/v/watch/br/images/overview/consider/feature_connectivity__cwtqydvy2laq_small.jpg"
-              alt="Insights"
-              className="w-full h-72 object-cover"
-            />
-          </div>
-        </Card>
+                      {/* Card 3 */}
+                      <Card>
+                        <div className={`rounded-2xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl hover:scale-105 ${
+                          isDarkMode ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-gray-100'
+                        }`}>
+                          <div className="p-4 sm:p-6 lg:p-8">
+                            <div className="flex items-center mb-3">
+                              <div className="p-2 bg-blue-100 rounded-lg mr-3">
+                                <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                                </svg>
+                              </div>
+                              <h3 className="text-lg sm:text-xl font-semibold text-gray-500">
+                                Lead Generation
+                              </h3>
+                            </div>
+                            <p className="text-sm sm:text-base text-gray-600 mb-4">
+                              Automatic lead capture and qualification system
+                            </p>
+                          </div>
+                          <img
+                            src="https://www.apple.com/v/watch/br/images/overview/consider/feature_connectivity__cwtqydvy2laq_small.jpg"
+                            alt="Lead Generation"
+                            className="w-full h-80 sm:h-64 lg:h-64 object-cover"
+                          />
+                        </div>
+                      </Card>
 
-        {/* Card 4 */}
-        <Card>
-          <div className={`border shadow-lg overflow-hidden transition-transform transform hover:-translate-y-1 hover:shadow-xl duration-300 ${
-            isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
-          }`}>
-            <div className="p-6 md:p-8">
-              <h3 className="text-xl font-semibold mb-2">
-                AI Inventory Control
-              </h3>
-              <p className={isDarkMode ? 'text-gray-300' : 'text-gray-600'}>
-                AI-powered analytics to help you stay ahead of the curve.
-              </p>
+                      {/* Card 4 */}
+                      <Card>
+                        <div className={`rounded-2xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl hover:scale-105 ${
+                          isDarkMode ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-gray-100'
+                        }`}>
+                          <div className="p-4 sm:p-6 lg:p-8">
+                            <div className="flex items-center mb-3">
+                              <div className="p-2 bg-blue-100 rounded-lg mr-3">
+                                <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                                </svg>
+                              </div>
+                              <h3 className="text-lg sm:text-xl font-semibold text-gray-500">
+                                Smart Inventory
+                              </h3>
+                            </div>
+                            <p className="text-sm sm:text-base text-gray-600 mb-4">
+                              AI-powered inventory management and forecasting
+                            </p>
+                          </div>
+                          <img
+                            src="https://www.apple.com/v/watch/br/images/overview/consider/feature_health__b2yo83wkzoaa_small_2x.jpg"
+                            alt="Smart Inventory"
+                            className="w-full h-80 sm:h-64 lg:h-64 object-cover"
+                          />
+                        </div>
+                      </Card>
+                    </CardSwap>
+                  </div>
+                </div>
+              </div>
             </div>
-            <img
-              src="https://www.apple.com/v/watch/br/images/overview/consider/feature_health__b2yo83wkzoaa_small_2x.jpg"
-              alt="Insights"
-              className="w-full h-72 object-cover"
-            />
+
+            {/* Mobile stats - shown only on mobile */}
+            <div className="flex lg:hidden justify-center items-center gap-8 mt-12 pt-8 border-t border-gray-200">
+              <div className="text-center">
+                <div className="text-xl font-bold text-blue-600">95%</div>
+                <div className="text-xs text-gray-500">Automation</div>
+              </div>
+              <div className="text-center">
+                <div className="text-xl font-bold text-blue-600">3x</div>
+                <div className="text-xs text-gray-500">Faster</div>
+              </div>
+              <div className="text-center">
+                <div className="text-xl font-bold text-blue-600">24/7</div>
+                <div className="text-xs text-gray-500">Active</div>
+              </div>
+            </div>
           </div>
-        </Card>
-      </CardSwap>
-    </div>
-      </div>
-       </section>
+        </section>
 
 
 
         {/* Pricing Section */}
-        <section className={`px-4 md:mt-8 mt-4 md:pt-40 pt-32 md:ml-0 ml-4 ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-white text-gray-900'}`}>
-          <div className="max-w-7xl mx-auto flex flex-row lg:flex-row items-center justify-between gap-4 md:gap-12 md:mt-0 mt-16">
-
+        <section className={`px-4 md:mt-8 mt-4 md:pt-40 pt-20 md:ml-0 ml-0 ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-white text-gray-900'}`}>
+          <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-6 md:gap-12 md:mt-0 mt-8">
+            
             {/* Left Section - Pricing Card */}
-            <div className="w-full lg:w-1/2 md:w-1/2 w-[600px] h-[300px] md:h-2/3 pt-16">
-              <div className={`rounded-3xl shadow-xl p-10 md:p-10 hover:shadow-2xl transition duration-300 ${
+            <div className="w-full lg:w-1/2 md:w-1/2 lg:pt-16 md:pt-16 pt-0">
+              <div className={`rounded-3xl shadow-xl p-6 md:p-10 hover:shadow-2xl transition duration-300 ${
                 isDarkMode ? 'bg-gray-800 border border-gray-700' : 'bg-gray-200 border border-gray-200'
               }`}>
                 
                 {/* Price */}
                 <div className="flex justify-center items-end gap-2 mb-4">
-                  <span className={`text-5xl sm:text-6xl md:text-7xl font-extrabold ${
+                  <span className={`text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold ${
                     isDarkMode ? 'text-white' : 'text-gray-700'
                   }`}>
                     ₹99
                   </span>
-                  <span className={`text-base mb-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>/month</span>
+                  <span className={`text-sm md:text-base mb-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                    /month
+                  </span>
                 </div>
-
+                
                 {/* Features */}
-                <ul className={`text-sm md:text-base space-y-4 mb-10 text-center pr-8 ${
+                <ul className={`text-sm md:text-base space-y-3 md:space-y-4 mb-6 md:mb-10 text-center px-2 md:pr-8 ${
                   isDarkMode ? 'text-gray-300' : 'text-gray-600'
                 }`}>
-                  <li> Unlimited access to all features</li>
-                  <li> AI-powered automation tools</li>
-                  <li>24/7 support & updates</li>
-                  <li> Instant onboarding</li>
+                  <li>• Unlimited access to all features</li>
+                  <li>• AI-powered automation tools</li>
+                  <li>• 24/7 support & updates</li>
+                  <li>• Instant onboarding</li>
                 </ul>
-
+                
                 {/* CTA Button */}
                 <div className="flex justify-center">
-                  <button className="bg-blue-600 hover:bg-blue-700 text-white text-lg px-4 py-3 rounded-full transition duration-300 shadow-md hover:shadow-lg md:w-1/3 w-auto">
+                  <button className="bg-blue-600 hover:bg-blue-700 text-white text-sm md:text-lg px-6 md:px-4 py-3 rounded-full transition duration-300 shadow-md hover:shadow-lg w-full md:w-1/3 max-w-xs">
                     Get Started Now
                   </button>
                 </div>
               </div>
             </div>
-
+            
             {/* Right Section - Text */}
-            <div className="w-full lg:w-1/2 text-left pt-40 md:pt-16">
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-2">
+            <div className="w-full lg:w-1/2 text-center lg:text-left md:text-left pt-4 md:pt-40 lg:pt-16 px-2 md:px-0">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-2 leading-tight">
                 Low on Margins,
               </h2>
-              <p className="text-2xl md:text-2xl mb-6">
+              <p className="text-xl md:text-2xl mb-4 md:mb-6">
                 We care too..
               </p>
-              <p className={`text-sm md:text-lg ${
+              <p className={`text-sm md:text-lg leading-relaxed ${
                 isDarkMode ? 'text-gray-300' : 'text-gray-600'
               }`}>
                 Whether you're scaling your business or just starting out, got you covered.
               </p>
             </div>
-
           </div>
         </section>
 
 
 
 
-
-      {/* Highlight Section */}
-      <section className={`w-full py-16 md:pt-40 pt-40 pl-8 -ml-8 ${isDarkMode ? 'bg-gray-900' : 'bg-white'}`}>
-        <div className="max-w-[90%] mx-auto md:h-[80vh] h-[60vh] flex flex-row lg:flex-row md:gap-8 gap-4">
-
-          {/* Left Subsection */}
-          <div className={`w-full lg:w-1/2 relative rounded-3xl overflow-hidden flex items-start justify-center p-6 md:p-10 ${
-            isDarkMode ? 'bg-gray-800' : 'bg-gray-100'
-          }`}>
-
-            {/* Text content (top 40%) */}
-            <div className="z-10 w-full text-center mt-2 md:mt-8">
-              <h3 className={`text-2xl md:text-3xl font-semibold tracking-tight ${
-                isDarkMode ? 'text-white' : 'text-gray-900'
-              }`}>
-                Built for Modern World
-              </h3>
-              <p className={`mt-2 text-sm md:text-base mb-2 ${
-                isDarkMode ? 'text-gray-300' : 'text-gray-700'
-              }`}>
-                Experience design and efficiency like never before.
-              </p>
-            </div>
-
-            {/* Background image at bottom 60% */}
-            <div
-              className="absolute bottom-0 left-0 w-full h-[70%] z-0"
-              style={{
-                backgroundImage: `url('https://www.apple.com/v/watch/br/images/overview/essentials/banner_bands__cd5m1690azaq_medium.jpg')`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center'
-              }}
-            ></div>
+    {/* Highlight Section */}
+    <section className={`w-full py-8 md:py-16 md:pt-40 pt-20 px-4 md:pl-8 md:-ml-8 ${isDarkMode ? 'bg-gray-900' : 'bg-white'}`}>
+      <div className="max-w-[95%] md:max-w-[90%] mx-auto md:h-[80vh] min-h-[70vh] flex flex-col md:flex-row lg:flex-row gap-4 md:gap-8">
+        
+        {/* Left Subsection */}
+        <div className={`w-full lg:w-1/2 relative rounded-2xl md:rounded-3xl overflow-hidden flex items-start justify-center p-4 md:p-6 lg:p-10 min-h-[300px] md:min-h-0 ${
+          isDarkMode ? 'bg-gray-800' : 'bg-gray-100'
+        }`}>
+          {/* Text content (top 40%) */}
+          <div className="z-10 w-full text-center mt-2 md:mt-8">
+            <h3 className={`text-xl md:text-2xl lg:text-3xl font-semibold tracking-tight leading-tight ${
+              isDarkMode ? 'text-white' : 'text-gray-900'
+            }`}>
+              Built for Modern World
+            </h3>
+            <p className={`mt-2 text-sm md:text-base mb-2 px-2 md:px-0 ${
+              isDarkMode ? 'text-gray-300' : 'text-gray-700'
+            }`}>
+              Experience design and efficiency like never before.
+            </p>
           </div>
-
-          {/* Right Subsection */}
+          
+          {/* Background image at bottom 60% */}
           <div
-            className="w-full lg:w-1/2 relative rounded-3xl overflow-hidden flex items-center justify-center p-6 md:p-10"
+            className="absolute bottom-0 left-0 w-full h-[60%] md:h-[70%] z-0"
             style={{
-              backgroundImage: `url('https://www.apple.com/v/watch/br/images/overview/essentials/banner_airpods__dc2h7dg71l0m_large.jpg')`,
+              backgroundImage: `url('https://www.apple.com/v/watch/br/images/overview/essentials/banner_bands__cd5m1690azaq_medium.jpg')`,
               backgroundSize: 'cover',
-              backgroundPosition: 'center',
-              backgroundColor: isDarkMode ? '#1f2937' : '#e5e7eb' // Tailwind: gray-800 / gray-200
+              backgroundPosition: 'center'
             }}
-          >
-            <div className="bg-transparent rounded-xl px-6 py-2 text-center mb-16">
-              <h3 className={`text-3xl md:text-4xl font-bold tracking-tight ${
-                isDarkMode ? 'text-gray-900' : 'text-gray-900'
-              }`}>
-                Security at Peak
-              </h3>
-              <p className={`mt-3 mb-16 text-base md:text-lg ${
-                isDarkMode ? 'text-gray-900' : 'text-gray-700'
-              }`}>
-                AI powered Security mechanism
-              </p>
-            </div>
-          </div>
-
+          ></div>
         </div>
-      </section>
+        
+        {/* Right Subsection */}
+        <div
+          className="w-full lg:w-1/2 relative rounded-2xl md:rounded-3xl overflow-hidden flex items-center justify-center p-4 md:p-6 lg:p-10 min-h-[300px] md:min-h-0"
+          style={{
+            backgroundImage: `url('https://www.apple.com/v/watch/br/images/overview/essentials/banner_airpods__dc2h7dg71l0m_large.jpg')`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundColor: isDarkMode ? '#1f2937' : '#e5e7eb' // Tailwind: gray-800 / gray-200
+          }}
+        >
+          {/* Overlay for better text readability on mobile */}
+          <div className="absolute inset-0 bg-black bg-opacity-20 md:bg-opacity-0 z-0"></div>
+          
+          <div className="bg-white bg-opacity-80 md:bg-transparent rounded-xl px-4 md:px-6 py-3 md:py-2 text-center mb-8 md:mb-16 z-10 backdrop-blur-sm md:backdrop-blur-none">
+            <h3 className={`text-2xl md:text-3xl lg:text-4xl font-bold tracking-tight leading-tight ${
+              isDarkMode ? 'text-gray-900' : 'text-gray-900'
+            }`}>
+              Security at Peak
+            </h3>
+            <p className={`mt-2 md:mt-3 mb-4 md:mb-16 text-sm md:text-base lg:text-lg ${
+              isDarkMode ? 'text-gray-700' : 'text-gray-700'
+            }`}>
+              AI powered Security mechanism
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
 
 
       {/* Testimonials */}

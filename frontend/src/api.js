@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: "https://sledjeweb-gpj2.onrender.com//api", // backend URL
+  baseURL: "https://sledjeweb-gpj2.onrender.com/api", // backend URL
 });
 
 // If you want to attach token for logged-in routes later:
