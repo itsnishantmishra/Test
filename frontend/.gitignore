@@ -1,0 +1,2 @@
+# Ignore cache files
+frontend/node_modules/.cache/
