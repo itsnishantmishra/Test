@@ -2,7 +2,7 @@ import React from "react";
 import { useState } from "react";
 import { BrowserRouter as Router, Route, Routes, Navigate, useLocation } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
-
+import { GoogleOAuthProvider } from '@react-oauth/google';
 // Components
 import NavbarWrap from "./components/Structure";
 import PrivateRoute from "./components/PrivateRoute";
@@ -59,6 +59,7 @@ function AnimatedRoutes() {
     <div className="relative w-full h-screen overflow-hidden">
       <AnimatePresence mode="wait">
         <Routes location={location} key={location.pathname}>
+
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
         </Routes>
@@ -69,6 +70,7 @@ function AnimatedRoutes() {
 
 function App() {
   return (
+     <GoogleOAuthProvider clientId="421153872210-nbi614sftkqtl547klout83tc5ofiuvq.apps.googleusercontent.com">
     <AuthProvider>
     <Router>
       
@@ -269,6 +271,7 @@ function App() {
       </Routes>
     </Router>
   </AuthProvider>
+  </GoogleOAuthProvider>
   );
 }
 

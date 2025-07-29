@@ -68,3 +68,52 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+
+
+
+
+
+
+
+        {/* Background reveal: white to image, revealed from bottom */}
+        <div className="absolute inset-0 max-w-full h-full pointer-events-none select-none z-0">
+          {/* Background always */}
+          <div className={`absolute inset-0 ${isDarkMode ? 'bg-gray-900' : 'bg-white'}`} />
+          {/* Image revealed from bottom as you scroll */}
+          <img
+            src={kiranaShop}
+            alt="Background"
+            className="absolute left-0 bottom-0 w-full object-cover transition-all duration-500 md:mt-16"
+            style={{
+              height: `${bgReveal * 100}%`,
+              opacity: bgReveal,
+              filter: `blur(${10 - 10 * bgReveal}px) ${isDarkMode ? 'brightness(0.6) contrast(1.1)'  : ''}`,
+              transition: "height 0.4s cubic-bezier(0.4,0,0.2,1), opacity 0.4s, filter 0.4s"
+            }}
+          />
+        </div>
+        <div
+          className="relative z-10 transition-all duration-300"
+          style={{
+            transform: `scale(${sledgeScale}) translateY(${sledgeTranslate}px)`,
+            transition: "transform 0.4s cubic-bezier(0.4,0,0.2,1)"
+          }}
+        >
+          <h1 className={`text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight mb-4 md:mb-6 tracking-tight ${isDarkMode ? 'text-white' : 'text-black'}`}>
+            Sledge 
+          </h1>
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-4 md:mb-6 tracking-tight text-blue-400">
+            Software Solutions
+          </h1>
+          <p className={`text-base md:text-xl mb-6 md:mb-10 max-w-2xl mx-auto px-4 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+            A premium UI crafted with Eudoxus Sans for clarity, elegance, and modern appeal. Designed for forward-thinkers.
+          </p>
+          <button className={`px-6 md:px-8 py-2 md:py-3 text-base md:text-lg rounded-full transition-all ${
+            isDarkMode 
+              ? 'bg-white text-gray-900 hover:bg-gray-100' 
+              : 'bg-black text-white hover:bg-gray-900'
+          }`}>
+            Explore Now
+          </button>
+        </div>
