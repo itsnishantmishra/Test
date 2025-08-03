@@ -1,533 +1,800 @@
-import React, { useState, useEffect } from "react";
-import { Trash, Trash2, Check, CircleCheck, ChevronDown, ChevronUp } from "lucide-react";
+import React, { useState, useEffect } from 'react';
+import API from "../../api";
+import { Link } from 'react-router-dom';
+import {
+  ShoppingCart, Clock, CheckCircle, XCircle, AlertTriangle, Eye, Plus, Filter, Search, Bell,
+  Package, Calendar, DollarSign, ArrowRight, RefreshCw, FileText, X, Check, Edit, Truck,
+  User, Phone, Mail, MapPin, ArrowLeft, Trash2, Save, Download, Upload, MessageSquare,
+  History, Settings, AlertCircle
+} from 'lucide-react';
 
-const Orders = () => {
-  const [isDarkMode, setIsDarkMode] = useState(false);
-  const [activeTab, setActiveTab] = useState("pending");
-  const [pendingOrders, setPendingOrders] = useState([
-    { id: 1, item: "Aashirvaad Atta", quantity: 10, rate: 300, checked: false, distributor: "Hindustan Distributors" },
-    { id: 2, item: "Tata Salt", quantity: 5, rate: 20, checked: false, distributor: "Bharat Traders" },
-    { id: 3, item: "Fortune Sunflower Oil", quantity: 2, rate: 150, checked: false, distributor: "Agro India Supplies" },
-    { id: 4, item: "Amul Butter", quantity: 4, rate: 50, checked: false, distributor: "Dairy Fresh Distributors" },
-  ]);
-  const [readyOrders, setReadyOrders] = useState([]);
-  const [onWayOrders, setOnWayOrders] = useState([]);
-  const [suggestedItems, setSuggestedItems] = useState([
-    { id: 1, item: "Basmati Rice", quantity: 3, rate: 120 },
-    { id: 2, item: "Madhur Sugar", quantity: 2, rate: 45 },
-    { id: 3, item: "Everest Chilli Powder", quantity: 1, rate: 90 },
-    { id: 4, item: "Rajdhani Besan", quantity: 5, rate: 60 },
-  ]);
-  const [expandedDistributors, setExpandedDistributors] = useState({});
-  const [showOrderPlacedModal, setShowOrderPlacedModal] = useState(false);
-  const [selectAll, setSelectAll] = useState(true);
+const RetailerOrders = () => {
+  const [orders, setOrders] = useState([]);
+  const [notifications, setNotifications] = useState([]);
+  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [activeTab, setActiveTab] = useState('all');
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [showCreateOrder, setShowCreateOrder] = useState(false);
+  const [showOrderDetails, setShowOrderDetails] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [distributors, setDistributors] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [createOrderData, setCreateOrderData] = useState({
+    distributorId: '',
+    items: [],
+    notes: ''
+  });
+  
+  const [editMode, setEditMode] = useState(false);
+  const [editOrderData, setEditOrderData] = useState({ items: [], notes: '' });
 
-  const toggleExpand = (dist) => {
-    setExpandedDistributors((prev) => ({
-      ...prev,
-      [dist]: !prev[dist],
-    }));
-  };
-
-  const handleCheckboxChange = (id) => {
-    setPendingOrders((prev) =>
-      prev.map((order) =>
-        order.id === id ? { ...order, checked: !order.checked } : order
-      )
-    );
-  };
- useEffect(() => {
-    // Detect initial system theme
-    const darkThemeQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    setIsDarkMode(darkThemeQuery.matches);
-
-    // Listen for system theme changes
-    const handleThemeChange = (e) => {
-      setIsDarkMode(e.matches);
-    };
-
-    darkThemeQuery.addEventListener('change', handleThemeChange);
-
-    // Cleanup listener when component unmounts
-    return () => darkThemeQuery.removeEventListener('change', handleThemeChange);
-  }, []);
-  // Whenever selectAll changes, update all checkboxes
+  // Fetch orders and notifications from backend
   useEffect(() => {
-    setPendingOrders((prevOrders) =>
-      prevOrders.map((order) => ({
-        ...order,
-        checked: selectAll,
-      }))
-    );
-  }, [selectAll]);
+    fetchOrders();
+    fetchNotifications();
+    fetchDistributors();
+    fetchProducts();
+  }, []);
 
-  const handleSelectAllChange = () => {
-    setSelectAll((prev) => !prev);
+  const fetchOrders = async () => {
+    setLoading(true);
+    try {
+      const res = await API.get('orders/retailer/orders');
+      setOrders(res.data.data || []);
+      console.log("Fetched orders:", res.data.data);
+    } catch (e) {
+      setOrders([]);
+    }
+    setLoading(false);
   };
 
-  const handleSelectAll = (checked) => {
-    setPendingOrders((prev) =>
-      prev.map((order) => ({ ...order, checked }))
-    );
+  const fetchNotifications = async () => {
+    try {
+      const res = await API.get('/notifications');
+      setNotifications(res.data.data.notifications || []);
+    } catch (e) {
+      setNotifications([]);
+    }
   };
 
-  const handleQuantityChange = (id, quantity) => {
-    setPendingOrders((prev) =>
-      prev.map((order) =>
-        order.id === id ? { ...order, quantity: parseInt(quantity) || 0 } : order
-      )
-    );
+  const fetchDistributors = async () => {
+    // Replace with your actual API endpoint for distributors
+    try {
+      const res = await API.get('orders/distributors');
+      setDistributors(res.data.data || []);
+    } catch {
+      setDistributors([]);
+    }
   };
 
-  const calculatePrice = (quantity, rate) => quantity * rate;
-
-  const selectedOrders = pendingOrders.filter((order) => order.checked);
-  const finalPrice = selectedOrders.reduce(
-    (sum, order) => sum + calculatePrice(order.quantity, order.rate),
-    0
-  );
-
-  const proceedOrders = () => {
-    const toMove = pendingOrders.filter((order) => order.checked);
-    setReadyOrders((prev) => [...prev, ...toMove.map(o => ({ ...o, checked: false }))]);
-    setPendingOrders((prev) => prev.filter((order) => !order.checked));
-    setActiveTab("ready");
+  const fetchProducts = async () => {
+    // Replace with your actual API endpoint for products
+    try {
+      const res = await API.get('orders/products');
+      setProducts(res.data.data || []);
+    } catch {
+      setProducts([]);
+    }
   };
 
-  const groupByDistributor = (orders) => {
-    return orders.reduce((acc, order) => {
-      acc[order.distributor] = acc[order.distributor] || [];
-      acc[order.distributor].push(order);
-      return acc;
-    }, {});
-  };
-
-  const deleteItemFromDistributor = (distributor, itemId) => {
-    setReadyOrders((prev) =>
-      prev.filter(order => !(order.distributor === distributor && order.id === itemId))
-    );
-  };
-
-  const deleteDistributor = (distributor) => {
-    setReadyOrders((prev) =>
-      prev.filter(order => order.distributor !== distributor)
-    );
-  };
-
-  const placeDistributorOrder = (distributor) => {
-    const distributorOrders = readyOrders.filter(o => o.distributor === distributor);
-    setOnWayOrders(prev => [...prev, ...distributorOrders]);
-    setShowOrderPlacedModal(true);
-    deleteDistributor(distributor);
-  };
-
-  const placeAllOrders = () => {
-    if (readyOrders.length === 0) {
-      alert("No orders are ready to be placed.");
+  // Create order
+  const handleCreateOrder = async () => {
+    if (!createOrderData.distributorId || createOrderData.items.length === 0) {
+      alert("Please select distributor and add at least one product.");
       return;
     }
-    setOnWayOrders((prev) => [...prev, ...readyOrders]);
-    setReadyOrders([]);
-    setShowOrderPlacedModal(true);
+    setLoading(true);
+    try {
+      const res = await API.post('orders/create', createOrderData);
+      setShowCreateOrder(false);
+      setCreateOrderData({ distributorId: '', items: [], notes: '' });
+      fetchOrders();
+
+    } catch (e) {
+      alert(e.response?.data?.message || "Failed to create order");
+    }
+    setLoading(false);
   };
 
-  const closeOrderPlacedModal = () => {
-    setShowOrderPlacedModal(false);
-    if (readyOrders.length !== 0) {
-      setActiveTab("ready");
-    } else {
-      setActiveTab("pending");
+  // Complete order (distributor enters code, retailer confirms)
+  const handleCompleteOrder = async (orderId) => {
+    const code = prompt("Enter the 6-digit code provided by the distributor to complete the order:");
+    if (!code || code.length !== 6) {
+      alert("Invalid code.");
+      return;
+    }
+    setLoading(true);
+    try {
+      // Backend should verify code and mark order as completed
+      await API.put(`/orders/retailer/orders/${orderId}/complete`, { code });
+      // Update inventory after order is fulfilled
+      await API.post('/inventory/checkout', { orderId });
+      fetchOrders();
+      alert("Order completed and inventory updated!");
+    } catch (e) {
+      alert(e.response?.data?.message || "Failed to complete order");
+    }
+    setLoading(false);
+  };
+
+  // Cancel order
+  const handleCancelOrder = async (orderId, reason) => {
+    if (!reason) return;
+    setLoading(true);
+    try {
+      await API.put(`/orders/retailer/orders/${orderId}/cancel`, { reason });
+      fetchOrders();
+    } catch (e) {
+      alert(e.response?.data?.message || "Failed to cancel order");
+    }
+    setLoading(false);
+  };
+
+  // Approve modified order
+  const handleApproveModifiedOrder = async (orderId, approved) => {
+    setLoading(true);
+    try {
+      await API.put(`/orders/retailer/orders/${orderId}/approve`, { approved });
+      fetchOrders();
+    } catch (e) {
+      alert(e.response?.data?.message || "Failed to update order");
+    }
+    setLoading(false);
+  };
+
+  const openEditOrder = () => {
+    setEditOrderData({
+      items: (selectedOrder.items || []).map(item => ({
+        sku: item.sku,
+        quantity: item.quantity,
+        unit: item.unit || 'box',
+        name: item.productName || item.name,
+        variantName: item.variantName || item.category
+      })),
+      notes: selectedOrder.notes || ''
+    });
+    setEditMode(true);
+  };
+
+  const handleEditOrderChange = (idx, field, value) => {
+    setEditOrderData(prev => {
+      const items = [...prev.items];
+      items[idx][field] = value;
+      return { ...prev, items };
+    });
+  };
+
+  const handleEditOrderNotes = (value) => {
+    setEditOrderData(prev => ({ ...prev, notes: value }));
+  };
+
+  const saveEditOrder = async () => {
+    setLoading(true);
+    console.log(selectedOrder);
+    try {
+      await API.put(`/orders/retailer/orders/${selectedOrder._id}/modify`, {
+        items: editOrderData.items.map(({ sku, quantity, unit }) => ({ sku, quantity, unit })),
+        notes: editOrderData.notes
+      });
+      setEditMode(false);
+      setShowOrderDetails(false);
+      fetchOrders();
+    } catch (e) {
+      alert(e.response?.data?.message || "Failed to modify order");
+    }
+    setLoading(false);
+  };
+
+  // ...inside RetailerOrders component
+  
+  const OrderDetailsModal = () => {
+    if (!selectedOrder) return null;
+
+    // Handler to close modal when clicking outside the modal content
+    const handleOverlayClick = (e) => {
+      if (e.target === e.currentTarget) {
+        setShowOrderDetails(false);
+      }
+    };
+
+    return (
+      <div
+        className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
+        onClick={handleOverlayClick}
+      >
+        <div
+          className="bg-white rounded-xl shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto"
+          onClick={e => e.stopPropagation()}
+        >
+          <div className="p-6 border-b border-gray-200">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <button
+                  onClick={() => {
+                    setShowOrderDetails(false);
+                    setEditMode(false);
+                  }}
+                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                >
+                  <ArrowLeft className="w-5 h-5 text-gray-500" />
+                </button>
+                <div>
+                  <h2 className="text-xl font-semibold text-gray-900">{selectedOrder.orderNumber}</h2>
+                  <p className="text-sm text-gray-500">{selectedOrder.distributor?.businessName || selectedOrder.distributorId}</p>
+                </div>
+              </div>
+              <div className={`flex items-center space-x-2 px-3 py-1 rounded-full text-sm font-medium border ${getStatusColor(selectedOrder.status)}`}>
+                {getStatusIcon(selectedOrder.status)}
+                <span className="capitalize">{selectedOrder.status}</span>
+              </div>
+            </div>
+          </div>
+  
+          <div className="p-6 space-y-6">
+            {/* Pending Actions */}
+            {selectedOrder.status === 'pending' && !editMode && (
+              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                <div className="flex items-center space-x-2 mb-3">
+                  <Clock className="w-5 h-5 text-yellow-600" />
+                  <h3 className="font-semibold text-yellow-800">Pending Order</h3>
+                </div>
+                <p className="text-sm text-yellow-700 mb-4">
+                  This order is pending. You can modify or cancel it before the distributor responds.
+                </p>
+                <div className="flex space-x-3">
+                  <button
+                    onClick={() => handleCancelOrder(selectedOrder.id, prompt("Reason for cancellation?"))}
+                    className="flex items-center space-x-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+                  >
+                    <XCircle className="w-4 h-4" />
+                    <span>Cancel Order</span>
+                  </button>
+                  <button
+                    onClick={openEditOrder}
+                    className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                  >
+                    <Edit className="w-4 h-4" />
+                    <span>Modify Order</span>
+                  </button>
+                </div>
+              </div>
+            )}
+  
+            {/* Editable product section */}
+            {selectedOrder.status === 'pending' && editMode && (
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <h3 className="font-semibold text-blue-800 mb-4">Edit Products</h3>
+                <div className="space-y-2">
+                  {editOrderData.items.map((item, idx) => (
+                    <div key={item.sku} className="flex items-center space-x-2 mb-2">
+                      <span className="flex-1">{item.name} <span className="text-xs text-gray-500">({item.variantName})</span></span>
+                      <input
+                        type="number"
+                        min={1}
+                        value={item.quantity}
+                        onChange={e => handleEditOrderChange(idx, 'quantity', Number(e.target.value))}
+                        className="w-20 border rounded px-2 py-1"
+                      />
+                      <span className="text-xs text-gray-500">{item.unit}</span>
+                    </div>
+                  ))}
+                  <textarea
+                    className="w-full border rounded px-2 py-1 mt-2"
+                    rows={2}
+                    value={editOrderData.notes}
+                    onChange={e => handleEditOrderNotes(e.target.value)}
+                    placeholder="Notes"
+                  />
+                </div>
+                <div className="flex space-x-2 mt-4">
+                  <button
+                    onClick={() => setEditMode(false)}
+                    className="px-4 py-2 bg-gray-200 rounded"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={saveEditOrder}
+                    className="px-4 py-2 bg-blue-600 text-white rounded"
+                    disabled={loading}
+                  >
+                    {loading ? "Saving..." : "Save Changes"}
+                  </button>
+                </div>
+              </div>
+            )}
+  
+            {/* Order Items (read-only if not editing) */}
+            {!editMode && (
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">Order Items</h3>
+                <div className="bg-gray-50 rounded-lg overflow-hidden">
+                  <table className="min-w-full">
+                    <thead className="bg-gray-100">
+                      <tr>
+                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Product</th>
+                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Category</th>
+                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Quantity</th>
+                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Price</th>
+                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Total</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-200">
+                      {(selectedOrder.items || []).map(item => (
+                        <tr key={item.id || item.sku} className="bg-white">
+                          <td className="px-4 py-3 text-sm text-gray-900">{item.name || item.productName}</td>
+                          <td className="px-4 py-3 text-sm text-gray-500">{item.category || item.variantName}</td>
+                          <td className="px-4 py-3 text-sm text-gray-900">{item.quantity}</td>
+                          <td className="px-4 py-3 text-sm text-gray-900">₹{item.variantSellingPrice?.toLocaleString()}</td>
+                          <td className="px-4 py-3 text-sm font-medium text-gray-900">
+                            ₹{(item.quantity * item.variantSellingPrice)?.toLocaleString()}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+  
+            {/* Contact & Shipping Info */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">Distributor Contact</h3>
+                <div className="bg-gray-50 rounded-lg p-4 space-y-3">
+                  <div className="flex items-center space-x-2">
+                    <User className="w-4 h-4 text-gray-600" />
+                    <span className="text-sm text-gray-900">{selectedOrder.distributor?.ownerName || '-'}</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Phone className="w-4 h-4 text-gray-600" />
+                    <span className="text-sm text-gray-900">{selectedOrder.distributor?.phone || '-'}</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Mail className="w-4 h-4 text-gray-600" />
+                    <span className="text-sm text-gray-900">{selectedOrder.distributor?.email || '-'}</span>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">Shipping Address</h3>
+                <div className="bg-gray-50 rounded-lg p-4">
+                  <div className="flex items-start space-x-2">
+                    <MapPin className="w-4 h-4 text-gray-600 mt-0.5" />
+                    <div className="text-sm text-gray-900">
+                      <p>{selectedOrder.shippingAddress?.street || '-'}</p>
+                      <p>{selectedOrder.shippingAddress?.city || ''} {selectedOrder.shippingAddress?.state || ''}</p>
+                      <p>{selectedOrder.retailer?.pincode || ''}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+  
+            {/* Order History */}
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Order History</h3>
+              <div className="space-y-3">
+                {(selectedOrder.orderHistory || []).map((entry, index) => (
+                  <div key={index} className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+                    <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                    <div className="flex-1">
+                      <p className="text-sm text-gray-900">{entry.action}</p>
+                      <p className="text-xs text-gray-500">
+                        {entry.date ? new Date(entry.date).toLocaleString() : ""} • {entry.user}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+  
+            {/* Notes */}
+            {selectedOrder.notes && (
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">Notes</h3>
+                <div className="bg-gray-50 rounded-lg p-4">
+                  <p className="text-sm text-gray-900">{selectedOrder.notes}</p>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const getStatusIcon = (status) => {
+    const iconProps = { size: 20 };
+    switch (status) {
+      case 'pending':
+        return <Clock {...iconProps} className="text-yellow-500" />;
+      case 'confirmed':
+        return <CheckCircle {...iconProps} className="text-blue-500" />;
+      case 'shipped':
+        return <Truck {...iconProps} className="text-purple-500" />;
+      case 'delivered':
+        return <Package {...iconProps} className="text-green-500" />;
+      case 'cancelled':
+        return <XCircle {...iconProps} className="text-red-500" />;
+      case 'modified':
+        return <Edit {...iconProps} className="text-orange-500" />;
+      default:
+        return <Clock {...iconProps} className="text-gray-500" />;
     }
   };
 
-  const TabButton = ({ tabId, label }) => (
-    <button
-      onClick={() => setActiveTab(tabId)}
-      className="flex-1 text-center px-3 py-3 md:px-4 md:py-2 font-medium transition relative"
-    >
-      <span
-        className={`text-lg md:text-base ${
-          activeTab === tabId
-            ? "text-blue-800 font-semibold"
-            : "text-gray-600 hover:text-gray-800"
-        }`}
-      >
-        {label}
-      </span>
-      <div
-        className={`absolute bottom-0 left-0 right-0 h-1 rounded-full transition-all duration-700 ${
-          activeTab === tabId ? "bg-blue-600" : "bg-transparent"
-        }`}
-      />
-    </button>
-  );
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'pending':
+        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      case 'confirmed':
+        return 'bg-blue-100 text-blue-800 border-blue-200';
+      case 'shipped':
+        return 'bg-purple-100 text-purple-800 border-purple-200';
+      case 'delivered':
+        return 'bg-green-100 text-green-800 border-green-200';
+      case 'cancelled':
+        return 'bg-red-100 text-red-800 border-red-200';
+      case 'modified':
+        return 'bg-orange-100 text-orange-800 border-orange-200';
+      default:
+        return 'bg-gray-100 text-gray-800 border-gray-200';
+    }
+  };
 
-  return (
-    <div className="min-h-screen bg-white p-4 md:p-6" >
-      <h2 className="text-4xl md:text-5xl font-bold md:leading-tight mb-6 tracking-tight text-between md:pt-4 md:pl-16">
-              <span className="bg-black bg-clip-text text-transparent font-eudoxus">
-                Fast Track
-              </span>
-              <span className="bg-gradient-to-r from-purple-500 via-violet-500 to-teal-400 bg-clip-text text-transparent font-eudoxus pl-2">
-                 Orders
-              </span>
-            </h2>
-    <div className="bg-white-800 min-h-screen p-3 md:p-6 flex gap-3 md:gap- md:pl-16 md:pr-12"
-    >
-      {/* Main Section (75% of the screen) */}
-      <div className="flex-1" >
-        {/* Tabs */}
-        <div className="flex w-full gap-2 md:gap-4 mb-4 md:mb-6 border-b border-blue-600 font-bold font-eudoxus">
-          <TabButton tabId="pending" label="Pending" />
-          {readyOrders.length > 0 && <TabButton tabId="ready" label="Ready" />}
+  
+
+  const OrderCard = ({ order }) => (
+    <div className="bg-white rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-all duration-200 p-6">
+      <div className="flex items-center justify-between mb-4">
+        <div>
+          <h3 className="font-semibold text-gray-900">{order.distributor?.name || order.distributorId}</h3>
+          <p className="text-xs text-gray-500">{order.orderNumber}</p>
         </div>
-
-        {/* Pending Orders Section */}
-        {activeTab === "pending" && (
-          <>
-            {/* Orders Table */}
-            <div className="overflow-auto bg-white rounded-3xl shadow-md p-2 md:p-4">
-              <table className="min-w-full border border-gray-300 text-left text-sm md:text-base rounded-full">
-                <thead className="bg-blue-100">
-                  <tr>
-                    <th className="p-2 md:p-3">
-                      <input
-                        className="w-4 h-4 md:w-4 md:h-4 "
-                        type="checkbox"
-                        checked={selectAll}
-                        onChange={handleSelectAllChange}
-                      />
-                    </th>
-                    <th className="p-2 md:p-7 text-blue-800 font-semibold text-base md:text-base">Product</th>
-                    <th className="p-2 md:p-7 text-blue-800 font-semibold text-base md:text-base hidden md:table-cell">Details</th>
-                    <th className="p-2 md:p-4 text-blue-800 font-semibold text-base md:text-base">Rate</th>
-                    <th className="p-2 md:p-7 text-blue-800 font-semibold text-base md:text-base">Qty</th>
-                    <th className="p-2 md:p-4 text-blue-800 font-semibold text-base md:text-base">Total</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {pendingOrders.length === 0 ? (
-                    <tr>
-                      <td colSpan="6" className="text-center py-6 text-gray-500 text-base md:text-base">
-                        No pending orders in the list
-                      </td>
-                    </tr>
-                  ) : (
-                    pendingOrders.map((order) => (
-                      <tr key={order.id} className="border-t">
-                        <td className="p-2 md:p-3">
-                          <input
-                            type="checkbox"
-                            className="w-4 h-4"
-                            checked={order.checked}
-                            onChange={() => handleCheckboxChange(order.id)}
-                          />
-                        </td>
-                        <td className="p-7 md:p-3">
-                          <p className="font-semibold text-sm md:text-base">{order.item}</p>
-                          <p className="text-xs md:text-sm text-blue-900">
-                            {order.distributor}
-                          </p>
-                        </td>
-                        <td className="p-7 md:p-3 hidden md:table-cell">
-                          <p className="text-sm text-gray-600">High-quality product</p>
-                        </td>
-                        <td className="p-7 md:p-3 text-sm md:text-base font-semibold">₹{order.rate}</td>
-                        <td className="p-7 md:p-3">
-                          <input
-                            type="number"
-                            min="1"
-                            className="w-12 md:w-16 px-1 md:px-2 py-1 border rounded text-sm md:text-base"
-                            value={order.quantity}
-                            onChange={(e) =>
-                              handleQuantityChange(order.id, e.target.value)
-                            }
-                          />
-                        </td>
-                        <td className="p-7 md:p-3 text-sm md:text-base font-semibold">₹{order.quantity * order.rate}</td>
-                      </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
-            </div>
-            {/* Proceed to Checkout Section */}
-            <div className="text-center mt-4 md:mt-6">
-              <h2 className="text-lg md:text-2xl font-bold text-gray-800 mb-3 md:mb-4">
-                Checkout ({selectedOrders.length} items): ₹{finalPrice}
-              </h2>
-              <button
-                onClick={proceedOrders}
-                className="bg-blue-900 text-white px-6 md:px-8 py-2 md:py-3 text-base md:text-lg font-semibold rounded-full hover:bg-blue-700 w-full md:w-auto"
-              >
-                Proceed
-              </button>
-            </div>
-          </>
+        <div className="flex items-center space-x-2">
+          <div className={`flex items-center space-x-2 px-3 py-1 rounded-full text-sm font-medium border`}>
+            <span className="capitalize">{order.status}</span>
+          </div>
+        </div>
+      </div>
+      <div className="grid grid-cols-3 gap-4 mb-4">
+        <div className="flex items-center space-x-2">
+          <Package className="w-4 h-4 text-gray-400" />
+          <span className="text-sm text-gray-600">{order.itemCount || (order.items ? order.items.length : 0)} items</span>
+        </div>
+        <div className="flex items-center space-x-2">
+          <DollarSign className="w-4 h-4 text-gray-400" />
+          <span className="text-sm text-gray-600">₹{order.totalAmount?.toLocaleString()}</span>
+        </div>
+        <div className="flex items-center space-x-2">
+          <Calendar className="w-4 h-4 text-gray-400" />
+          <span className="text-sm text-gray-600">{new Date(order.createdAt).toLocaleDateString()}</span>
+        </div>
+      </div>
+      <div className="flex items-center justify-between">
+        <button
+          onClick={() => {
+           openOrderModal(order.id)
+          }}
+          className="flex items-center space-x-1 px-3 py-1.5 text-sm font-medium text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors"
+        >
+          <Eye className="w-4 h-4" />
+          <span>View</span>
+        </button>
+        {order.status === 'processing' && (
+          <button
+            onClick={() => handleCompleteOrder(order.id)}
+            className="flex items-center space-x-1 px-3 py-1.5 text-sm font-medium text-green-600 bg-green-50 rounded-lg hover:bg-green-100 transition-colors"
+          >
+            <CheckCircle className="w-4 h-4" />
+            <span>Complete</span>
+          </button>
         )}
-
-        {/* Ready Orders Section */}
-        {activeTab === "ready" && (
+        {order.status === 'pending' && (
+          <button
+            onClick={() => handleCancelOrder(order.id, prompt("Reason for cancellation?"))}
+            className="flex items-center space-x-1 px-3 py-1.5 text-sm font-medium text-red-600 bg-red-50 rounded-lg hover:bg-red-100 transition-colors"
+          >
+            <XCircle className="w-4 h-4" />
+            <span>Cancel</span>
+          </button>
+        )}
+        {order.status === 'modified' && (
           <>
-            {readyOrders.length === 0 ? (
-              <p className="text-gray-300 text-center py-6 text-base md:text-base">No ready orders</p>
-            ) : (
-              <>
-                <h2 className="text-lg md:text-2xl font-semibold text-gray-800 mb-4 md:mb-6">
-                  Only one step to bring in
-                </h2>
-                {Object.entries(groupByDistributor(readyOrders)).map(
-                  ([distributor, items]) => {
-                    const showAll = expandedDistributors[distributor];
-                    const displayItems = showAll ? items : items.slice(0, 3);
-                    const total = items.reduce(
-                      (acc, o) => acc + o.quantity * o.rate,
-                      0
-                    );
-                    return (
-                      <div
-                        key={distributor}
-                        className={`bg-white rounded-xl shadow-sm border-2 transition-all duration-300 mb-4 md:mb-6 ${
-                          showAll ? "border-blue-600 shadow-lg" : "border-blue-200 hover:border-blue-300"
-                        }`}
-                      >
-                        {/* Distributor Header */}
-                        <div className="p-4 md:p-6 flex justify-between items-start mb-2 md:mb-4">
-                          <div className="flex items-center space-x-4">
-                            <div className="w-12 h-12 md:w-14 md:h-14 rounded-lg bg-blue-900 text-white flex items-center justify-center text-lg font-bold">
-                              {distributor
-                                .split(" ")
-                                .map((w) => w[0])
-                                .join("")
-                                .toUpperCase()
-                                .slice(0, 2)}
-                            </div>
-                            <div>
-                              <h3 className="text-base md:text-xl font-bold text-blue-900">{distributor}</h3>
-                              <div className="text-blue-600 text-xs md:text-sm">
-                                {items.length} item{items.length > 1 ? "s" : ""}
-                              </div>
-                            </div>
-                          </div>
-                          <button
-                            onClick={() => deleteDistributor(distributor)}
-                            className="text-red-600 hover:text-red-800"
-                          >
-                            <Trash2 size={18} className="md:w-5 md:h-5" />
-                          </button>
-                        </div>
-                        {/* Expand/Collapse Button */}
-                        {items.length > 3 && (
-                          <button
-                            onClick={() => toggleExpand(distributor)}
-                            className="w-full flex items-center justify-between bg-blue-100 hover:bg-blue-200 rounded-lg px-4 py-2 transition-colors mb-2"
-                          >
-                            <span className="font-medium text-blue-700">
-                              {showAll ? "View Less" : `View More (${items.length - 3} more)`}
-                            </span>
-                            {showAll ? (
-                              <ChevronUp className="w-5 h-5 text-blue-600" />
-                            ) : (
-                              <ChevronDown className="w-5 h-5 text-blue-600" />
-                            )}
-                          </button>
-                        )}
-                        {/* Product List */}
-                        <ul className="space-y-2 md:space-y-3 px-4 md:px-6 pb-2 md:pb-3">
-                          {displayItems.map((item) => (
-                            <li
-                              key={item.id}
-                              className="flex justify-between items-start border-b pb-2 md:pb-3 last:border-none"
-                            >
-                              <div className="flex-1">
-                                <p className="font-semibold text-sm md:text-base text-blue-800">
-                                  {item.item}
-                                </p>
-                                <p className="text-xs md:text-sm text-blue-900">
-                                  Qty: {item.quantity}, Rate: ₹{item.rate}, Price: ₹{item.quantity * item.rate}
-                                </p>
-                              </div>
-                              <button
-                                onClick={() =>
-                                  deleteItemFromDistributor(distributor, item.id)
-                                }
-                                className="text-red-500 hover:text-red-700 mt-1"
-                              >
-                                <Trash size={16} className="md:w-4 md:h-4" />
-                              </button>
-                            </li>
-                          ))}
-                        </ul>
-                        {/* View More / Less */}
-                        {items.length > 3 && (
-                          <button
-                            onClick={() => toggleExpand(distributor)}
-                            className="text-blue-600 text-sm md:text-sm mt-2 md:mt-2"
-                          >
-                            {showAll ? "View Less" : "View More"}
-                          </button>
-                        )}
-                        {/* Bottom section */}
-                        <div className="flex flex-col md:flex-row justify-between items-center mt-3 md:mt-4 gap-2 md:gap-3 px-4 md:px-6 pb-4">
-                          <p className="font-semibold text-sm md:text-base text-blue-900">
-                            Final Value: ₹{total}
-                          </p>
-                          <button
-                            onClick={() => placeDistributorOrder(distributor)}
-                            className="bg-green-600 text-white px-4 py-2 md:px-4 md:py-2 rounded-full hover:bg-green-700 w-full md:w-auto text-sm md:text-base"
-                          >
-                            Order
-                          </button>
-                        </div>
-                      </div>
-                    );
-                  }
-                )}
-                <div className="flex justify-end">
-                  <button
-                    onClick={placeAllOrders}
-                    className="bg-black md:py-3 text-white px-6 py-2 md:px-6 md:py-2 md:rounded-full hover:bg-blue-700 w-full md:w-auto text-base md:text-base"
-                  >
-                    Place All Orders
-                  </button>
-                </div>
-              </>
-            )}
+            <button
+              onClick={() => handleApproveModifiedOrder(order.id, true)}
+              className="flex items-center space-x-1 px-3 py-1.5 text-sm font-medium text-green-600 bg-green-50 rounded-lg hover:bg-green-100 transition-colors"
+            >
+              <Check className="w-4 h-4" />
+              <span>Approve</span>
+            </button>
+            <button
+              onClick={() => handleApproveModifiedOrder(order.id, false)}
+              className="flex items-center space-x-1 px-3 py-1.5 text-sm font-medium text-red-600 bg-red-50 rounded-lg hover:bg-red-100 transition-colors"
+            >
+              <X className="w-4 h-4" />
+              <span>Reject</span>
+            </button>
           </>
         )}
       </div>
+    </div>
+  );
 
-      {/* Right Sidebar */}
-      <div className="w-1/3 md:w-1/4 flex flex-col gap-3 md:gap-6">
-        {/* Conditionally Render Checkout Area */}
-        {readyOrders.length > 0 && (
-          <div className="bg-white p-3 md:p-4 rounded-lg shadow">
-            {/* Free Delivery Message */}
-            <div className="flex items-center gap-2 mb-3 md:mb-4">
-              <Check className="w-5 h-5 md:w-6 md:h-6 text-green-600" />
-              <p className="text-green-600 font-medium text-xs md:text-base">
-                Your order is eligible for free delivery under{" "}
-                <span className="font-semibold">Sledge Delivery Solutions</span>
-              </p>
-            </div>
-            {/* Proceed to Checkout Section */}
-            <div className="text-center">
-              <h2 className="text-sm md:text-xl font-bold text-blue-800 mb-3 md:mb-4">
-                Proceed to Checkout ({readyOrders.length} items): ₹
-                {readyOrders.reduce(
-                  (sum, order) => sum + order.quantity * order.rate,
-                  0
-                )}
-              </h2>
-              <button
-                onClick={placeAllOrders}
-                className="bg-blue-600 text-white px-4 py-2 md:px-6 md:py-2 text-sm md:text-lg font-semibold rounded-full hover:bg-blue-700 w-full"
+  const CreateOrderModal = () => (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+      <div className="bg-white rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+        <div className="p-6 border-b border-gray-200">
+          <div className="flex items-center justify-between">
+            
+          <h2 className="text-xl font-semibold text-gray-900 hover:underline cursor-pointer">
+            Create New Order
+          </h2>
+        
+            <button
+              onClick={() => setShowCreateOrder(false)}
+              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            >
+              <XCircle className="w-5 h-5 text-gray-500" />
+            </button>
+          </div>
+        </div>
+        <div className="p-6">
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Select Distributor
+              </label>
+              <select
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                value={createOrderData.distributorId}
+                onChange={e => setCreateOrderData(d => ({ ...d, distributorId: e.target.value }))}
               >
-                Place All Orders
+                <option value="">Select distributor</option>
+                {distributors.map(d => (
+                  <option key={d.id} value={d.id}>{d.businessName}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Add Products
+              </label>
+              {/* You can implement a product selection UI here */}
+              <div className="border border-gray-300 rounded-lg p-4">
+                <p className="text-sm text-gray-500 text-center py-8">
+                  Product selection interface would go here
+                </p>
+              </div>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Notes (Optional)
+              </label>
+              <textarea
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                rows="3"
+                placeholder="Add any special instructions..."
+                value={createOrderData.notes}
+                onChange={e => setCreateOrderData(d => ({ ...d, notes: e.target.value }))}
+              />
+            </div>
+          </div>
+          <div className="flex space-x-3 mt-6">
+            <button
+              onClick={() => setShowCreateOrder(false)}
+              className="flex-1 px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleCreateOrder}
+              className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              disabled={loading}
+            >
+              {loading ? "Creating..." : "Send Order Request"}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+ 
+
+  // Filtered orders
+  const filteredOrders = orders.filter(order => {
+    const matchesSearch = (order.orderNumber || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (order.distributor?.ownerName || '').toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesTab = activeTab === 'all' || order.status === activeTab;
+    return matchesSearch && matchesTab;
+  });
+
+  const openOrderModal = async (orderId) => {
+    setShowOrderDetails(true);
+    setSelectedOrder(null); // show loading state if needed
+    try {
+      const res = await API.get(`/orders/retailer/orders/${orderId}`);
+      setSelectedOrder(res.data.data);
+    } catch (e) {
+      alert("Failed to fetch order details");
+      setShowOrderDetails(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <div className="bg-white shadow-sm border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            <h1 className="text-2xl font-bold text-gray-900">Order Management</h1>
+            <div className="flex items-center space-x-4">
+              <button
+                onClick={() => setShowNotifications(!showNotifications)}
+                className=" mt-2 relative p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <Bell className="w-5 h-5" />
+                {notifications.filter(n => !n.read).length > 0 && (
+                  <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
+                    {notifications.filter(n => !n.read).length}
+                  </span>
+                )}
+              </button>
+              <button
+                onClick={() => setShowCreateOrder(true)}
+                className=" mt-2 flex items-center space-x-2 px-4 py-2 bg-blue-500 text-white rounded-full hover:bg-blue-700 transition-colors"
+              >
+                <Plus className="w-4 h-4" />
+                <Link to="/layout/shelf"><h2>New Order</h2></Link>
               </button>
             </div>
           </div>
-        )}
-
-        {/* Orders on Way Section */}
-        <div
-          className="p-3 md:p-4 rounded-3xl shadow-md transition-all duration-300 bg-blue-900"
-          style={{
-            height: "200px",
-            overflowY: "auto",
-          }}
-        >
-          <h3 className="text-sm md:text-lg font-semibold text-white mb-2 md:mb-3 text-center">
-            Orders on Way
-          </h3>
-          {onWayOrders.length === 0 ? (
-            <p className="text-gray-300 text-center text-xs md:text-base">No orders on the way.</p>
-          ) : (
-            <div className="grid grid-cols-1 gap-2 md:gap-3">
-              {onWayOrders.map((order, i) => (
-                <div
-                  key={i}
-                  className="bg-white p-2 md:p-3 rounded-lg shadow-md"
-                >
-                  <h4 className="font-semibold text-blue-800 text-xs md:text-base">
-                    {order.item}
-                  </h4>
-                  <p className="text-xs md:text-sm text-gray-600">
-                    Quantity: {order.quantity} | Rate: ₹{order.rate}
-                  </p>
-                  <p className="text-xs md:text-sm text-gray-600">
-                    Total: ₹{order.quantity * order.rate}
-                  </p>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* Suggested Items Section */}
-        <div
-          className={`p-3 md:p-4 rounded-3xl shadow-md transition-all duration-300 ${
-            suggestedItems.length === 0
-              ? "bg-gray700"
-              : suggestedItems.length <= 3
-              ? "bg-blue-750"
-              : suggestedItems.length <= 6
-              ? "bg-blue-800"
-              : "bg-blue-900"
-          }`}
-          style={{
-            height: "200px",
-            overflowY: "auto",
-            overflowX: "auto",
-          }}
-        >
-          <h3 className="text-sm md:text-lg font-semibold text-white mb-2 md:mb-3 text-center">
-            Suggested Items (Low on Stock)
-          </h3>
-          {suggestedItems.length === 0 ? (
-            <p className="text-gray-300 text-center text-xs md:text-base">No low-stock items.</p>
-          ) : (
-            <div className="grid grid-cols-1 gap-2 md:gap-3">
-              {suggestedItems.map((item, i) => (
-                <div
-                  key={i}
-                  className="bg-white p-2 md:p-3 rounded-lg shadow-md"
-                >
-                  <h4 className="font-semibold text-blue-800 text-xs md:text-base">
-                    {item.item}
-                  </h4>
-                  <p className="text-xs md:text-sm text-gray-600">
-                    Quantity: {item.quantity} | Rate: ₹{item.rate}
-                  </p>
-                  <p className="text-xs md:text-sm text-gray-600">
-                    Total: ₹{item.quantity * item.rate}
-                  </p>
-                </div>
-              ))}
-            </div>
-          )}
         </div>
       </div>
 
-      {/* Order Placed Modal */}
-      {showOrderPlacedModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-30 backdrop-blur-sm flex justify-center items-center z-50 p-4">
-          <div className="bg-blue-600 text-white p-6 md:p-8 rounded-lg shadow-lg w-full max-w-md text-center">
-            <CircleCheck className="w-16 h-16 mx-auto mb-4 text-green-400" />
-            <h2 className="text-2xl md:text-3xl font-bold mb-4">Order Placed!</h2>
-            <p className="text-lg mb-6">Your order has been successfully placed.</p>
-            <button
-              onClick={closeOrderPlacedModal}
-              className="bg-white text-blue-600 px-6 py-2 rounded-full font-semibold hover:bg-gray-100 w-full md:w-auto text-lg"
-            >
-              OK
-            </button>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Filters and Search */}
+        <div className="mb-8">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex space-x-1 bg-gray-100 rounded-lg p-1">
+              {['all', 'pending', 'processing', 'modified', 'completed'].map(tab => (
+                <button
+                  key={tab}
+                  onClick={() => setActiveTab(tab)}
+                  className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+                    activeTab === tab
+                      ? 'bg-white shadow-sm'
+                      : 'text-gray-600 hover:text-gray-900'
+                  }`}
+                >
+                  {tab.charAt(0).toUpperCase() + tab.slice(1)}
+                </button>
+              ))}
+            </div>
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+              <input
+                type="text"
+                placeholder="Search orders..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Orders List */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+          {filteredOrders.map(order => (
+            <OrderCard key={order.id} order={order} />
+          ))}
+        </div>
+
+        {filteredOrders.length === 0 && (
+          <div className="text-center py-12">
+            <ShoppingCart className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+            <h3 className="text-lg font-medium text-gray-900 mb-2">No orders found</h3>
+            <p className="text-gray-500">
+              {searchTerm ? 'Try adjusting your search terms' : 'Create your first order to get started'}
+            </p>
+          </div>
+        )}
+      </div>
+
+      {/* Modals */}
+      {showCreateOrder && <CreateOrderModal />}
+      {showOrderDetails && selectedOrder && <OrderDetailsModal order={selectedOrder} />}
+      {showNotifications && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-xl shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b border-gray-200">
+              <div className="flex items-center justify-between">
+                <h2 className="text-xl font-semibold text-gray-900">Notifications</h2>
+                <button
+                  onClick={() => setShowNotifications(false)}
+                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                >
+                  <XCircle className="w-5 h-5 text-gray-500" />
+                </button>
+              </div>
+            </div>
+            <div className="p-6 space-y-4">
+              {notifications.map((notification, index) => (
+                <div key={index} className={`p-4 rounded-lg ${notification.read ? 'bg-gray-50' : 'bg-blue-50'}`}>
+                  <h3 className="font-semibold text-gray-900">{notification.title}</h3>
+                  <p className="text-sm text-gray-600">{notification.message}</p>
+                  <span className="text-xs text-gray-500">{new Date(notification.date).toLocaleString()}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+      {editMode && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b border-gray-200">
+              <div className="flex items-center justify-between">
+                <h2 className="text-xl font-semibold text-gray-900">Edit Order</h2>
+                <button
+                  onClick={() => setEditMode(false)}
+                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                >
+                  <XCircle className="w-5 h-5 text-gray-500" />
+                </button>
+              </div>
+            </div>
+            <div className="p-6 space-y-4">
+              {/* Editable product section */}
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <h3 className="font-semibold text-blue-800 mb-4">Edit Products</h3>
+                <div className="space-y-2">
+                  {editOrderData.items.map((item, idx) => (
+                    <div key={item.sku} className="flex items-center space-x-2 mb-2">
+                      <span className="flex-1">{item.name} <span className="text-xs text-gray-500">({item.variantName})</span></span>
+                      <input
+                        type="number"
+                        min={1}
+                        value={item.quantity}
+                        onChange={e => handleEditOrderChange(idx, 'quantity', Number(e.target.value))}
+                        className="w-20 border rounded px-2 py-1"
+                      />
+                      <span className="text-xs text-gray-500">{item.unit}</span>
+                    </div>
+                  ))}
+                  <textarea
+                    className="w-full border rounded px-2 py-1 mt-2"
+                    rows={2}
+                    value={editOrderData.notes}
+                    onChange={e => handleEditOrderNotes(e.target.value)}
+                    placeholder="Notes"
+                  />
+                </div>
+                <div className="flex space-x-2 mt-4">
+                  <button
+                    onClick={() => setEditMode(false)}
+                    className="px-4 py-2 bg-gray-200 rounded"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={saveEditOrder}
+                    className="px-4 py-2 bg-blue-600 text-white rounded"
+                  >
+                    Save
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       )}
     </div>
-    </div>
   );
 };
 
-export default Orders;
+export default RetailerOrders;

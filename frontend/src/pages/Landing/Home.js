@@ -9,10 +9,11 @@ import Home2 from "../../assets/Home2.png";
 import Home3 from "../../assets/Home3.png";
 import Home4 from "../../assets/Home4.png";
 import Money from "../../assets/HomeMoney.png";
-import ExploreSection from "../../components/ExploreSection";
+import ExploreSection from "./ExploreSection";
 import BG2 from "../../assets/Background2.png";
 import CardSwap, { Card } from '../Utilities/CardSwap/cardSwap'
 import NewsLetter from "./newsletter";
+import SledgeFeatures from "./SledgeFeatures";
 
 import { useRef, useEffect, useState,} from "react";
 
@@ -54,71 +55,9 @@ const testimonials = [
 ];
 
 
-const features = [
-  {
-    title: "Inventory Management",
-    desc: "Stay updated with real-time stock levels.",
-    img: "https://via.placeholder.com/600x300"
-  },
-  {
-    title: "Billing Solutions",
-    desc: "Generate invoices and manage transactions effortlessly.",
-    img: "https://via.placeholder.com/600x300"
-  },
-  {
-    title: "Business Credit Management",
-    desc: "Offer and track credit transactions securely.",
-    img: "https://via.placeholder.com/600x300"
-  },
-  {
-    title: "Supply Chain Management",
-    desc: "Optimize and streamline supply chain operations.",
-    img: "https://via.placeholder.com/600x300"
-  },
-  {
-    title: "Growth & Analytics",
-    desc: "Gain insights to scale your business effectively.",
-    img: "https://via.placeholder.com/600x300"
-  },
-  {
-    title: "Curated Business Support",
-    desc: "Get expert advice and tailored support.",
-    img: "https://via.placeholder.com/600x300"
-  }
-];
 
-const Modalfeatures = [
-  {
-    title: "Inventory Management",
-    desc: "Managing stock shouldn’t be a guessing game. Our Inventory Management system gives you real-time updates on what’s in stock, what’s running low, and what’s moving fast—so you can make smart, data-driven decisions. From barcode tracking to automated low-stock alerts, you’ll never have to worry about overordering or missing a sale. Whether you’re running a warehouse, retail store, or supply hub, the interface is intuitive and scalable to fit your operations. Say goodbye to outdated spreadsheets and hello to seamless stock control. Your business deserves a smarter, smoother way to manage inventory—this is it.",
-    img: "https://support.apple.com/content/dam/edam/applecare/images/en_US/psp/psp_heroes/hero-banner-support-home.image.small_2x.jpg"
-  },
-  {
-    title: "Billing Solutions",
-    desc: "Billing should be fast, reliable, and professional—and that’s exactly what we deliver. With our comprehensive billing tools, you can generate invoices, send them instantly to customers, track payments, and set up recurring billing without a hitch. The system integrates seamlessly with your sales and customer data, giving you a full view of your financials in one place. Accept multiple payment modes and get notified when payments are delayed. Every invoice you send reflects your brand with customizable layouts and logos. Whether it’s a one-time transaction or a monthly subscription, billing has never been this easy or elegant.",
-    img: "https://support.apple.com/content/dam/edam/applecare/images/en_US/psp/psp_heroes/hero-banner-support-home.image.small_2x.jpg"
-  },
-  {
-    title: "Business Credit Management",
-    desc: "Extend credit with confidence using our advanced business credit management system. Easily set credit limits for customers, monitor outstanding balances, and automate friendly payment reminders. Designed with transparency and accountability in mind, our tools help you maintain strong business relationships while protecting your bottom line. Detailed credit reports and real-time repayment tracking help you spot risks early and take action quickly. Whether you’re managing dozens of customers or just starting to offer credit, the system scales with your growth. Build trust, increase sales, and manage debt effectively—all from one centralized dashboard that puts you in control.",
-    img: "https://support.apple.com/content/dam/edam/applecare/images/en_US/psp_heros/psp-hero-banner-watch.image.small_2x.jpg"
-  },
-  {
-    title: "Supply Chain Management",
-    desc: "Your supply chain is the backbone of your business—and we make sure it runs smoothly. Our supply chain management tools offer full visibility across procurement, warehousing, shipping, and delivery. Monitor supplier performance, reduce lead times, and forecast inventory needs with intelligent suggestions. You can track each order in real-time and resolve bottlenecks before they impact your customers. With built-in collaboration features, everyone from vendors to logistics managers stays in sync. Whether you’re handling simple deliveries or complex networks, this platform brings order and clarity to the chaos of supply. Get control, stay ahead, and keep everything moving efficiently.",
-    img: "https://images.unsplash.com/photo-1605902711912-cfb43c4437e3?auto=format&fit=crop&w=1400&q=80"
-  },
-  {
-    title: "Growth & Analytics",
-    desc: "Data is only useful if it drives action. Our analytics dashboard turns complex numbers into clear, beautiful insights that help you grow faster. Track customer behavior, product performance, revenue trends, and operational KPIs—all in real time. Our tools help you identify what’s working, fix what isn’t, and uncover opportunities you didn’t even know existed. Use filters, visualizations, and comparison tools to go deep into your metrics. Whether you're preparing a pitch, tracking a campaign, or optimizing a workflow, our analytics help you move forward with confidence. It's not just about numbers—it's about smarter decisions and sustainable success.",
-    img: "https://support.apple.com/content/dam/edam/applecare/images/en_US/psp_heros/psp-hero-banner-watch.image.small_2x.jpg"
-  },
-  {
-    title: "Curated Business Support",
-    desc: "Behind every successful business is a great support system. We go beyond software by offering personalized guidance, industry connections, and human expertise tailored to your unique needs. Whether you're seeking funding, improving operations, or expanding into new markets, our network of advisors and curated tools helps you get there faster. You can book strategy sessions, access expert content, or simply chat with a specialist who understands your space. Business is a journey—and you shouldn’t walk it alone. With our support, you gain a team that grows with you, every step of the way.",
-    img: "https://support.apple.com/content/dam/edam/applecare/images/en_US/psp/psp_heroes/hero-banner-support-home.image.small_2x.jpg"
-  }
-];
+
+
 
 
 
@@ -437,7 +376,7 @@ useEffect(() => {
           const rect = heroRef.current.getBoundingClientRect();
           const windowHeight = window.innerHeight;
           const start = 0;
-          const end = -windowHeight * 1.2;
+          const end = -windowHeight * 0.9;
           let progress = 0;
           if (rect.top < start) {
             progress = Math.min(1, Math.max(0, (start - rect.top) / (start - end)));
@@ -449,29 +388,7 @@ useEffect(() => {
         }
 
         // --- WHY SLEDGE SECTION ANIMATION --- (FIXED)
-        if (whySledgeRef.current) {
-          const rect = whySledgeRef.current.getBoundingClientRect();
-          const windowHeight = window.innerHeight;
-          
-          // Check if section is in view for visibility
-          if (rect.top < windowHeight * 0.8 && rect.bottom > windowHeight * 0.2) {
-            setIsWhySledgeVisible(true);
-          }
-          
-          // Only calculate scroll animation if section is visible
-          if (rect.top <= windowHeight && rect.bottom >= 0) {
-            const start = 0;
-            const end = -windowHeight * 1.2;
-            let progress = 0;
-            if (rect.top < start) {
-              progress = Math.min(1, Math.max(0, (start - rect.top) / (start - end)));
-            }
-            const width = Math.round((100 - 15 * progress) * 100) / 100;
-            const radius = Math.round(progress * 48 * 100) / 100; // Fixed: multiply by 100 for proper rounding
-            whySledgeRef.current.style.width = `${width}vw`;
-            whySledgeRef.current.style.borderRadius = `${radius}px`;
-          }
-        }
+        
 
         // --- SLEDGE SECTION ANIMATION ---
         if (sledgeRef.current) {
@@ -530,7 +447,7 @@ useEffect(() => {
           style={{
             width: `${heroWidth}vw`,
             height: "100vh",
-            borderRadius: `${heroRadius}px`,
+            borderRadius: `$50px`,
              transformStyle: "preserve-3d",
             perspective: 1000,
             
@@ -652,7 +569,7 @@ useEffect(() => {
       {/* Sledge Software Solutions Section */}
       <section
         ref={sledgeRef}
-        className={`text-center px-4 md:mb-8 py-16 md:py-28 lg:py-60 rounded-3xl w-full max-w-xl md:max-w-7xl mx-auto relative overflow-hidden transition-all duration-1000 ease-out transform ${
+        className={`text-center px-4 md:mb-8 py-16 md:py-28 lg:py-60 w-full max-w-xl md:max-w-full  md:mr-2 relative overflow-hidden transition-all duration-1000 ease-out transform ${
           isSledgeVisible ? 'opacity-100 translate-y-0' : 'opacity-100 translate-y-20'
         }`}
         style={{
@@ -681,7 +598,7 @@ useEffect(() => {
 
         
         {/* Enhanced gradient overlay for better text readability */}
-        <div className="absolute inset-0 z-1 " />
+        <div className="absolute inset-0 z-1 w-full" />
         
         {/* Background reveal logic - Desktop only animation */}
         <div className="absolute inset-0 w-full h-full pointer-events-none select-none z-2 overflow-hidden">
@@ -717,7 +634,7 @@ useEffect(() => {
         
         {/* Content Container with enhanced styling */}
         <div
-          className="relative z-10 transition-all duration-300 "
+          className="relative z-10 transition-all duration-300 w-full"
           style={{
             // Apply scaling and translation only on desktop
             ...(window.innerWidth >= 768 ? {
@@ -785,258 +702,10 @@ useEffect(() => {
       </div>
         
         
-
-        {/* Why Choose Sledge Section */}
-<section
-  ref={whySledgeRef}
-  id="why-sledge-section"
-  className={`w-full relative flex flex-col justify-center overflow-hidden mx-auto pt-8 md:pt-16 px-4 md:px-16 transition-all duration-1000 ease-out ${
-    isWhySledgeVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-20'
-  } ${isDarkMode ? 'bg-gray-900' : 'bg-black'}`}
-  style={{
-    width: "100vw",
-    height: "auto",
-    minHeight: "100vh",
-    borderRadius: "0px",
-    boxShadow: heroRadius !== "0px" ? (isDarkMode ? "0 8px 32px 0 rgba(0,0,0,0.6)" : "0 8px 32px 0 rgba(36,41,54,0.13)") : undefined,
-    transform: "translateZ(0)",
-    willChange: "width, border-radius",
-    background: isDarkMode 
-      ? 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f172a 100%)'
-      : 'linear-gradient(135deg, #000000 0%, #1a1a2e 50%, #000000 100%)'
-  }}
->
-  {/* Animated background particles */}
-  <div className="absolute inset-0 overflow-hidden pointer-events-none">
-    <div className="absolute top-20 left-10 w-2 h-2 bg-purple-500 rounded-full animate-pulse opacity-60"></div>
-    <div className="absolute top-40 right-20 w-1 h-1 bg-blue-400 rounded-full animate-ping opacity-40"></div>
-    <div className="absolute bottom-32 left-1/4 w-1.5 h-1.5 bg-teal-400 rounded-full animate-pulse opacity-50"></div>
-    <div className="absolute bottom-20 right-1/3 w-2 h-2 bg-violet-500 rounded-full animate-ping opacity-30"></div>
-  </div>
-
-  <div
-    className="w-full h-full relative z-10 pb-8"
-    style={{
-      transform: isWhySledgeVisible ? 'none' : 'translateY(20px)',
-      transition: 'transform 1000ms ease-out',
-      transitionDelay: isWhySledgeVisible ? '400ms' : '0ms',
-    }}
-  >
-    {/* Header */}
-    <div className="text-left mb-8 md:mb-16 ">
-      <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-violet-500 to-teal-400 mb-4">
-        Why Choose Sledge
-      </h2>
-      <p className="text-gray-400 text-lg md:text-xl max-w-2xl mx-right">
-        Experience the future of B2B with cutting-edge features designed for modern businesses
-      </p>
-    </div>
-
-    {/* Mobile: Enhanced vertical scroll with cards */}
-    <div className="block md:hidden">
-      <div className="max-h-[70vh] overflow-y-auto px-2 space-y-4 pb-8 scrollbar-hide">
-        {features.map((feature, idx) => (
-          <div
-            key={idx}
-            onClick={() => setSelectedFeature(idx)}
-            className="group relative cursor-pointer"
-            style={{
-              transform: isWhySledgeVisible ? 'translateY(0)' : 'translateY(30px)',
-              opacity: isWhySledgeVisible ? 1 : 0,
-              transition: `all 800ms ease-out`,
-              transitionDelay: isWhySledgeVisible ? `${500 + idx * 100}ms` : '0ms',
-            }}
-          >
-            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-white/5 to-white/10 backdrop-blur-xl border border-white/20 p-6 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl hover:shadow-purple-500/20">
-              {/* Gradient overlay */}
-              <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 via-transparent to-teal-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-              
-              {/* Content */}
-              <div className="relative z-10 flex items-start space-x-4">
-                <div className="flex-shrink-0 p-3 rounded-xl bg-gradient-to-br from-purple-500/20 to-teal-500/20 border border-white/10">
-                  {idx === 0 && <Package className="w-6 h-6 text-blue-400" />}
-                  {idx === 1 && <CreditCard className="w-6 h-6 text-green-400" />}
-                  {idx === 2 && <Users className="w-6 h-6 text-purple-400" />}
-                  {idx === 3 && <TrendingUp className="w-6 h-6 text-orange-400" />}
-                  {idx === 4 && <BarChart className="w-6 h-6 text-pink-400" />}
-                  {idx === 5 && <ShoppingCart className="w-6 h-6 text-teal-400" />}
-                </div>
-                
-                <div className="flex-1 min-w-0">
-                  <h3 className="text-xl font-bold text-white mb-2 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-purple-400 group-hover:to-teal-400 transition-all duration-300">
-                    {feature.title}
-                  </h3>
-                  <p className="text-gray-300 text-sm leading-relaxed mb-3">
-                    {feature.desc}
-                  </p>
-                  <div className="flex items-center text-purple-400 group-hover:text-teal-400 transition-colors">
-                    <span className="text-xs font-medium">Explore feature</span>
-                    <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-
-    {/* Desktop: Enhanced grid layout */}
-    <div className="hidden md:grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 lg:gap-8">
-      {features.map((feature, idx) => (
-        <div
-          key={idx}
-          className="group relative cursor-pointer h-[280px]"
-          style={{
-            transform: isWhySledgeVisible ? 'translateY(0)' : 'translateY(30px)',
-            opacity: isWhySledgeVisible ? 1 : 0,
-                  transition: `all 800ms ease-out`,
-                  transitionDelay: isWhySledgeVisible ? `${500 + idx * 100}ms` : '0ms',
-                }}
-              >
-                <div className="relative h-full overflow-hidden rounded-3xl bg-gradient-to-br from-white/5 to-white/10 backdrop-blur-xl border border-white/20 p-8 transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/20">
-                  {/* Animated gradient overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 via-transparent to-teal-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                  
-                  {/* Glowing orb effect */}
-                  <div className="absolute -top-10 -right-10 w-20 h-20 bg-gradient-to-br from-purple-500/30 to-teal-500/30 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                  
-                  {/* Content */}
-                  <div className="relative z-10 h-full flex flex-col">
-                    <div className="flex items-center mb-6">
-                      <div className="p-4 rounded-2xl bg-gradient-to-br from-purple-500/20 to-teal-500/20 border border-white/10 mr-4 group-hover:scale-110 transition-transform duration-300">
-                        {idx === 0 && <Package className="w-8 h-8 text-blue-400" />}
-                        {idx === 1 && <CreditCard className="w-8 h-8 text-green-400" />}
-                        {idx === 2 && <Users className="w-8 h-8 text-purple-400" />}
-                        {idx === 3 && <TrendingUp className="w-8 h-8 text-orange-400" />}
-                        {idx === 4 && <BarChart className="w-8 h-8 text-pink-400" />}
-                        {idx === 5 && <ShoppingCart className="w-8 h-8 text-teal-400" />}
-                      </div>
-                      <h3 className="text-2xl font-bold text-white group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-purple-400 group-hover:to-teal-400 transition-all duration-300">
-                        {feature.title}
-                      </h3>
-                    </div>
-                    
-                    <p className="text-gray-300 text-lg leading-relaxed mb-6 flex-grow">
-                      {feature.desc}
-                    </p>
-                    
-                    <button
-                      type="button"
-                      className="flex items-center text-purple-400 group-hover:text-teal-400 transition-colors focus:outline-none group/button"
-                      onClick={() => setSelectedFeature(idx)}
-                    >
-                      <span className="text-sm font-medium">Learn more</span>
-                      <ArrowRight className="w-4 h-4 ml-2 group-hover/button:translate-x-1 transition-transform" />
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+        {/* Why Choose Sledge*/ }
+        <div>
+          <SledgeFeatures/>
         </div>
-      </section>
-
-
-
-        {/* Modal Overlay */}
-        {selectedFeature !== null && (
-          <div
-            className="fixed inset-0 z-50 bg-black/70 backdrop-blur-md flex items-center justify-center p-2 sm:p-4 overflow-auto"
-            onClick={() => setSelectedFeature(null)}
-          >
-            <div
-              className={`mx-auto relative rounded-3xl w-full max-w-4xl max-h-[95vh] overflow-hidden ${
-                isDarkMode ? 'bg-gray-900/95' : 'bg-white/95'
-              } backdrop-blur-xl border border-white/20 shadow-2xl`}
-              onClick={(e) => e.stopPropagation()}
-            >
-              {/* Header with close button */}
-              <div className="relative p-4 sm:p-6 pb-0">
-                <button
-                  onClick={() => setSelectedFeature(null)}
-                  className="absolute top-3 right-3 sm:top-4 sm:right-4 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center hover:bg-red-500/20 hover:border-red-500/40 transition-all duration-300 group z-10"
-                >
-                  <svg 
-                    className="w-5 h-5 sm:w-6 sm:h-6 text-gray-400 group-hover:text-red-400 transition-colors" 
-                    fill="none" 
-                    stroke="currentColor" 
-                    viewBox="0 0 24 24"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
-              </div>
-
-              {/* Scrollable content */}
-              <div className="max-h-[90vh] overflow-y-auto px-4 sm:px-6 pb-6">
-                {/* Image with gradient overlay */}
-                <div className="relative mb-6 sm:mb-8 rounded-2xl overflow-hidden group">
-                  <img
-                    src={Modalfeatures[selectedFeature].img}
-                    alt={Modalfeatures[selectedFeature].title}
-                    className="w-full h-48 sm:h-64 md:h-80 object-cover transition-transform duration-700 group-hover:scale-105"
-                    style={{
-                      filter: isDarkMode ? 'brightness(0.85) contrast(1.1)' : 'brightness(0.95)'
-                    }}
-                  />
-                  {/* Gradient overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent"></div>
-                  
-                  {/* Feature indicator */}
-                  <div className="absolute top-4 left-4 px-3 py-1 bg-white/10 backdrop-blur-sm rounded-full border border-white/20">
-                    <span className="text-white text-xs font-medium">Feature #{selectedFeature + 1}</span>
-                  </div>
-                </div>
-
-                {/* Title */}
-                <div className="mb-6 sm:mb-8">
-                  <h2 className={`text-2xl sm:text-3xl md:text-4xl font-bold mb-2 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-violet-500 to-teal-400`}>
-                    {Modalfeatures[selectedFeature].title}
-                  </h2>
-                  <div className="w-16 sm:w-20 h-1 bg-gradient-to-r from-purple-500 to-teal-500 rounded-full"></div>
-                </div>
-
-                {/* Description with enhanced styling */}
-                <div className={`relative rounded-2xl p-6 sm:p-8 ${isDarkMode ? 'bg-white/5' : 'bg-gray-50/80'} backdrop-blur-sm border border-white/10`}>
-                  {/* Decorative elements */}
-                  <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
-                    <div className="absolute top-4 left-4 w-2 h-2 bg-purple-500 rounded-full animate-pulse opacity-60"></div>
-                    <div className="absolute bottom-4 right-4 w-1.5 h-1.5 bg-teal-500 rounded-full animate-pulse opacity-40"></div>
-                  </div>
-                  
-                  {/* Content */}
-                  <div className="relative z-10">
-                    <p className={`text-base sm:text-lg md:text-xl leading-relaxed sm:leading-relaxed ${
-                      isDarkMode ? 'text-gray-200' : 'text-gray-700'
-                    }`}>
-                      {Modalfeatures[selectedFeature].desc}
-                    </p>
-                  </div>
-                  
-                  {/* Bottom accent */}
-                  <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-12 h-0.5 bg-gradient-to-r from-purple-500 to-teal-500 rounded-full"></div>
-                </div>
-
-                {/* Action buttons */}
-                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mt-6 sm:mt-8">
-                  <button
-                    className={`flex-1 px-6 py-3 rounded-xl font-medium border transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] ${
-                      isDarkMode 
-                        ? 'border-white/20 text-white hover:bg-white/10' 
-                        : 'border-gray-300 text-gray-700 hover:bg-gray-50'
-                    }`}
-                    onClick={() => setSelectedFeature(null)}
-                  >
-                    Close
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-
 
         {/* AI Section */}
         <section
@@ -1504,10 +1173,187 @@ useEffect(() => {
           </div>
 
             {/* Newsletter Content */}
-            {/* Old NewsLetter in Resources */ }
-           <div id="newsletter-section"> {/* Added ID for smooth scrolling */}
-          <NewsLetter />
+          
+                     <section 
+          ref={newsletterRef}
+          className={`relative min-h-screen py-20 overflow-hidden ${
+            isDarkMode ? 'bg-black' : 'bg-black'
+          }`}
+        >
+          {/* Animated Background */}
+          <div className="absolute inset-0 pointer-events-none">
+            {/* Dynamic Gradient Orbs */}
+            <div 
+              className="absolute w-96 h-96 bg-gradient-to-r from-purple-500/30 to-pink-500/30 rounded-full blur-3xl animate-pulse"
+              style={{
+                top: '20%',
+                left: '10%',
+                transform: `translate(${mousePosition.x * 0.02}px, ${mousePosition.y * 0.02}px)`,
+                transition: 'transform 0.3s ease-out'
+              }}
+            />
+            <div 
+              className="absolute w-80 h-80 bg-gradient-to-r from-blue-500/20 to-cyan-500/20 rounded-full blur-3xl animate-pulse"
+              style={{
+                top: '60%',
+                right: '15%',
+                animationDelay: '1s',
+                transform: `translate(${mousePosition.x * -0.01}px, ${mousePosition.y * -0.01}px)`,
+                transition: 'transform 0.3s ease-out'
+              }}
+            />
+            <div 
+              className="absolute w-64 h-64 bg-gradient-to-r from-violet-500/25 to-indigo-500/25 rounded-full blur-3xl animate-pulse"
+              style={{
+                top: '40%',
+                left: '50%',
+                animationDelay: '2s',
+                transform: `translate(${mousePosition.x * 0.015}px, ${mousePosition.y * 0.015}px)`,
+                transition: 'transform 0.3s ease-out'
+              }}
+            />
+            
+            {/* Floating Particles */}
+            {[...Array(20)].map((_, i) => (
+              <div
+                key={i}
+                className={`absolute w-1 h-1 rounded-full ${isDarkMode ? 'bg-white/20' : 'bg-black/10'} animate-pulse`}
+                style={{
+                  top: `${Math.random() * 100}%`,
+                  left: `${Math.random() * 100}%`,
+                  animationDelay: `${Math.random() * 1}s`,
+                  animationDuration: `${2 + Math.random() * 3}s`
+                }}
+              />
+            ))}
+          </div>
+
+          {/* Newsletter Content */}
+          <div
+            className={`relative z-10 w-full flex flex-col items-center justify-center text-center px-4 md:px-8 transition-all duration-1000 ease-out transform ${
+              isNewsletterVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-32'
+            }`}
+            style={{
+              transitionDelay: isNewsletterVisible ? '200ms' : '0ms'
+            }}
+            >
+            <div className="max-w-6xl mx-auto space-y-12">
+              {/* Hero Text */}
+              <div className="space-y-8">
+                <div className="inline-flex items-center space-x-3 px-6 py-3 rounded-full bg-gradient-to-r from-blue-500/20 to-pink-500/20 backdrop-blur-xl border border-white/10">
+                  <Sparkles className="w-5 h-5 text-purple-400" />
+                  <span className={`text-sm font-medium ${isDarkMode ? 'text-white' : 'text-gray-100'}`}>
+                    Newsletter
+                  </span>
+                </div>
+                
+                <h2 className={`text-4xl md:text-6xl lg:text-7xl font-black leading-none tracking-tight transition-all duration-700 ${
+                  isDarkMode ? 'text-white' : 'text-gray-100'
+                }`}>
+                  <span className="block">Subscribe to </span>
+                  <span className="block bg-gradient-to-r from-blue-600 via-blue-400 to-pink-400 bg-clip-text text-transparent animate-pulse">
+                    Sledge
+                  </span>
+                  <span className="block text-xl md:text-3xl lg:text-4xl font-light mt-4 opacity-70">
+                    Stay ahead of tomorrow
+                  </span>
+                </h2>
+                
+                <p className={`text-lg md:text-xl max-w-3xl mx-auto leading-relaxed font-light ${
+                  isDarkMode ? 'text-gray-300' : 'text-gray-100'
+                }`}>
+                  Exclusive insights, breakthrough innovations, and the future of business.
+                  <span className="block mt-2 bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent font-medium">
+                    Delivered with precision.
+                  </span>
+                </p>
               </div>
+
+              {/* Tally Form Container */}
+              <div className={`relative max-w-3xl mx-auto p-8 md:p-12 rounded-3xl backdrop-blur-2xl transition-all duration-500 hover:scale-105 overflow-hidden${
+                isDarkMode 
+                  ? 'bg-white/5 border border-white/10 shadow-2xl shadow-purple-500/10' 
+                  : 'bg-black/5 border border-black/10 shadow-2xl shadow-black/10'
+              }`}>
+                {/* Glow Effect */}
+                <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-purple-500/20 via-pink-500/20 to-blue-500/20 blur-xl opacity-0 hover:opacity-100 transition-opacity duration-500"></div>
+                
+                {/* Tally Form Embed */}
+                <div className="relative z-10">
+                  <div className="overflow-hidden rounded-2xl">
+                    <iframe
+                      src="https://tally.so/embed/3yAaYx?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1"
+                      width="100%"
+                      height="600"
+                      frameBorder="0"
+                      marginHeight="0"
+                      marginWidth="0"
+                      title="Newsletter Subscription"
+                      className="w-full min-h-[400px] transition-all duration-300"
+                      style={{
+                        background: 'transparent',
+                        border: 'none',
+                        borderRadius: '1rem',
+                        overflow:"hidden"
+                      }}
+                    ></iframe>
+                  </div>
+                  
+                  {/* Custom Overlay for Enhanced Design */}
+                  <div className="absolute inset-0 pointer-events-none">
+                    {/* Subtle gradient overlay */}
+                    <div className={`absolute inset-0 rounded-2xl bg-gradient-to-br opacity-5 ${
+                      isDarkMode ? 'from-purple-400/20 to-blue-400/20' : 'from-purple-500/10 to-blue-500/10'
+                    }`}></div>
+                     {/* Corner accent elements */}
+                    <div className="absolute top-4 left-4 w-3 h-3 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full opacity-30 animate-pulse"></div>
+                    <div className="absolute top-4 right-4 w-2 h-2 bg-gradient-to-r from-blue-400 to-cyan-400 rounded-full opacity-40 animate-pulse" style={{animationDelay: '0.5s'}}></div>
+                    <div className="absolute bottom-4 left-4 w-2 h-2 bg-gradient-to-r from-violet-400 to-indigo-400 rounded-full opacity-35 animate-pulse" style={{animationDelay: '1s'}}></div>
+                    <div className="absolute bottom-4 right-4 w-3 h-3 bg-gradient-to-r from-pink-400 to-rose-400 rounded-full opacity-30 animate-pulse" style={{animationDelay: '1.5s'}}></div>
+                  </div>
+                </div>
+                
+                {/* Decorative Elements */}
+                <div className="absolute -top-6 -left-6 w-12 h-12 bg-gradient-to-r from-purple-500/30 to-pink-500/30 rounded-full blur-xl animate-pulse"></div>
+                <div className="absolute -bottom-6 -right-6 w-16 h-16 bg-gradient-to-r from-blue-500/20 to-cyan-500/20 rounded-full blur-xl animate-pulse" style={{animationDelay: '1s'}}></div>
+              </div>
+
+              {/* Trust Indicators */}
+              <div className={`flex flex-wrap items-center justify-center gap-4 md:gap-8 text-sm ${
+                isDarkMode ? 'text-gray-400' : 'text-gray-600'
+              }`}>
+                <div className="flex items-center space-x-2">
+                  <CheckCircle className="w-5 h-5 text-green-400" />
+                  <span>No spam, ever</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <CheckCircle className="w-5 h-5 text-green-400" />
+                  <span>Unsubscribe anytime</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <CheckCircle className="w-5 h-5 text-green-400" />
+                  <span>Premium content</span>
+                </div>
+              </div>
+               {/* Enhanced CTA Section */}
+              <div className="space-y-6">
+                <div className={`inline-flex items-center space-x-2 px-4 py-2 rounded-full text-sm font-medium ${
+                  isDarkMode ? 'bg-purple-900/30 text-purple-300' : 'bg-purple-100 text-purple-700'
+                }`}>
+                  <ArrowRight className="w-4 h-4" />
+                  <span>Join 10,000+ innovators already subscribed</span>
+                </div>
+                
+                <p className={`text-sm max-w-2xl mx-auto leading-relaxed ${
+                  isDarkMode ? 'text-gray-500' : 'text-gray-500'
+                }`}>
+                  By subscribing, you agree to receive our newsletter and promotional emails. 
+                  You can unsubscribe at any time. We respect your privacy and never share your data.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
         </section>
           </div>
 
